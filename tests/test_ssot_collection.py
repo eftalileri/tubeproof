@@ -159,3 +159,39 @@ def test_video_download_uses_the_audio_chain():
 
     assert MEDIA_FORMATS["audio"] == "/".join(_AUDIO)
     assert [alt.split("+", 1)[1] for alt in MEDIA_FORMATS["video"].split("/")[:-1]] == list(_AUDIO)
+
+
+def test_empty_leftover_is_not_reused_as_a_download(tmp_path, monkeypatch):
+    from tubeproof.sources.youtube import transcript
+
+    (tmp_path / "vid.m4a").write_bytes(b"")
+    fetched = []
+
+    class FakeYDL:
+        def __init__(self, opts):
+            self.opts = opts
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def process_ie_result(self, info, download):
+            fetched.append(info)
+            (tmp_path / "vid.webm").write_bytes(b"audio")
+
+    monkeypatch.setattr(transcript.yt_dlp, "YoutubeDL", FakeYDL)
+    monkeypatch.setattr(transcript, "extract", lambda vid: {"id": vid})
+    assert transcript.download_media("vid", tmp_path).name == "vid.webm"
+    assert fetched and not (tmp_path / "vid.m4a").exists()
+
+
+def test_failed_split_leaves_no_file(tmp_path):
+    from tubeproof.sources.youtube.transcript import split_audio
+
+    bad = tmp_path / "vid.mp4"
+    bad.write_bytes(b"not a video")
+    with pytest.raises(RuntimeError):
+        split_audio(bad, tmp_path / "audio")
+    assert not list((tmp_path / "audio").iterdir())

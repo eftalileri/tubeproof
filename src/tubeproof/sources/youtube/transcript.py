@@ -126,8 +126,12 @@ def download_media(video_id: str, dest_dir: str | Path, kind: str = "audio") -> 
     dest = Path(dest_dir)
     dest.mkdir(parents=True, exist_ok=True)
     for old in dest.glob(f"{video_id}.*"):
-        if old.suffix not in (".part", ".ytdl"):
-            return old
+        if old.suffix in (".part", ".ytdl"):
+            continue
+        if old.stat().st_size == 0:  # a failed earlier write, not a download: reusing it broke a retry
+            old.unlink()
+            continue
+        return old
     # Original track only: many videos carry 20+ AI-dubbed audio tracks, and "smallest audio"
     # picked an Arabic dub of an English video (2026-10-27). lang sort prefers the original,
     # +abr then takes its smallest bitrate (speech needs little).
@@ -152,6 +156,7 @@ def split_audio(video: Path, dest_dir: str | Path) -> Path:
     r = subprocess.run(["ffmpeg", "-nostdin", "-loglevel", "error", "-y", "-i", str(video), "-vn", "-c:a", "copy",
                         str(out)], capture_output=True, text=True)
     if r.returncode != 0 or not out.exists() or out.stat().st_size == 0:
+        out.unlink(missing_ok=True)  # leave nothing a retry could take for a finished file
         raise RuntimeError(f"no audio track in {video.name}: {r.stderr[-200:]}")
     return out
 
