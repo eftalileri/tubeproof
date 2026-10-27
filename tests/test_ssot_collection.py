@@ -151,3 +151,11 @@ def test_store_one_ttl_cutoff(tmp_path, monkeypatch):
     s._conn.commit()
     assert s.get("meta", "old") is None and s.purge_expired() == 1
     assert sqlite3.connect(tmp_path / "c.sqlite").execute("SELECT key FROM cache").fetchall() == [("fresh",)]
+
+
+def test_video_download_uses_the_audio_chain():
+    """Picture downloads try the same audio preferences, in order, as audio downloads."""
+    from tubeproof.sources.youtube.transcript import _AUDIO, MEDIA_FORMATS
+
+    assert MEDIA_FORMATS["audio"] == "/".join(_AUDIO)
+    assert [alt.split("+", 1)[1] for alt in MEDIA_FORMATS["video"].split("/")[:-1]] == list(_AUDIO)

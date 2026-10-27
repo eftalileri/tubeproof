@@ -108,10 +108,13 @@ def _via_ytdlp(video_id: str, prefer_lang: str | None) -> Transcript:
 # is 118 MB, cut detection 38 s; 2026-10-27) merged with the original audio track, so exemplar mode
 # fetches each video once and `split_audio` hands Whisper its track (two fetches per video tripped
 # YouTube's bot check after ~45 videos; 2026-10-27).
-_AUDIO = "ba[format_note*=original][ext=m4a]/ba[format_note*=original]/ba"
+# One audio preference chain for both kinds. A video with a single audio track has no "original"
+# note; without the m4a step its fallback paired a webm picture with opus audio, which `split_audio`
+# could not copy out (Sebastian Lague 8BCdKJ4ObZ4, 2026-10-27).
+_AUDIO = ("ba[format_note*=original][ext=m4a]", "ba[format_note*=original]", "ba[ext=m4a]", "ba")
 MEDIA_FORMATS = {
-    "audio": _AUDIO,
-    "video": "+".join(("bv*[height<=360][ext=mp4]", _AUDIO.split("/")[0])) + "/bv*[height<=360]+ba/b[height<=360]",
+    "audio": "/".join(_AUDIO),
+    "video": "/".join(f"bv*[height<=360]+{a}" for a in _AUDIO) + "/b[height<=360]",
 }
 
 
@@ -145,7 +148,7 @@ def split_audio(video: Path, dest_dir: str | Path) -> Path:
     """The audio track of a `kind="video"` download as its own file (stream copy, no re-encode)."""
     dest = Path(dest_dir)
     dest.mkdir(parents=True, exist_ok=True)
-    out = dest / f"{video.stem}.m4a"
+    out = dest / f"{video.stem}.mka"  # Matroska holds any audio codec, so the copy never depends on the format
     r = subprocess.run(["ffmpeg", "-nostdin", "-loglevel", "error", "-y", "-i", str(video), "-vn", "-c:a", "copy",
                         str(out)], capture_output=True, text=True)
     if r.returncode != 0 or not out.exists() or out.stat().st_size == 0:
