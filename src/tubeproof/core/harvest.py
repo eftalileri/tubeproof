@@ -320,6 +320,8 @@ def _channel_latest(channels: list[dict], store: Store, log=print) -> tuple:
             try:
                 m = _cached(store, "meta", vid, lambda: yt_meta.video_meta(vid), VideoMeta)
             except Exception as e:  # members-only or removed: skip, the next upload takes its place
+                if yt_meta.bot_checked(e):
+                    raise
                 log(f"   ! meta {vid}: {str(e)[:120]}")
                 continue
             chosen.append(vid)

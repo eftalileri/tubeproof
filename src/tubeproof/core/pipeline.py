@@ -27,7 +27,8 @@ from tubeproof.core.synth_stage import write_reports
 from tubeproof.core.verify_stage import run_verify
 from tubeproof.llm.base import LLM
 from tubeproof.models import VideoBundle
-from tubeproof.sources.youtube.transcript import (captions_blocked, download_media, fetch_transcript,
+from tubeproof.sources.youtube.metadata import bot_checked
+from tubeproof.sources.youtube.transcript import (captions_blocked, download_media, fetch_transcript, split_audio,
                                                 transcribe_audio)
 from tubeproof.store.db import Store
 
@@ -97,6 +98,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
         except Exception as e:
             with lock:
                 stats["whisper_failed"] += 1
+                stats["blocked"] = stats.get("blocked", 0) + bot_checked(e)
             log(f"   ✗ audio {vid}: {str(e)[:140]}")
             return
         with lock:
@@ -147,13 +149,17 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
     def prepare_exemplar(b: VideoBundle) -> None:
         """Picture first (cuts, frames, thumbnail), then the usual transcript route."""
         vid = b.meta.id
+        audio = None
         try:
             path = download_media(vid, video_dir, kind="video")
             m = exemplar.measure(vid, path, b.meta.duration_s, exemplar_dir)
+            if not b.transcript:
+                audio = split_audio(path, audio_dir)
             path.unlink(missing_ok=True)
         except Exception as e:
             with lock:
                 stats["map_failed"] += 1
+                stats["blocked"] = stats.get("blocked", 0) + bot_checked(e)
             log(f"   ✗ exemplar {vid}: {str(e)[:140]}")
             return
         log(f"   ✓ exemplar {vid} · {m['cuts_per_min']} cuts/min · first 10 s {m['cuts_first_10s']} cuts · "
@@ -161,7 +167,9 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
         if b.transcript:
             submit_map(vid)
         else:
-            download(vid, b.meta.language, b.meta.duration_s)
+            with lock:
+                stats["audio"] += 1
+            whisper_q.put((vid, b.meta.language, audio, b.meta.duration_s))
 
     def on_bundle(b: VideoBundle) -> None:
         if mode == "exemplar" and exemplar.load(run_dir, b.meta.id) is None:
@@ -194,6 +202,12 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
     log(f"[flow] audio {stats['audio']} · whisper {stats['whisper']} (failed {stats['whisper_failed']}) · "
         f"analysis {stats['mapped']} (failed {stats['map_failed']}) · {elapsed()} · ${llm.meter.usd:.2f}")
 
+    if stats.get("blocked"):
+        raise RuntimeError(f"YouTube bot check on {stats['blocked']} downloads: wait for it to lift and re-run "
+                           "(finished videos are kept)")
+    if mode == "exemplar" and stats["map_failed"] + stats["whisper_failed"]:
+        raise RuntimeError(f"{stats['map_failed'] + stats['whisper_failed']} videos failed: re-run to retry them "
+                           "before writing a report on a partial sample")
     if mode == "exemplar":  # no claims to cluster or verify: the report tests rules against the videos
         outs = write_reports(llm, run_id, cfg, log=log)
         log(f"[flow] done · {elapsed()} · total ${llm.meter.usd:.2f} · {llm.meter.by_tier}")

@@ -98,17 +98,20 @@ def _via_ytdlp(video_id: str, prefer_lang: str | None) -> Transcript:
     return Transcript(video_id=video_id, language=lang, is_generated=None, source="yt_dlp", segments=segs)
 
 
-# kind -> yt-dlp format. video: picture only, 360p is enough to see a frame and to detect cuts
-# (a 43 min video: 118 MB, cut detection 38 s; 2026-10-27); its audio comes from "audio" if needed.
+# kind -> yt-dlp format. video: 360p picture (enough to see a frame and detect cuts; a 43 min video
+# is 118 MB, cut detection 38 s; 2026-10-27) merged with the original audio track, so exemplar mode
+# fetches each video once and `split_audio` hands Whisper its track (two fetches per video tripped
+# YouTube's bot check after ~45 videos; 2026-10-27).
+_AUDIO = "ba[format_note*=original][ext=m4a]/ba[format_note*=original]/ba"
 MEDIA_FORMATS = {
-    "audio": "ba[format_note*=original][ext=m4a]/ba[format_note*=original]/ba",
-    "video": "bv*[height<=360][ext=mp4]/bv*[height<=360]/wv*",
+    "audio": _AUDIO,
+    "video": "+".join(("bv*[height<=360][ext=mp4]", _AUDIO.split("/")[0])) + "/bv*[height<=360]+ba/b[height<=360]",
 }
 
 
 def download_media(video_id: str, dest_dir: str | Path, kind: str = "audio") -> Path:
-    """Smallest original-language audio track (`kind="audio"`) or a 360p picture-only stream
-    (`kind="video"`). The media CDN is not covered by the caption rate-limit, so this is safe to
+    """Smallest original-language audio track (`kind="audio"`) or a 360p picture with the original
+    audio (`kind="video"`). The media CDN is not covered by the caption rate-limit, so this is safe to
     run in parallel. Keep the two kinds in separate folders: an existing file is reused."""
 
     dest = Path(dest_dir)
@@ -124,11 +127,24 @@ def download_media(video_id: str, dest_dir: str | Path, kind: str = "audio") -> 
     # 12+ min ranged, and one stall forever; 2026-10-27).
     opts = ydl_opts(skip_download=False, noprogress=True,
                     format=MEDIA_FORMATS[kind],
-                    format_sort=["lang", "+abr"] if kind == "audio" else ["res:360", "+size"], outtmpl=str(dest / f"{video_id}.%(ext)s"),
+                    format_sort=["lang", "+abr"] if kind == "audio" else ["lang", "res:360", "+size", "+abr"],
+                    merge_output_format="mp4", outtmpl=str(dest / f"{video_id}.%(ext)s"),
                     socket_timeout=30, http_chunk_size=10 * 1024 * 1024)
     with yt_dlp.YoutubeDL(opts) as ydl:
         ydl.download([http.watch_url(video_id)])
     return next(p for p in dest.glob(f"{video_id}.*") if p.suffix not in (".part", ".ytdl"))
+
+
+def split_audio(video: Path, dest_dir: str | Path) -> Path:
+    """The audio track of a `kind="video"` download as its own file (stream copy, no re-encode)."""
+    dest = Path(dest_dir)
+    dest.mkdir(parents=True, exist_ok=True)
+    out = dest / f"{video.stem}.m4a"
+    r = subprocess.run(["ffmpeg", "-nostdin", "-loglevel", "error", "-y", "-i", str(video), "-vn", "-c:a", "copy",
+                        str(out)], capture_output=True, text=True)
+    if r.returncode != 0 or not out.exists() or out.stat().st_size == 0:
+        raise RuntimeError(f"no audio track in {video.name}: {r.stderr[-200:]}")
+    return out
 
 
 

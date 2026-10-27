@@ -25,6 +25,15 @@ def ydl_opts(**extra) -> dict:
     }
 
 
+# YouTube's anti-bot wall: every request from this IP fails until it lifts, so callers must stop,
+# never skip the video (a skip once silently swapped a channel's latest uploads for older ones).
+BOT_CHECK = "not a bot"
+
+
+def bot_checked(e: BaseException) -> bool:
+    return BOT_CHECK in str(e)
+
+
 def video_meta(video_id: str) -> VideoMeta:
     http.throttle(http.YOUTUBE_HOME)
     with yt_dlp.YoutubeDL(ydl_opts()) as ydl:

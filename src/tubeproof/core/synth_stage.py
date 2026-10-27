@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from pathlib import Path
 
@@ -320,7 +321,7 @@ def write_reports(llm: LLM, run_id: str, cfg: dict, log=print) -> list[Path]:
     """The public report always; the reader's report too when the research has a private context."""
     from tubeproof.research import has_private
 
-    outs = [run_synth(llm, run_id, cfg, private=False, log=log)]
-    if has_private(cfg):
-        outs.append(run_synth(llm, run_id, cfg, private=True, log=log))
-    return outs
+    # The two reports read the same inputs and are independent: write them at the same time.
+    kinds = [False, True] if has_private(cfg) else [False]
+    with ThreadPoolExecutor(len(kinds)) as ex:
+        return list(ex.map(lambda private: run_synth(llm, run_id, cfg, private=private, log=log), kinds))
