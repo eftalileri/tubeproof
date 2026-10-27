@@ -15,6 +15,7 @@ from typing import Iterator
 from tubeproof.config import DAYS_PER_MONTH
 from tubeproof import http
 from tubeproof.models import SearchHit
+from tubeproof.sources.youtube.metadata import is_channel_id
 
 CLIENT_VERSION = "2.20261020.00.00"
 
@@ -116,7 +117,7 @@ def _playlist(lv: dict, query: str) -> SearchHit | None:
         for part in row.get("metadataParts", []):
             for run in part.get("text", {}).get("commandRuns", []):
                 ep = run.get("onTap", {}).get("innertubeCommand", {}).get("browseEndpoint", {})
-                if ep.get("browseId", "").startswith("UC") and not channel_id:
+                if is_channel_id(ep.get("browseId", "")) and not channel_id:
                     channel_id = ep["browseId"]
                     channel = part["text"]["content"].strip()
     m = re.search(r"'text': '([\d,]+ videos?)'", str(lv.get("contentImage", {})))
@@ -144,17 +145,18 @@ def _walk(node, query: str, hits: list[SearchHit], tokens: list[str]) -> None:
             _walk(x, query, hits, tokens)
 
 
-def search(query: str, *, kind: str = "video", months: float = 12, sort: str = "popularity",
-           duration: str | None = None, limit: int = 40, hl: str = "en",
-           gl: str = "US") -> Iterator[SearchHit]:
-    """Yield up to `limit` hits, following continuation pages.
+# The UI language is pinned to English so "5 months ago" / "1.2M views" parse the same everywhere
+# (`parse_age_days`, `parse_count`); the query text itself drives the result language.
+UI_HL = "en"
+DEFAULT_GL = "US"  # result region when a query names none
 
-    The UI language is pinned to English so "5 months ago" / "1.2M views" parse
-    the same everywhere; `gl` keeps results regional and the query text itself
-    drives result language. `hl` is kept for the API backend's relevanceLanguage.
-    """
+
+def search(query: str, *, kind: str = "video", months: float = 12, sort: str = "popularity",
+           duration: str | None = None, limit: int = 40, gl: str = DEFAULT_GL) -> Iterator[SearchHit]:
+    """Yield up to `limit` hits, following continuation pages. `gl` keeps results regional; the UI
+    language is always `UI_HL` (there is no language parameter: it would change date parsing)."""
     params = build_params(sort, upload_bucket(months), kind, duration)
-    context = {"client": {"clientName": "WEB", "clientVersion": CLIENT_VERSION, "hl": "en", "gl": gl}}
+    context = {"client": {"clientName": "WEB", "clientVersion": CLIENT_VERSION, "hl": UI_HL, "gl": gl}}
     body: dict = {"context": context, "query": query, "params": params}
     seen: set[str] = set()
     rank = 0

@@ -7,6 +7,7 @@ from typing import get_args
 
 import pytest
 
+from tubeproof import research
 from tubeproof.core import synth_stage, verify_stage
 from tubeproof.core.extraction import (BEATS, NO_COI, QUOTE_WORDS, STYLE_EXAMPLES, Basis, Claim, ClaimType, Coi,
                                        ExemplarExtraction)
@@ -100,13 +101,13 @@ def _verdict(doc, url=None):
 
 def test_verify_retries_once_and_guards_both_answers():
     c = Cluster("K1", [mk("a:C1", "a", ctype="platform_mechanic")])
-    cfg = {"official_domains": ["facebook.com"]}
+    cfg = research.verify_args({"official_domains": ["facebook.com"]})
     llm = FakeLLM([_verdict("supports", "https://blog.example.com/x"), _verdict("supports", "https://evil.com/y")])
-    v = verify_stage.verify_cluster(llm, c, "topic", cfg)
+    v = verify_stage.verify_cluster(llm, c, "topic", **cfg)
     assert len(llm.calls) == 2 and "previous answer" in llm.calls[1]["user"]
     assert v["doc_check"]["result"] == "not_checked"  # a non-official "doc" is never trusted, on either attempt
     llm = FakeLLM([_verdict("supports", "https://www.facebook.com/business/help/1")])
-    assert verify_stage.verify_cluster(llm, c, "topic", cfg)["doc_check"]["result"] == "supports"
+    assert verify_stage.verify_cluster(llm, c, "topic", **cfg)["doc_check"]["result"] == "supports"
     assert len(llm.calls) == 1
 
 

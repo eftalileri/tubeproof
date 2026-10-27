@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import inspect
 import math
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -12,14 +11,14 @@ from tubeproof.models import SearchHit
 from tubeproof.sources.youtube import innertube
 
 
-_SEARCH = inspect.signature(innertube.search).parameters  # the search owns the language/region defaults
-
-
 @dataclass
 class Query:
+    """One search query. `hl` is the language the query text is written in: it is not sent to YouTube
+    (the search pins its UI language, `innertube.UI_HL`); the harvest's market-language quota reads it.
+    `gl` is the result region, sent to the search."""
     text: str
-    hl: str = _SEARCH["hl"].default
-    gl: str = _SEARCH["gl"].default
+    hl: str = "en"
+    gl: str = innertube.DEFAULT_GL
 
 
 @dataclass
@@ -39,9 +38,9 @@ def discover(queries: list[Query], months: float, per_query: int = 30,
     for q in queries:
         # Both orders: popularity alone drifts off-topic, relevance alone misses proven videos.
         hits = list(innertube.search(q.text, kind="video", months=months, limit=per_query // 2,
-                                     sort="popularity", hl=q.hl, gl=q.gl))
+                                     sort="popularity", gl=q.gl))
         hits += list(innertube.search(q.text, kind="video", months=months, limit=per_query,
-                                      sort="relevance", hl=q.hl, gl=q.gl))
+                                      sort="relevance", gl=q.gl))
         for hit in hits:
             if hit.id in cand.videos and q.text in cand.queries_by_id[hit.id]:
                 continue
@@ -55,7 +54,7 @@ def discover(queries: list[Query], months: float, per_query: int = 30,
             on_progress(q, cand)
     for q in (playlist_queries if playlist_queries is not None else queries) if playlists_per_query else []:
         for hit in innertube.search(q.text, kind="playlist", months=months,
-                                    limit=playlists_per_query, hl=q.hl, gl=q.gl):
+                                    limit=playlists_per_query, gl=q.gl):
             cand.queries_by_id[hit.id].append(q.text)
             cand.playlists.setdefault(hit.id, hit)
         if on_progress:
@@ -63,15 +62,22 @@ def discover(queries: list[Query], months: float, per_query: int = 30,
     return cand
 
 
+# A candidate whose age is unknown (search hit without "N units ago", metadata without an upload date)
+# is ranked as one year old: its views per day are neither inflated nor zeroed. Candidate ranking only;
+# the claim rubric's unknown age is `score.UNKNOWN_AGE_MONTHS`.
+UNKNOWN_AGE_DAYS = 365
+
+
 def rank_score(views: int | None, age_days: int | None, likes: int | None = None,
                comments: int | None = None, query_hits: int = 1) -> float:
     """Popularity that does not just reward old mega-videos.
 
     log views + log views/day + engagement + bonus for matching several queries
-    (a video several phrasings agree on is more on-topic).
+    (a video several phrasings agree on is more on-topic). `age_days=None` is unknown
+    (`UNKNOWN_AGE_DAYS`); 0 is a video from today, counted as one day.
     """
     v = max(views or 0, 1)
-    age = max(age_days or 365, 1)
+    age = UNKNOWN_AGE_DAYS if age_days is None else max(age_days, 1)
     score = math.log10(v) + 0.8 * math.log10(v / age + 1)
     if likes is not None and views:
         score += 25 * min(likes / views, 0.1)

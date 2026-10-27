@@ -114,7 +114,7 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
         if plan_only:
             raise ValueError(f"{run_id} already has a plan that is not harvested yet: run `process` on it")
         return _harvest_plan(prev, run_dir, store, fill, log, on_bundle)
-    existing = {f.stem for f in layout.videos(run_dir).glob("*.json")}
+    existing = {f.stem for f in layout.bundles(run_dir)}
     if prev:
         topic = prev["topic"]
         pack_name = prev["params"].get("pack") or pack_name
@@ -287,14 +287,12 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
 
 
 def _channel_latest(channels: list[dict], store: Store, log=print) -> tuple:
-    """Latest long-form uploads per channel. YouTube's "UULF" + channel-id playlist holds only
-    long-form videos (no Shorts, no streams), so `playlist_meta` lists them without a new API."""
+    """Latest long-form uploads per channel, listed from the channel's uploads playlist
+    (`yt_meta.uploads_playlist`) by `playlist_meta`, without a new API."""
     chosen, metas, reason = [], {}, {}
     for ch in channels:
         cid, n = ch["id"], int(ch.get("latest", EXEMPLAR_LATEST))
-        if not cid.startswith("UC"):
-            raise ValueError(f"channel id must start with UC: {cid!r}")
-        pl = yt_meta.playlist_meta("UULF" + cid[2:], max_items=n + 10)
+        pl = yt_meta.playlist_meta(yt_meta.uploads_playlist(cid), max_items=n + 10)
         for vid in pl.video_ids:
             if sum(1 for v in chosen if metas[v].channel_id == cid) >= n:
                 break
@@ -327,7 +325,7 @@ def repair(run_id: str, *, allow_whisper: bool = True, log=print) -> dict:
     """
     store = Store()
     run_dir = settings.run_dir(run_id)
-    bundles = [b for f in sorted(layout.videos(run_dir).glob("*.json"))
+    bundles = [b for f in layout.bundles(run_dir)
                if not (b := VideoBundle.model_validate_json(f.read_text())).transcript]
     log(f"[repair] {len(bundles)} videos missing a transcript")
     fixed = 0
@@ -356,7 +354,7 @@ def bundle_stats(b: VideoBundle) -> dict:
 
 def run_stats(run_dir: Path) -> dict:
     """Harvest statistics of a run: summed `bundle_stats`, plus transcripts per language."""
-    files = sorted(layout.videos(run_dir).glob("*.json"))
+    files = layout.bundles(run_dir)
     counts, langs = Counter(), Counter()
     for f in files:
         b = VideoBundle.model_validate_json(f.read_text())

@@ -12,7 +12,7 @@ from rich.console import Console
 from tubeproof import research
 from tubeproof.config import settings
 from tubeproof.core import harvest as core_harvest
-from tubeproof.core.harvest import read_manifest, video_titles
+from tubeproof.core.harvest import read_manifest
 from tubeproof.i18n import lang_of
 from tubeproof.research import given
 from tubeproof.store.db import Store
@@ -40,16 +40,16 @@ def _ctx(run_id: str, pack: str | None) -> tuple:
 
 # Help texts quote the selection policy's own defaults (SSOT-14); options left unset pass nothing.
 _POLICY = {k: p.default for k, p in inspect.signature(core_harvest.harvest).parameters.items()}
-_WORKERS = typer.Option(None, help="Parallel LLM calls (default: the stage's)")
+_WORKERS = typer.Option(None, help=f"Parallel LLM calls (default {settings.llm_workers})")
 _BACKEND = typer.Option(None, help=f"LLM backend (default {settings.llm_backend})")
 _PACK = typer.Option(None, help="Topic pack name or path (default: the run's pack, else research/<id>/pack.yaml)")
 
 
 @app.command()
 def search(query: str, playlists: bool = False, months: Optional[float] = None,
-           limit: int = research.SEARCH_LIMIT, hl: Optional[str] = None, gl: Optional[str] = None):
+           limit: int = research.SEARCH_LIMIT, gl: Optional[str] = None):
     """Run one search (quick check)."""
-    for h in research.search(query, playlists=playlists, **given(months=months, limit=limit, hl=hl, gl=gl)):
+    for h in research.search(query, playlists=playlists, **given(months=months, limit=limit, gl=gl)):
         extra = f"{h.video_count} videos" if playlists else f"{h.views or 0:>12,} views · {h.published_text}"
         console.print(f"{h.rank_in_query:>3}. [bold]{h.id}[/] · {extra} · {h.channel} · {h.title[:70]}")
 
@@ -130,7 +130,7 @@ def verify(run_id: str, workers: Optional[int] = _WORKERS, backend: Optional[str
 
     run_dir, topic, cfg = _ctx(run_id, pack)
     llm = _llm(backend)
-    run_verify(llm, run_dir, topic, cfg, log=log, **given(workers=workers))
+    run_verify(llm, run_dir, topic, **research.verify_args(cfg), log=log, **given(workers=workers))
     console.print(f"[green]✓[/] ${llm.meter.usd:.2f}")
 
 
@@ -138,26 +138,11 @@ def verify(run_id: str, workers: Optional[int] = _WORKERS, backend: Optional[str
 def report(run_id: str, backend: Optional[str] = _BACKEND, pack: Optional[str] = _PACK,
            render: bool = typer.Option(False, help="Only re-render links and appendix (no model call)")):
     """Score + synthesize: the public REPORT.md, and private/REPORT.md when a private context exists."""
-    from tubeproof.core.synth_stage import build_scored, render_report, report_dir, BODY_FILE, write_reports
+    from tubeproof.core.synth_stage import write_reports
 
-    run_dir, _topic, cfg = _ctx(run_id, pack)
-    if not render:
-        for out in write_reports(_llm(backend), run_id, cfg, log=log):
-            console.print(f"[green]✓[/] {out}")
-        return
-    if research.mode_of(cfg) == "exemplar":
-        from tubeproof.core.synth_stage import render_exemplar
-
-        vids = read_manifest(run_dir)["videos"]
-        for private in (False, True):
-            if (report_dir(run_id, private) / BODY_FILE).exists():
-                console.print(f"[green]✓[/] {render_exemplar(run_id, private, vids, lang_of(cfg))}")
-        return
-    scored = build_scored(run_dir, research.breakpoints(cfg))
-    titles = video_titles(read_manifest(run_dir))
-    for private in (False, True):
-        if (report_dir(run_id, private) / BODY_FILE).exists():
-            console.print(f"[green]✓[/] {render_report(run_id, private, scored, titles, lang_of(cfg))}")
+    _run_dir, _topic, cfg = _ctx(run_id, pack)
+    for out in write_reports(None if render else _llm(backend), run_id, cfg, log=log, render_only=render):
+        console.print(f"[green]✓[/] {out}")
 
 
 @app.command()

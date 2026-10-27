@@ -30,7 +30,7 @@ SEARCH_LIMIT = 15  # hits a quick search lists (CLI `search`, MCP `search_videos
 
 def given(**opts) -> dict:
     """Only the options a caller set. Defaults belong to the function called (selection policy:
-    core harvest; search window and region: innertube; workers: the stage), never to a shell."""
+    core harvest; search window and region: innertube; workers: `settings.llm_workers`), never to a shell."""
     return {k: v for k, v in opts.items() if v is not None}
 
 
@@ -52,8 +52,29 @@ def load_config(run_id: str | None = None, pack: str | None = None) -> dict:
     return cfg
 
 
+def _breakpoints(cfg: dict) -> list[tuple[str, date]]:
+    """The pack's platform breakpoints as (name, date). Both fields are required: a nameless change
+    would reach the verify prompt as a made-up label."""
+    out = []
+    for b in cfg.get("breakpoints") or []:
+        if not b.get("name") or not b.get("date"):
+            raise ValueError(f"breakpoint needs a name and a date: {b!r}")
+        out.append((b["name"], date.fromisoformat(str(b["date"]))))
+    return out
+
+
 def breakpoints(cfg: dict) -> list[date]:
-    return [date.fromisoformat(str(b["date"])) for b in cfg.get("breakpoints", [])]
+    """Breakpoint dates (scoring halves older platform-mechanic claims)."""
+    return [d for _, d in _breakpoints(cfg)]
+
+
+def verify_args(cfg: dict) -> dict:
+    """What the verify stage is handed from a config: report language, the known platform changes
+    ("name (date)") and the official domains a doc check may cite."""
+    from tubeproof.i18n import lang_of
+
+    return {"lang": lang_of(cfg), "changes": [f"{n} ({d})" for n, d in _breakpoints(cfg)],
+            "domains": list(cfg.get("official_domains") or [])}
 
 
 def has_private(cfg: dict) -> bool:
@@ -112,7 +133,7 @@ def process(run_id: str, llm, *, pack: str | None = None, topic: str | None = No
 
 
 def search(query: str, *, playlists: bool = False, **opts) -> list[SearchHit]:
-    """A quick search (CLI `search`, MCP `search_videos`). `opts` (months, limit, hl, gl) pass only
+    """A quick search (CLI `search`, MCP `search_videos`). `opts` (months, limit, gl) pass only
     when set; the window and region defaults are the search's own (SSOT-05)."""
     return list(innertube.search(query, kind="playlist" if playlists else "video",
                                  **{"limit": SEARCH_LIMIT, **given(**opts)}))

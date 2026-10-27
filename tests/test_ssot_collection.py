@@ -147,7 +147,6 @@ def test_store_one_ttl_cutoff(tmp_path, monkeypatch):
     s._conn.execute("UPDATE cache SET fetched_at=? WHERE key='old'", (time.time() - 10 * 86400,))
     s._conn.commit()
     assert s.get("meta", "fresh") == 1 and s.get("meta", "old") == 2
-    assert s.get("meta", "old", max_age_days=5) is None
     s._conn.execute("UPDATE cache SET fetched_at=? WHERE key='old'", (time.time() - 31 * 86400,))
     s._conn.commit()
     assert s.get("meta", "old") is None and s.purge_expired() == 1

@@ -1,4 +1,7 @@
 import base64
+import json
+
+import pytest
 
 from tubeproof.core.discover import rank_score
 from tubeproof.filters.linkclass import classify
@@ -98,6 +101,16 @@ def test_exemplar_citations_become_links(tmp_path, monkeypatch):
     monkeypatch.setattr(synth_stage, "settings", SimpleNamespace(run_dir=lambda run_id: tmp_path))
     (tmp_path / synth_stage.BODY_FILE).write_text("Hook first [V1 83s], see [V2]; bad [V9].")
     vids = [{"id": "aaa", "title": "A"}, {"id": "bbb", "title": "B"}]
+    with pytest.raises(RuntimeError, match="aaa: no exemplar measurement"):  # never a blank table row
+        synth_stage.render_exemplar("r", False, vids, "en")
+    from tubeproof.config import layout
+    from tubeproof.core.exemplar import PICTURE_METRICS, SPEECH_METRICS
+
+    for v in vids:
+        for path, rec in ((layout.exemplar_file(tmp_path, v["id"]), {"video_id": v["id"], **dict.fromkeys(PICTURE_METRICS, 1)}),
+                          (layout.extraction(tmp_path, v["id"]), {"speech": dict.fromkeys(SPEECH_METRICS, 2)})):
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(rec))
     out = synth_stage.render_exemplar("r", False, vids, "en").read_text()
     assert "[V1 1:23](https://youtu.be/aaa?t=83)" in out
     assert "[V2](https://youtu.be/bbb)" in out

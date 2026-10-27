@@ -12,7 +12,7 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
-from tubeproof.config import layout
+from tubeproof.config import layout, settings
 from tubeproof.core import exemplar
 from tubeproof.core.extraction import (BEATS, QUOTE_WORDS, STYLE_EXAMPLES, CommentExtraction, ExemplarExtraction,
                                        VideoExtraction)
@@ -98,10 +98,13 @@ def _map_exemplar(llm: LLM, topic: str, b: VideoBundle, lang: str, wins: list[Wi
         raise LLMError(f"no exemplar measurements for {b.meta.id}")
     sp = exemplar.speech(b.transcript)
     measured = {k: v for k, v in m.items() if k not in ("frames", "thumbnail", "video_id")} | {"speech": sp}
+    if len(m["frame_times"]) != len(m["frames"]):  # a record from before frames were paired with their times
+        raise LLMError(f"{b.meta.id}: {len(m['frames'])} frames but {len(m['frame_times'])} frame times; "
+                       "re-measure the video")
     images = ([m["thumbnail"]] if m["thumbnail"] else []) + m["frames"]
     system = load_prompt("map_exemplar.md", lang, topic=topic, beats=BEATS, quote_words=QUOTE_WORDS,
                          examples=STYLE_EXAMPLES,
-                         frame_times=", ".join(f"{t}s" for t in m["frame_times"][:len(m["frames"])]))
+                         frame_times=", ".join(f"{t}s" for t in m["frame_times"]))
     user = _video_input(b, wins) + f"\n\nMEASURED BY CODE:\n{json.dumps(measured, ensure_ascii=False)}"
     ext = ExemplarExtraction.model_validate(
         llm.json("extract", system, user, ExemplarExtraction.model_json_schema(), images=images))
@@ -167,10 +170,11 @@ def save_extraction(run_dir: Path, res: dict) -> None:
     p.write_text(json.dumps(res, ensure_ascii=False, indent=1))
 
 
-def run_map(llm: LLM, run_dir: Path, topic: str, lang: str, workers: int = 4, only: list[str] | None = None,
+def run_map(llm: LLM, run_dir: Path, topic: str, lang: str, workers: int = settings.llm_workers,
+            only: list[str] | None = None,
             mode: str = "claims", log=print) -> dict:
     todo = []
-    for f in sorted(layout.videos(run_dir).glob("*.json")):
+    for f in layout.bundles(run_dir):
         if only and f.stem not in only:
             continue
         if is_mapped(run_dir, f.stem):

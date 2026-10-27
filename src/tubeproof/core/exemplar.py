@@ -36,6 +36,8 @@ BODY_FRACTIONS = (0.2, 0.4, 0.6, 0.8)
 PICTURE_METRICS = ("duration_s", "cuts_per_min", "cuts_first_3s", "cuts_first_10s", "cuts_first_30s",
                    "cuts_first_60s", "shot_s_median", "changes_per_min", "changes_first_30s", "change_gap_s_median")
 WINDOWS = (3, 10, 30, 60)  # seconds; "first N s" metrics
+# Speech metrics (keys of `speech`) in the report table, in this order.
+SPEECH_METRICS = ("wpm", "wpm_first_10s", "wpm_first_30s", "first_speech_s")
 _SENTENCE = re.compile(r"[.!?…]+\s+")
 
 
@@ -64,23 +66,26 @@ def frame_times(duration_s: int) -> list[int]:
     return sorted(set(FRAME_TIMES) | {int(duration_s * f) for f in BODY_FRACTIONS})
 
 
-def frames(video: Path, out_dir: Path, times: list[int]) -> list[Path]:
+def frames(video: Path, out_dir: Path, times: list[int]) -> list[tuple[int, Path]]:
+    """(time, path) of each frame actually written: ffmpeg writes nothing for a time past the end, and
+    the frame list and its times must stay paired (the model is told which second each image is)."""
     out_dir.mkdir(parents=True, exist_ok=True)
-    paths = []
+    out = []
     for t in times:
         p = out_dir / f"f{t:04d}.jpg"
+        p.unlink(missing_ok=True)  # a frame from an earlier run must not pass as written now
         subprocess.run(["ffmpeg", "-nostdin", "-loglevel", "error", "-y", "-ss", str(t), "-i", str(video),
                         "-frames:v", "1", "-q:v", "4", str(p)], check=True)
         if p.exists():
-            paths.append(p)
-    return paths
+            out.append((t, p))
+    return out
 
 
 def thumbnail(video_id: str, out_dir: Path) -> Path | None:
     out_dir.mkdir(parents=True, exist_ok=True)
     with http.client() as c:
         for name in ("maxresdefault", "hqdefault"):
-            resp = http.request(c, "GET", f"https://i.ytimg.com/vi/{video_id}/{name}.jpg")
+            resp = http.request(c, "GET", http.thumbnail_url(video_id, name))
             if resp.status_code == 200 and len(resp.content) > 2000:  # 120x90 grey placeholder is ~1 KB
                 p = out_dir / "thumb.jpg"
                 p.write_bytes(resp.content)
@@ -111,14 +116,14 @@ def speech(tr: Transcript) -> dict:
 def measure(video_id: str, video: Path, duration_s: int | None, run_dir: Path) -> dict:
     """Picture metrics, frames and thumbnail. Speech metrics need the final transcript, so the map
     stage adds them (`speech`) when it analyses the video."""
-    out_dir = layout.exemplar(run_dir) / video_id
+    out_dir = layout.exemplar_assets(run_dir, video_id)
     if not duration_s:
         raise ValueError(f"{video_id}: no duration in metadata; cuts per minute would be invented")
     cs, ch = cuts(video)
     dur = duration_s
     shots = [b - a for a, b in zip([0.0] + cs, cs + [float(dur)]) if b > a]
     gaps = [b - a for a, b in zip([0.0] + ch, ch + [float(dur)]) if b > a]
-    times = frame_times(dur)
+    shot = frames(video, out_dir / "frames", frame_times(dur))
     res = {
         "video_id": video_id,
         "duration_s": dur,
@@ -130,9 +135,9 @@ def measure(video_id: str, video: Path, duration_s: int | None, run_dir: Path) -
         "changes_per_min": round(len(ch) / (dur / 60), 1),
         "changes_first_30s": sum(1 for t in ch if t < 30),
         "change_gap_s_median": round(statistics.median(gaps), 2) if gaps else None,
-        "frames": [str(p) for p in frames(video, out_dir / "frames", times)],
+        "frames": [str(p) for _, p in shot],
         "thumbnail": str(p) if (p := thumbnail(video_id, out_dir)) else None,
-        "frame_times": times,
+        "frame_times": [t for t, _ in shot],  # one per frame, in the same order
     }
     out = layout.exemplar_file(run_dir, video_id)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -148,7 +153,7 @@ def load(run_dir: Path, video_id: str) -> dict | None:
 def table(run_dir: Path) -> list[dict]:
     """Per-video rows for the report: picture metrics + the speech metrics the map stage saved."""
     rows = []
-    for p in sorted(layout.exemplar(run_dir).glob("*.json")):
+    for p in layout.exemplar_files(run_dir):
         row = json.loads(p.read_text())
         ex = layout.extraction(run_dir, p.stem)
         row["speech"] = json.loads(ex.read_text()).get("speech") if ex.exists() else None

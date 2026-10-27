@@ -37,6 +37,11 @@ different knowledge has different authorities, each registered in `docs/SSOT.md`
 list or regex that already has an owner, a stage re-deriving a value it was handed, hidden fallbacks that
 substitute a default for missing data (fail loudly instead).
 
+- A paired list (frames and their times, items and their ids) MUST be paired where it is produced, never
+  re-aligned by slicing downstream: one missing frame shifted every later timestamp (2026-10-27).
+- A lifetime, worker count or id prefix MUST be read from its owner, never passed as a literal by a caller:
+  a caller-side TTL disagreed with the purge and deleted relevance ratings after 30 days (2026-10-27).
+
 **Defect found → fix the whole class.** Name the wrong logic, search the whole repository for every
 occurrence, bind all of them to one authority, and prove the fix on real output (a run, a measured number).
 An SSOT violation seen during any task is fixed in that task; it is never deferred or dropped for cost.

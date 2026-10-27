@@ -34,6 +34,8 @@ class Settings:
     model_extract: str = _env("MODEL_EXTRACT", "claude-haiku-5-5")
     model_verify: str = _env("MODEL_VERIFY", "claude-sonnet-5-5")
     model_synth: str = _env("MODEL_SYNTH", "claude-opus-5-5")
+    # Parallel LLM calls of a stage (map, reduce, merge pass, verify, the pipeline's map pool).
+    llm_workers: int = int(_env("LLM_WORKERS", "4"))
     # Whisper. 0 minutes = whole video (the key part of a talk is often late). Tempo 1.5: 38% less
     # time, 98-99% identical text (Turkish and Arabic, 2026-10-27). engine "" = mlx if cached, else faster.
     whisper_engine: str = _env("WHISPER", "")
@@ -82,7 +84,19 @@ class Settings:
 
 
 class Layout:
-    """File names inside a run folder (`research/<id>/data/`). The only place they are written."""
+    """File names inside a run folder (`research/<id>/data/`). The only place they are written.
+
+    Per-video records (bundles, extractions, exemplar measurements) are `<folder>/<video id>.json`;
+    `_record` names one and `_records` lists a folder, so no stage globs a file-name rule itself."""
+
+    @staticmethod
+    def _record(folder: Path, video_id: str) -> Path:
+        return folder / f"{video_id}.json"
+
+    @staticmethod
+    def _records(folder: Path) -> list[Path]:
+        """The folder's records, sorted by video id (`.stem` is the id); none when it does not exist."""
+        return sorted(folder.glob("*.json"))
 
     @staticmethod
     def manifest(run_dir: Path) -> Path:
@@ -96,25 +110,35 @@ class Layout:
     def videos(run_dir: Path) -> Path:
         return run_dir / "videos"
 
-    @staticmethod
-    def bundle(run_dir: Path, video_id: str) -> Path:
-        return run_dir / "videos" / f"{video_id}.json"
+    def bundle(self, run_dir: Path, video_id: str) -> Path:
+        return self._record(self.videos(run_dir), video_id)
+
+    def bundles(self, run_dir: Path) -> list[Path]:
+        return self._records(self.videos(run_dir))
 
     @staticmethod
     def extractions(run_dir: Path) -> Path:
         return run_dir / "extractions"
 
-    @staticmethod
-    def extraction(run_dir: Path, video_id: str) -> Path:
-        return run_dir / "extractions" / f"{video_id}.json"
+    def extraction(self, run_dir: Path, video_id: str) -> Path:
+        return self._record(self.extractions(run_dir), video_id)
+
+    def extraction_files(self, run_dir: Path) -> list[Path]:
+        return self._records(self.extractions(run_dir))
 
     @staticmethod
     def exemplar(run_dir: Path) -> Path:
         return run_dir / "exemplar"
 
-    @staticmethod
-    def exemplar_file(run_dir: Path, video_id: str) -> Path:
-        return run_dir / "exemplar" / f"{video_id}.json"
+    def exemplar_file(self, run_dir: Path, video_id: str) -> Path:
+        return self._record(self.exemplar(run_dir), video_id)
+
+    def exemplar_files(self, run_dir: Path) -> list[Path]:
+        return self._records(self.exemplar(run_dir))
+
+    def exemplar_assets(self, run_dir: Path, video_id: str) -> Path:
+        """Per-video folder of the thumbnail and frames (next to the video's measurement record)."""
+        return self.exemplar(run_dir) / video_id
 
     @staticmethod
     def clusters(run_dir: Path) -> Path:

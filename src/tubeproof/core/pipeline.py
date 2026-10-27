@@ -28,7 +28,7 @@ from tubeproof.core.synth_stage import write_reports
 from tubeproof.core.verify_stage import run_verify
 from tubeproof.llm.base import LLM
 from tubeproof.models import VideoBundle
-from tubeproof.research import mode_of
+from tubeproof.research import mode_of, verify_args
 from tubeproof.sources.youtube.metadata import bot_checked
 from tubeproof.sources.youtube.transcript import (CAPTIONS_DEFERRED, captions_blocked, download_media,
                                                 fetch_transcript, split_audio, transcribe_audio)
@@ -51,7 +51,7 @@ def coverage(tr, duration_s: int | None) -> float | None:
     return min(1.0, (last.start + last.duration) / duration_s)
 
 
-def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers: int = 4,
+def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers: int = settings.llm_workers,
             log=print) -> Path:
     run_dir = settings.run_dir(run_id)
     manifest = read_manifest(run_dir)
@@ -60,8 +60,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
     mode = mode_of(cfg)
     audio_dir = settings.media_dir(run_id, "audio")
     video_dir = settings.media_dir(run_id, "video")
-    ext_dir = layout.extractions(run_dir)
-    ext_dir.mkdir(exist_ok=True)
+    layout.extractions(run_dir).mkdir(exist_ok=True)
     store = Store()
     t0 = time.time()
     stats: Counter = Counter()
@@ -119,7 +118,8 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                 if CAPTIONS_DEFERRED in (b.transcript_error or "") and not captions_blocked():
                     try:
                         tr = fetch_transcript(vid, lang, allow_whisper=False)
-                    except Exception:
+                    except Exception as e:  # Whisper below still runs; the reason is logged, not dropped
+                        log(f"   · late captions {vid}: {str(e)[:140]} → Whisper")
                         tr = None
                 tr = tr or transcribe_audio(vid, path, lang)
                 if tr.source == "whisper" and coverage(tr, dur) is None:
@@ -184,7 +184,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
 
     worker = threading.Thread(target=whisper_worker, name="whisper", daemon=True)
     worker.start()
-    for f in sorted(layout.videos(run_dir).glob("*.json")):
+    for f in layout.bundles(run_dir):
         on_bundle(VideoBundle.model_validate_json(f.read_text()))
     if manifest.get("planned"):
         harvest(topic, [], run_id=run_id, allow_whisper=False, on_bundle=on_bundle, log=log,
@@ -218,12 +218,12 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
         log(f"[flow] done · {elapsed()} · total ${llm.meter.usd:.2f} · {llm.meter.by_tier}")
         return outs[0]
     clusters = layout.clusters(run_dir)
-    newest = max((f.stat().st_mtime for f in ext_dir.glob("*.json")), default=0)
+    newest = max((f.stat().st_mtime for f in layout.extraction_files(run_dir)), default=0)
     if clusters.exists() and clusters.stat().st_mtime > newest:
         log("[reduce] clusters up to date, skipped")  # resume must not re-roll the LLM grouping
     else:
         run_reduce(run_dir, llm, map_workers, log=log)
-    run_verify(llm, run_dir, topic, cfg, workers=map_workers, log=log)
+    run_verify(llm, run_dir, topic, **verify_args(cfg), workers=map_workers, log=log)
     outs = write_reports(llm, run_id, cfg, log=log)
     log(f"[flow] done · {elapsed()} · total ${llm.meter.usd:.2f} · {llm.meter.by_tier}")
     return outs[0]

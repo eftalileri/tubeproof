@@ -19,7 +19,7 @@ from pydantic import BaseModel
 
 from tubeproof.core import exemplar
 from tubeproof.core.harvest import read_manifest, video_titles
-from tubeproof.core.reduce_stage import load_clusters
+from tubeproof.core.reduce_stage import CLUSTER_PREFIX, load_clusters
 from tubeproof.core.score import BANDS, FIRST_HAND, RUBRIC_VERSION, score_cluster
 from tubeproof.core.segment import fmt_ts
 from tubeproof.core.verify_stage import cluster_key, needs_llm
@@ -76,7 +76,7 @@ def _first_hand(r: dict) -> bool:
     return any(m["basis"] in FIRST_HAND for m in r["members"])
 
 
-def _digest(scored: list[dict], extractions_dir: Path, max_single: int = 60) -> str:
+def _digest(scored: list[dict], run_dir: Path, max_single: int = 60) -> str:
     """Single-source clusters: every first-hand one goes in, plus the best `max_single` others.
     A flat cap of 60 by confidence left out 95 of 137 first-hand single-source clusters, the
     practitioner evidence the tool exists for (2026-10-27)."""
@@ -104,7 +104,7 @@ def _digest(scored: list[dict], extractions_dir: Path, max_single: int = 60) -> 
             + (f"\n   test: {r['test_local']}" if r["test_local"] else "")
         )
     tips, sales, hype = [], [], []
-    for f in sorted(extractions_dir.glob("*.json")):
+    for f in layout.extraction_files(run_dir):
         ex = json.loads(f.read_text())
         tips += (ex.get("comments") or {}).get("new_tips", [])[:4]
         v = ex["video"]
@@ -129,7 +129,7 @@ def _appendix(scored: list[dict], titles: dict[str, str], cited: set[str], lang:
                    f"· {L['confidence']} {s['confidence']:.2f}\n\n{r['claim_local']}\n")
         if r["reasoning_local"]:
             out.append(f"\n*{L['assessment']}:* {r['reasoning_local']}\n")
-        if r["test_local"]:  # the report cites these as "[K<n> <test_ref>]"
+        if r["test_local"]:  # the report cites these as "[<CLUSTER_PREFIX><n> <test_ref>]"
             out.append(f"\n*{L['test']}:* {r['test_local']}\n")
         if r["doc_url"]:
             out.append(f"\n- {L['official']}: [{r['doc_url']}]({r['doc_url']}) — “{(r['doc_quote'] or '')[:200]}”")
@@ -166,7 +166,7 @@ def _write_report(run_id: str, private: bool, cite: re.Pattern, link, tail) -> P
 
 def render_report(run_id: str, private: bool, scored: list[dict], titles: dict[str, str], lang: str) -> Path:
     """Model text + links + evidence appendix. Re-runnable without calling the model."""
-    cite = re.compile(rf"\[(K\d+)( {re.escape(labels(lang)['test_ref'])})?\]")
+    cite = re.compile(rf"\[({re.escape(CLUSTER_PREFIX)}\d+)( {re.escape(labels(lang)['test_ref'])})?\]")
     return _write_report(run_id, private, cite,
                          lambda m: f"[{m.group(1)}{m.group(2) or ''}](#{m.group(1).lower()})",
                          lambda body: _appendix(scored, titles, {m.group(1) for m in cite.finditer(body)}, lang))
@@ -199,6 +199,17 @@ _MODES = {
 }
 
 
+def _measured(rows: dict[str, dict], video_id: str) -> tuple[dict, dict]:
+    """A video's measurement row and its speech metrics. Both must exist: a blank row would reach the
+    model and the report table as a video with no cuts and no speech."""
+    r = rows.get(video_id)
+    if r is None:
+        raise RuntimeError(f"{video_id}: no exemplar measurement; re-run `tubeproof process` before the report")
+    if r.get("speech") is None:
+        raise RuntimeError(f"{video_id}: no speech metrics (no analysis); re-run `tubeproof process` before the report")
+    return r, r["speech"]
+
+
 def _exemplar_digest(run_dir: Path, vids: list[dict]) -> str:
     rows = {r["video_id"]: r for r in exemplar.table(run_dir)}
     out = []
@@ -207,8 +218,8 @@ def _exemplar_digest(run_dir: Path, vids: list[dict]) -> str:
         if not f.exists():
             continue
         ex = json.loads(f.read_text())
-        x, m = ex["video"], rows.get(v["id"], {})
-        measured = {k: m.get(k) for k in exemplar.PICTURE_METRICS} | (m.get("speech") or {})
+        x, (m, sp) = ex["video"], _measured(rows, v["id"])
+        measured = {k: m.get(k) for k in exemplar.PICTURE_METRICS} | sp
         beats = "; ".join(f"{int(b['t'])}s {b['kind']}: {b['what']}" for b in x["beats"])
         loops = "; ".join(f"{l['question']} ({int(l['opened_at_s'])}s→"
                           f"{int(l['closed_at_s']) if l.get('closed_at_s') is not None else '-'}s)" for l in x["open_loops"])
@@ -239,14 +250,13 @@ def render_exemplar(run_id: str, private: bool, vids: list[dict], lang: str) -> 
     rows = {r["video_id"]: r for r in exemplar.table(settings.run_dir(run_id))}
     L = labels(lang)
     cols = tuple(c for c in exemplar.PICTURE_METRICS if c not in ("duration_s", "cuts_first_60s"))
-    scols = ("wpm", "wpm_first_10s", "wpm_first_30s", "first_speech_s")
+    scols = exemplar.SPEECH_METRICS
     head = "| # | " + " | ".join(L["exemplar_cols"][c] for c in ("video", "views") + cols + scols) + " |"
     lines = [f"\n\n---\n\n## {L['exemplar_table']}\n", L["exemplar_intro"] + "\n", head,
              "|" + "---|" * (len(cols) + len(scols) + 3)]
     vals: dict[str, list] = {c: [] for c in cols + scols}
     for n, v in enumerate(vids, 1):
-        r = rows.get(v["id"]) or {}
-        sp = r.get("speech") or {}
+        r, sp = _measured(rows, v["id"])
         cells = [r.get(c) for c in cols] + [sp.get(c) for c in scols]
         for c, x in zip(cols + scols, cells):
             if isinstance(x, (int, float)):
@@ -258,10 +268,12 @@ def render_exemplar(run_id: str, private: bool, vids: list[dict], lang: str) -> 
     return _write_report(run_id, private, _VCITE, link, lambda body: "\n".join(lines) + "\n")
 
 
-def run_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> Path:
+def run_synth(llm: LLM | None, run_id: str, cfg: dict, *, private: bool, render_only: bool = False,
+              log=print) -> Path:
     """`private=False` writes the public report from the topic alone; `private=True` writes the
     reader's report with their question, context and decisions. Exemplar research gets the
-    exemplar report (how the videos are built, the reader's rules tested against them)."""
+    exemplar report (how the videos are built, the reader's rules tested against them).
+    `render_only=True` re-renders REPORT.md from the saved body (links, appendix or table): no model call."""
     from tubeproof.research import breakpoints, mode_of
 
     mode = mode_of(cfg)
@@ -282,24 +294,26 @@ def run_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> 
                   audience="the reader described below" if private else m["audience"], n_videos=len(vids),
                   today=date.today(), reader_block=reader, hypotheses_section=m["section"] if hyps else "")
     if mode == "exemplar":
-        system = load_prompt(m["prompt"], lang, **common,
-                             channels=", ".join(sorted({v["channel"] or "?" for v in vids})))
+        system = lambda: load_prompt(m["prompt"], lang, **common,  # noqa: E731
+                                     channels=", ".join(sorted({v["channel"] or "?" for v in vids})))
         what = f"exemplar report from {len(vids)} videos"
         digest = lambda: _exemplar_digest(run_dir, vids)  # noqa: E731
         render = lambda: render_exemplar(run_id, private, vids, lang)  # noqa: E731
     else:
         scored = build_scored(run_dir, breakpoints(cfg))
-        system = load_prompt(
+        system = lambda: load_prompt(  # noqa: E731
             m["prompt"], lang, **common, n_channels=len({v["channel"] for v in vids}),
             fit_column="Which fits the reader better, and why" if private else "When each one applies",
             levers_rule=("The reader's goal is stated in their question." if private
                          else "The goal is the one in the question."),
-            test_ref=labels(lang)["test_ref"])
+            test_ref=labels(lang)["test_ref"], cluster_prefix=CLUSTER_PREFIX)
         what = f"report from {len(scored)} clusters"
-        digest = lambda: _digest(scored, layout.extractions(run_dir))  # noqa: E731
+        digest = lambda: _digest(scored, run_dir)  # noqa: E731
         render = lambda: render_report(run_id, private, scored, video_titles(manifest), lang)  # noqa: E731
+    if render_only:
+        return render()
     log(f"[synth] {'private' if private else 'public'} {what}")
-    rep = Report.model_validate(llm.json("synth", system, digest(), Report.model_json_schema()))
+    rep = Report.model_validate(llm.json("synth", system(), digest(), Report.model_json_schema()))
     d = report_dir(run_id, private)
     d.mkdir(parents=True, exist_ok=True)
     (d / BODY_FILE).write_text(rep.markdown)  # the paid part; rendering below is free to redo
@@ -308,11 +322,18 @@ def run_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> 
     return out
 
 
-def write_reports(llm: LLM, run_id: str, cfg: dict, log=print) -> list[Path]:
-    """The public report always; the reader's report too when the research has a private context."""
+def write_reports(llm: LLM | None, run_id: str, cfg: dict, log=print, *, render_only: bool = False) -> list[Path]:
+    """The public report always; the reader's report too when the research has a private context.
+    `render_only=True` (no `llm` needed): re-render every report whose saved body exists, without a model call."""
     from tubeproof.research import has_private
 
+    if render_only:
+        kinds = [p for p in (False, True) if (report_dir(run_id, p) / BODY_FILE).exists()]
+        if not kinds:
+            raise FileNotFoundError(f"{run_id} has no saved report body to re-render: write the report first")
+    else:
+        kinds = [False, True] if has_private(cfg) else [False]
     # The two reports read the same inputs and are independent: write them at the same time.
-    kinds = [False, True] if has_private(cfg) else [False]
     with ThreadPoolExecutor(len(kinds)) as ex:
-        return list(ex.map(lambda private: run_synth(llm, run_id, cfg, private=private, log=log), kinds))
+        return list(ex.map(lambda private: run_synth(llm, run_id, cfg, private=private, render_only=render_only,
+                                                     log=log), kinds))

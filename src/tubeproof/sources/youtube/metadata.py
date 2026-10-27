@@ -81,6 +81,19 @@ def video_meta(video_id: str) -> VideoMeta:
     )
 
 
+def is_channel_id(text: str) -> bool:
+    """A YouTube channel id ("UC…"), as opposed to another browse id or a handle."""
+    return text.startswith("UC")
+
+
+def uploads_playlist(channel_id: str) -> str:
+    """The playlist of a channel's long-form uploads (no Shorts, no streams): YouTube's "UULF" + the
+    channel id without its "UC". Only a UC… channel id has one."""
+    if not is_channel_id(channel_id):
+        raise ValueError(f"channel id must start with UC: {channel_id!r}")
+    return "UULF" + channel_id[2:]
+
+
 def playlist_meta(playlist_id: str, max_items: int = 200) -> PlaylistMeta:
     http.throttle(http.YOUTUBE_HOME)
     opts = ydl_opts(extract_flat="in_playlist", playlistend=max_items)

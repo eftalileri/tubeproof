@@ -50,7 +50,8 @@ def screen(llm: LLM, topic: str, question: str | None, hits: list[SearchHit],
     """Return id -> relevance score; unrated ids are absent.
 
     With a store, ratings are cached per (rubric, topic, question, id), so a re-run selects the
-    same corpus: LLM ratings are not deterministic and selection must be reproducible.
+    same corpus: LLM ratings are not deterministic and selection must be reproducible. How long the
+    "rel:" kind is kept is the store's (`store.db.KIND_TTL_DAYS`).
     """
     system = _SYSTEM.format(topic=topic, question=(question or topic).strip(),
                             notes=f"\nTopic-specific examples:\n{notes.strip()}" if notes else "")
@@ -58,7 +59,7 @@ def screen(llm: LLM, topic: str, question: str | None, hits: list[SearchHit],
     scores: dict[str, int] = {}
     if store is not None:
         for h in hits:
-            if (cached := store.get(kind, h.id, max_age_days=3650)) is not None:
+            if (cached := store.get(kind, h.id)) is not None:
                 scores[h.id] = cached
         hits = [h for h in hits if h.id not in scores]
     fresh: dict[str, int] = {}

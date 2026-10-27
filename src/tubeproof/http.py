@@ -36,6 +36,11 @@ def short_url(video_id: str, t: int | float | None = None) -> str:
     return f"https://youtu.be/{video_id}" + (f"?t={int(t)}" if t is not None else "")
 
 
+def thumbnail_url(video_id: str, name: str) -> str:
+    """A video's thumbnail image on YouTube's image host; `name` is the size ("maxresdefault", "hqdefault")."""
+    return f"https://i.ytimg.com/vi/{video_id}/{name}.jpg"
+
+
 def norm_host(url: str) -> str:
     """Lower-case host without a leading "www.", for host-list and domain checks."""
     return (urlparse(url).hostname or "").lower().removeprefix("www.")

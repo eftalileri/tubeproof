@@ -17,7 +17,7 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 from pydantic import BaseModel, Field
 
-from tubeproof.config import layout
+from tubeproof.config import layout, settings
 from tubeproof.core.extraction import DEFAULT_BASIS, NO_COI
 from tubeproof.llm.base import LLM
 from tubeproof.prompts import load as load_prompt
@@ -28,6 +28,7 @@ SIM_THRESHOLD = 0.80   # embedding-only fallback (no LLM)
 BLOCK_THRESHOLD = 0.62  # coarse topic blocks; the LLM decides the real groups inside
 MAX_BLOCK = 30
 MERGE_THRESHOLD = 0.72  # second pass over group centroids: same point split across blocks
+CLUSTER_PREFIX = "K"  # cluster ids are K1, K2, ...: the report cites them as [K<n>] (synthesize.md, synth links)
 
 
 @dataclass
@@ -66,7 +67,7 @@ class Cluster:
 
 def load_members(run_dir: Path) -> list[Member]:
     members: list[Member] = []
-    for f in sorted(layout.extractions(run_dir).glob("*.json")):
+    for f in layout.extraction_files(run_dir):
         ex = json.loads(f.read_text())
         b = VideoBundle.model_validate_json(layout.bundle(run_dir, f.stem).read_text())
         wins = {w["seg_id"]: w for w in ex["windows"]}
@@ -161,7 +162,7 @@ def adjudicate(llm: LLM, members: list[Member], block: list[int]) -> list[list[i
 
 
 def merge_pass(llm: LLM, members: list[Member], vecs: np.ndarray, groups: list[list[int]],
-               workers: int = 4) -> list[list[int]]:
+               workers: int = settings.llm_workers) -> list[list[int]]:
     """A claim lands in exactly one embedding block, so the same point said in other words can
     end up in two groups ("trial qualified" vs "trial started is weak", 2026-10-27). Block the
     groups by centroid and let the model join the ones that answer the same question."""
@@ -178,7 +179,8 @@ def merge_pass(llm: LLM, members: list[Member], vecs: np.ndarray, groups: list[l
     return merged
 
 
-def cluster(members: list[Member], llm: LLM | None = None, workers: int = 4, log=print) -> list[Cluster]:
+def cluster(members: list[Member], llm: LLM | None = None, workers: int = settings.llm_workers,
+            log=print) -> list[Cluster]:
     if not members:
         return []
     vecs = embed([m.text_en for m in members])
@@ -199,11 +201,12 @@ def cluster(members: list[Member], llm: LLM | None = None, workers: int = 4, log
     out = [Cluster(cluster_id="", members=[members[k] for k in g]) for g in groups]
     out.sort(key=lambda c: (-len(c.channels), -len(c.members)))
     for n, c in enumerate(out, 1):
-        c.cluster_id = f"K{n}"
+        c.cluster_id = f"{CLUSTER_PREFIX}{n}"
     return out
 
 
-def run_reduce(run_dir: Path, llm: LLM | None = None, workers: int = 4, log=print) -> list[Cluster]:
+def run_reduce(run_dir: Path, llm: LLM | None = None, workers: int = settings.llm_workers,
+               log=print) -> list[Cluster]:
     members = load_members(run_dir)
     clusters = cluster(members, llm, workers, log)
     multi = sum(1 for c in clusters if len(c.channels) >= 2)

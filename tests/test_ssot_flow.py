@@ -13,7 +13,7 @@ class FakeStore:
     def __init__(self):
         self.cache, self.runs = {}, []
 
-    def get(self, kind, key, max_age_days=None):
+    def get(self, kind, key):
         return self.cache.get((kind, key))
 
     def put(self, kind, key, value):

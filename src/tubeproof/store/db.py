@@ -36,10 +36,20 @@ CREATE TABLE IF NOT EXISTS runs (
 """
 
 
-def _cutoff(max_age_days: float | None = None) -> float:
-    """Oldest `fetched_at` still valid; default age is the cache TTL (`settings.cache_ttl_days`)."""
-    days = max_age_days if max_age_days is not None else settings.cache_ttl_days
-    return time.time() - days * _DAY_S
+# Kinds (by prefix) kept longer than the YouTube cache TTL. Relevance ratings ("rel:<rubric hash>",
+# core/screen.py) are this tool's own LLM output, not YouTube data, and must survive so a re-run selects
+# the same corpus: purging them after 30 days re-rolled the selection (2026-10-27).
+KIND_TTL_DAYS = {"rel:": 3650}
+
+
+def ttl_days(kind: str) -> float:
+    """Days a cached row of `kind` stays valid: its `KIND_TTL_DAYS` entry, else `settings.cache_ttl_days`."""
+    return next((d for p, d in KIND_TTL_DAYS.items() if kind.startswith(p)), settings.cache_ttl_days)
+
+
+def _cutoff(kind: str) -> float:
+    """Oldest `fetched_at` still valid for `kind`; read by both `Store.get` and `Store.purge_expired`."""
+    return time.time() - ttl_days(kind) * _DAY_S
 
 
 class Store:
@@ -53,11 +63,11 @@ class Store:
         self.purge_expired()
 
     # --- cache -----------------------------------------------------------
-    def get(self, kind: str, key: str, max_age_days: float | None = None) -> Any | None:
+    def get(self, kind: str, key: str) -> Any | None:
         row = self._conn.execute(
             "SELECT value, fetched_at FROM cache WHERE kind=? AND key=?", (kind, key)
         ).fetchone()
-        if not row or row[1] < _cutoff(max_age_days):
+        if not row or row[1] < _cutoff(kind):
             return None
         return json.loads(row[0])
 
@@ -70,10 +80,13 @@ class Store:
             self._conn.commit()
 
     def purge_expired(self) -> int:
+        """Delete rows past their kind's TTL (`_cutoff`), one DELETE per distinct kind."""
         with self._lock:
-            cur = self._conn.execute("DELETE FROM cache WHERE fetched_at < ?", (_cutoff(),))
+            kinds = [k for (k,) in self._conn.execute("SELECT DISTINCT kind FROM cache")]
+            n = sum(self._conn.execute("DELETE FROM cache WHERE kind=? AND fetched_at < ?",
+                                       (k, _cutoff(k))).rowcount for k in kinds)
             self._conn.commit()
-        return cur.rowcount
+        return n
 
     # --- runs ------------------------------------------------------------
     def upsert_run(self, run_id: str, topic: str, params: dict, stage: str) -> None:

@@ -29,12 +29,12 @@ what to do, expected effect, evidence strength, clusters.
 
 ## Practical recipe
 Numbered steps built ONLY from well_supported / likely clusters. Each step cites its clusters
-like [K3] [K7]. Include concrete numbers where the clusters give them.
+like [{cluster_prefix}3] [{cluster_prefix}7]. Include concrete numbers where the clusters give them.
 
 ## How to proceed: validate with your own data
 Do not ask the reader to adopt contested advice blindly. Turn the most valuable contested,
 docs-contradicting or single-source items into a short sequence of cheap tests (use the
-clusters' `test` lines, cite them as [K<n> {test_ref}]): order, what changes, minimum
+clusters' `test` lines, cite them as [{cluster_prefix}<n> {test_ref}]): order, what changes, minimum
 duration/budget, success metric on the reader's OWN data, and the decision rule.
 
 ## Contested and conditional points
@@ -58,5 +58,5 @@ so the reader knows what to be careful about. No links to paid offers.
 What this research cannot tell (sample size, languages, period, survivorship bias), and that it
 reflects the videos available on {today}: re-run it after 3-6 months.
 
-Rules: cite cluster ids exactly as [K<number>]; never invent numbers, sources or links;
+Rules: cite cluster ids exactly as [{cluster_prefix}<number>]; never invent numbers, sources or links;
 plain, direct {language}; no marketing tone.

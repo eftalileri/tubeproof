@@ -16,13 +16,12 @@ from tubeproof.http import url_under
 
 from pydantic import BaseModel, Field
 
-from tubeproof.config import layout
+from tubeproof.config import layout, settings
 from tubeproof.core.extraction import ClaimType
 from tubeproof.core.reduce_stage import Cluster, load_clusters
 from tubeproof.core.score import FIRST_HAND
 from tubeproof.core.segment import fmt_ts
 from tubeproof.llm.base import LLM
-from tubeproof.i18n import lang_of
 from tubeproof.prompts import load as load_prompt
 
 MECHANIC_TYPES = {"platform_mechanic", "numeric_threshold"}
@@ -95,26 +94,22 @@ def _official(url: str | None, domains: list[str]) -> bool:
     return bool(url) and url_under(url, domains)
 
 
-def _changes(cfg: dict) -> str:
-    bps = cfg.get("breakpoints") or []
-    return "; ".join(f"{b.get('name', 'change')} ({b['date']})" for b in bps) or "none listed"
-
-
-def verify_cluster(llm: LLM, c: Cluster, topic: str, cfg: dict) -> dict:
-    official_domains = cfg.get("official_domains", [])
+def verify_cluster(llm: LLM, c: Cluster, topic: str, *, lang: str, changes: list[str], domains: list[str]) -> dict:
+    """`lang`, `changes` and `domains` come from `research.verify_args` (the config's authority)."""
     mechanic = any(m.claim_type in DOC_CHECK_TYPES for m in c.members)
     system = load_prompt(
-        "verify_cluster.md", lang_of(cfg), topic=topic, changes=_changes(cfg), domains=", ".join(official_domains) or "(none)",
+        "verify_cluster.md", lang, topic=topic, changes="; ".join(changes) or "none listed",
+        domains=", ".join(domains) or "(none)",
         first_hand=", ".join(FIRST_HAND),
-        doc_rule=(DOC_RULE if mechanic and official_domains
+        doc_rule=(DOC_RULE if mechanic and domains
                   else "Do not look anything up; set doc_check.result=not_checked."),
     )
-    tools = ["WebSearch", "WebFetch"] if mechanic and official_domains else None
+    tools = ["WebSearch", "WebFetch"] if mechanic and domains else None
     user = _input(c)
     for attempt in range(2):
         v = ClusterVerdict.model_validate(llm.json("verify", system, user, ClusterVerdict.model_json_schema(),
                                                    tools=tools))
-        if v.doc_check.result in ("supports", "contradicts") and not _official(v.doc_check.url, official_domains):
+        if v.doc_check.result in ("supports", "contradicts") and not _official(v.doc_check.url, domains):
             v.doc_check = DocCheck(result="not_checked")  # never trust a non-official "doc"
         if attempt or not (tools and v.doc_check.result == "not_checked"):
             break
@@ -126,14 +121,16 @@ def verify_cluster(llm: LLM, c: Cluster, topic: str, cfg: dict) -> dict:
     return v.model_dump(mode="json")
 
 
-def run_verify(llm: LLM, run_dir: Path, topic: str, cfg: dict, workers: int = 4, log=print) -> dict:
+def run_verify(llm: LLM, run_dir: Path, topic: str, *, lang: str, changes: list[str], domains: list[str],
+               workers: int = settings.llm_workers, log=print) -> dict:
     clusters = load_clusters(run_dir)
     out_path = layout.verdicts(run_dir)
     verdicts: dict = json.loads(out_path.read_text()) if out_path.exists() else {}
     todo = [c for c in clusters if needs_llm(c) and cluster_key(c) not in verdicts]
     log(f"[verify] {len(todo)} clusters to verify ({len(clusters) - len(todo)} skipped/ready)")
     with ThreadPoolExecutor(max_workers=workers) as ex:
-        futs = {ex.submit(verify_cluster, llm, c, topic, cfg): c for c in todo}
+        futs = {ex.submit(verify_cluster, llm, c, topic, lang=lang, changes=changes, domains=domains): c
+                for c in todo}
         for n, fut in enumerate(as_completed(futs), 1):
             c = futs[fut]
             try:
