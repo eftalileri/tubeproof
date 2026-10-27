@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 import json
 from typing import Optional
 
@@ -9,10 +10,11 @@ import typer
 from rich.console import Console
 
 from tubeproof import research
-from tubeproof.config import layout, settings
+from tubeproof.config import settings
+from tubeproof.core import harvest as core_harvest
 from tubeproof.core.harvest import read_manifest, video_titles
 from tubeproof.i18n import lang_of
-from tubeproof.sources.youtube import innertube
+from tubeproof.research import given
 from tubeproof.store.db import Store
 
 app = typer.Typer(help="tubeproof: research real practitioner experience on YouTube, free knowledge only, "
@@ -33,23 +35,22 @@ def _llm(backend: str | None):
 
 def _ctx(run_id: str, pack: str | None) -> tuple:
     run_dir = settings.run_dir(run_id)
-    manifest = read_manifest(run_dir)
-    cfg = research.load_config(run_id, pack or manifest["params"].get("pack"))
-    return run_dir, manifest["topic"], cfg
+    return run_dir, read_manifest(run_dir)["topic"], research.load_config(run_id, pack)
 
 
-_WORKERS = typer.Option(4, help="Parallel LLM calls")
-_BACKEND = typer.Option(None, help="LLM backend (default claude_cli)")
-_PACK = typer.Option(None, help="Topic pack name or path (default: research/<id>/pack.yaml)")
+# Help texts quote the selection policy's own defaults (SSOT-14); options left unset pass nothing.
+_POLICY = {k: p.default for k, p in inspect.signature(core_harvest.harvest).parameters.items()}
+_WORKERS = typer.Option(None, help="Parallel LLM calls (default: the stage's)")
+_BACKEND = typer.Option(None, help=f"LLM backend (default {settings.llm_backend})")
+_PACK = typer.Option(None, help="Topic pack name or path (default: the run's pack, else research/<id>/pack.yaml)")
 
 
 @app.command()
-def search(query: str, playlists: bool = False, months: float = 12, limit: int = 15,
-           hl: str = "en", gl: str = "US"):
+def search(query: str, playlists: bool = False, months: Optional[float] = None,
+           limit: int = research.SEARCH_LIMIT, hl: Optional[str] = None, gl: Optional[str] = None):
     """Run one search (quick check)."""
-    kind = "playlist" if playlists else "video"
-    for h in innertube.search(query, kind=kind, months=months, limit=limit, hl=hl, gl=gl):
-        extra = f"{h.video_count} videos" if kind == "playlist" else f"{h.views or 0:>12,} views · {h.published_text}"
+    for h in research.search(query, playlists=playlists, **given(months=months, limit=limit, hl=hl, gl=gl)):
+        extra = f"{h.video_count} videos" if playlists else f"{h.views or 0:>12,} views · {h.published_text}"
         console.print(f"{h.rank_in_query:>3}. [bold]{h.id}[/] · {extra} · {h.channel} · {h.title[:70]}")
 
 
@@ -59,79 +60,77 @@ def harvest(
     topic: Optional[str] = typer.Option(None, help="Topic (default: the pack's topic)"),
     pack: Optional[str] = _PACK,
     query: list[str] = typer.Option([], "--query", "-q", help="Extra search query (repeatable)"),
-    months: Optional[float] = typer.Option(None, help="Time window in months (default: pack, else 12)"),
-    videos: Optional[int] = typer.Option(None, help="Number of videos to select (default 30)"),
-    playlists: Optional[int] = typer.Option(None, help="Number of course playlists to inspect (default 5)"),
-    no_links: bool = typer.Option(False, help="Do not read description links"),
-    whisper: bool = typer.Option(False, help="Transcribe with Whisper when there are no captions"),
+    months: Optional[float] = typer.Option(None, help=f"Time window in months (default: pack, else {_POLICY['months']:g})"),
+    videos: Optional[int] = typer.Option(None, help=f"Number of videos to select (default {_POLICY['n_videos']})"),
+    playlists: Optional[int] = typer.Option(None, help=f"Number of course playlists to inspect "
+                                                       f"(default {_POLICY['n_playlists']})"),
+    links: Optional[bool] = typer.Option(None, "--links/--no-links",
+                                         help=f"Read description links (default {_POLICY['fetch_links']})"),
+    whisper: Optional[bool] = typer.Option(None, "--whisper/--no-whisper",
+                                           help="Transcribe with Whisper when there are no captions "
+                                                f"(default {_POLICY['allow_whisper']})"),
     no_screen: bool = typer.Option(False, help="Turn off the LLM relevance gate"),
     plan: bool = typer.Option(False, "--plan", help="Only select and save the list; `process` harvests it"),
 ):
     """Discover + harvest: find videos, download transcript/comment/link bundles."""
     cfg = research.load_config(run_id, pack)
-    run_dir = research.harvest(cfg, topic=topic, extra_queries=query, run_id=run_id, months=months,
-                               llm=None if no_screen else _llm(None), log=log, n_videos=videos,
-                               n_playlists=playlists, fetch_links=not no_links, allow_whisper=whisper,
-                               pack_name=pack, plan_only=plan)
+    run_dir = research.harvest(cfg, topic=topic, extra_queries=query, run_id=run_id,
+                               llm=None if no_screen else _llm(None), log=log, pack_name=pack, plan_only=plan,
+                               **given(months=months, n_videos=videos, n_playlists=playlists, fetch_links=links,
+                                       allow_whisper=whisper))
     console.print(f"[green]✓[/] {run_dir}")
 
 
 @app.command("repair")
-def repair_cmd(run_id: str, whisper: bool = typer.Option(True, help="Use Whisper when there are no captions")):
+def repair_cmd(run_id: str, whisper: Optional[bool] = typer.Option(
+        None, "--whisper/--no-whisper", help="Use Whisper when there are no captions (default: "
+        f"{inspect.signature(core_harvest.repair).parameters['allow_whisper'].default})")):
     """Retry videos with missing transcripts (captions first, then Whisper)."""
-    from tubeproof.core.harvest import repair
-
-    res = repair(run_id, allow_whisper=whisper, log=log)
+    res = core_harvest.repair(run_id, log=log, **given(allow_whisper=whisper))
     console.print(f"[green]✓[/] fixed {res['fixed']}, remaining {res['remaining']}")
 
 
 @app.command()
-def process(run_id: str, downloads: int = typer.Option(6, help="Parallel audio downloads"),
-            workers: int = _WORKERS, backend: Optional[str] = _BACKEND, pack: Optional[str] = _PACK):
+def process(run_id: str, downloads: Optional[int] = typer.Option(None, help="Parallel audio downloads "
+                                                                           "(default: the pipeline's)"),
+            workers: Optional[int] = _WORKERS, backend: Optional[str] = _BACKEND, pack: Optional[str] = _PACK):
     """Streaming run: harvest the plan + parallel audio + one Whisper + analysis as transcripts land,
     then cluster, verify and write the reports. Resumes where it stopped; plans first when there is no plan."""
-    from tubeproof.core.pipeline import process as run_process
-
-    if not layout.manifest(settings.run_dir(run_id)).exists():
-        log("no plan yet → planning first (review plan.json afterwards)")
-        research.harvest(research.load_config(run_id, pack), run_id=run_id, llm=_llm(backend), log=log,
-                         pack_name=pack, plan_only=True)
-    _run_dir, _topic, cfg = _ctx(run_id, pack)
-    out = run_process(run_id, _llm(backend), cfg, downloads=downloads, map_workers=workers, log=log)
+    out = research.process(run_id, _llm(backend), pack=pack, downloads=downloads, map_workers=workers, log=log)
     console.print(f"[green]✓[/] {out}")
 
 
 @app.command()
-def analyze(run_id: str, workers: int = _WORKERS,
+def analyze(run_id: str, workers: Optional[int] = _WORKERS,
             only: list[str] = typer.Option([], "--only", help="Only these video ids"),
             backend: Optional[str] = _BACKEND, pack: Optional[str] = _PACK):
     """Map stage: claim extraction, sales tagging, comment evidence per video."""
     from tubeproof.core.map_stage import run_map
 
     run_dir, topic, cfg = _ctx(run_id, pack)
-    res = run_map(_llm(backend), run_dir, topic, lang_of(cfg), workers=workers, only=only or None,
-                  mode=research.mode_of(cfg), log=log)
+    res = run_map(_llm(backend), run_dir, topic, lang_of(cfg), only=only or None, mode=research.mode_of(cfg),
+                  log=log, **given(workers=workers))
     console.print(f"[green]✓[/] {res['done']} videos, {len(res['failed'])} failed, ${res['usd']:.3f}")
 
 
 @app.command()
-def reduce(run_id: str, workers: int = _WORKERS, backend: Optional[str] = _BACKEND,
+def reduce(run_id: str, workers: Optional[int] = _WORKERS, backend: Optional[str] = _BACKEND,
            no_llm: bool = typer.Option(False, help="Cluster by embedding threshold only")):
     """Reduce stage: cluster claims."""
     from tubeproof.core.reduce_stage import run_reduce
 
-    run_reduce(settings.run_dir(run_id), None if no_llm else _llm(backend), workers, log=log)
+    run_reduce(settings.run_dir(run_id), None if no_llm else _llm(backend), log=log, **given(workers=workers))
 
 
 @app.command()
-def verify(run_id: str, workers: int = _WORKERS, backend: Optional[str] = _BACKEND,
+def verify(run_id: str, workers: Optional[int] = _WORKERS, backend: Optional[str] = _BACKEND,
            pack: Optional[str] = _PACK):
     """Verification: member stances and the official-docs check."""
     from tubeproof.core.verify_stage import run_verify
 
     run_dir, topic, cfg = _ctx(run_id, pack)
     llm = _llm(backend)
-    run_verify(llm, run_dir, topic, cfg, workers=workers, log=log)
+    run_verify(llm, run_dir, topic, cfg, log=log, **given(workers=workers))
     console.print(f"[green]✓[/] ${llm.meter.usd:.2f}")
 
 
@@ -171,24 +170,7 @@ def runs():
 @app.command()
 def stats(run_id: str):
     """Harvest statistics of a run."""
-    run_dir = settings.run_dir(run_id)
-    files = sorted(layout.videos(run_dir).glob("*.json"))
-    tot = dict(videos=len(files), transcripts=0, words=0, comments=0, spam=0, links=0, paid_links=0,
-               fetched_pages=0, paid_promo=0, langs={})
-    for f in files:
-        b = json.loads(f.read_text())
-        if b.get("transcript"):
-            tot["transcripts"] += 1
-            tot["words"] += sum(len(s["text"].split()) for s in b["transcript"]["segments"])
-            lang = b["transcript"].get("language") or "?"
-            tot["langs"][lang] = tot["langs"].get(lang, 0) + 1
-        tot["comments"] += len(b["comments"])
-        tot["spam"] += sum(1 for c in b["comments"] if c["spam_reasons"])
-        tot["links"] += len(b["links"])
-        tot["paid_links"] += sum(1 for l in b["links"] if l["is_paid"])
-        tot["fetched_pages"] += sum(1 for l in b["links"] if l["fetched"])
-        tot["paid_promo"] += 1 if b["meta"].get("has_paid_promotion") else 0
-    console.print_json(json.dumps(tot, ensure_ascii=False))
+    console.print_json(json.dumps(core_harvest.run_stats(settings.run_dir(run_id)), ensure_ascii=False))
 
 
 if __name__ == "__main__":
