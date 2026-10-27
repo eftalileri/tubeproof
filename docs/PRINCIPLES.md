@@ -77,6 +77,8 @@ Platform documentation says how something **should work**; practitioners describ
 ## 7. Data and platform rules
 
 27. Collected data is cached for at most 30 days and is not redistributed. Comment authors' names are hashed.
+    The tool's own judgements about a video (relevance ratings) are not collected data: they are kept
+    (`store.KIND_TTL_DAYS`) so a re-run selects the same corpus.
 28. The platform's rate limits are respected. If the subtitle service blocks, requests stop (15 minutes). Whisper is used via the audio route.
 29. Whisper and embedding models are used from the shared Hugging Face cache. Before downloading a new model, check what is already on the machine.
 30. **The whole video is read.** Audio is downloaded whole and transcribed whole; a transcript that covers less than 80% of the video is re-fetched once and flagged if still short. Long talks get a larger claim budget, so a 60-minute interview is not flattened to the size of a 10-minute video.
