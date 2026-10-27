@@ -14,7 +14,8 @@ from rapidfuzz import fuzz
 
 from tubeproof.config import layout
 from tubeproof.core import exemplar
-from tubeproof.core.extraction import CommentExtraction, ExemplarExtraction, VideoExtraction
+from tubeproof.core.extraction import (BEATS, QUOTE_WORDS, STYLE_EXAMPLES, CommentExtraction, ExemplarExtraction,
+                                       VideoExtraction)
 from tubeproof.core.segment import Window, fmt_ts, windows
 from tubeproof.prompts import load as load_prompt
 from tubeproof.llm.base import LLM, LLMError
@@ -26,6 +27,8 @@ MAX_DESC_CHARS = 3000
 MAX_COMMENTS = 140
 MAX_COMMENT_CHARS = 450
 QUOTE_MATCH_MIN = 80
+# The field that identifies a grounded item of each kind in the grounding record.
+GROUNDED_ID = {"claims": "claim_id", "beats": "t", "concepts": "name"}
 
 
 def claim_budget(duration_s: int | None) -> int:
@@ -66,6 +69,12 @@ def _comment_input(b: VideoBundle, ext: VideoExtraction) -> tuple[str, int]:
             f"</untrusted_data>"), len(chosen)
 
 
+def quote_score(quote: str, full: str, cited: str = "") -> float:
+    """The one quote-grounding match: how well `quote` is found in the cited segments or anywhere in
+    the transcript (0-100). Every verbatim quote the model returns is kept only at >= QUOTE_MATCH_MIN."""
+    return max(fuzz.partial_ratio(quote, cited) if cited else 0, fuzz.partial_ratio(quote, full))
+
+
 def ground(ext, wins: list[Window], field: str = "claims") -> dict:
     """Drop items of `ext.<field>` (claims, exemplar beats, or taught concepts) whose verbatim quote cannot be found
     in the cited (or any) segment."""
@@ -73,15 +82,13 @@ def ground(ext, wins: list[Window], field: str = "claims") -> dict:
     full = " ".join(by_id.values())
     kept, dropped = [], []
     for c in getattr(ext, field):
-        cited = " ".join(by_id.get(s, "") for s in c.seg_ids)
-        score = max(fuzz.partial_ratio(c.quote, cited) if cited else 0, fuzz.partial_ratio(c.quote, full))
+        score = quote_score(c.quote, full, " ".join(by_id.get(s, "") for s in c.seg_ids))
         (kept if score >= QUOTE_MATCH_MIN else dropped).append((c, score))
     setattr(ext, field, [c for c, _ in kept])
     valid_segs = set(by_id)
     for c in getattr(ext, field):
         c.seg_ids = [s for s in c.seg_ids if s in valid_segs]
-    return {"kept": len(kept), "dropped": [{"id": getattr(c, "claim_id", None) or getattr(c, "t", None) or getattr(c, "name", None),
-                                            "quote": c.quote, "score": s} for c, s in dropped]}
+    return {"kept": len(kept), "dropped": [{"id": getattr(c, GROUNDED_ID[field]), "quote": c.quote, "score": s} for c, s in dropped]}
 
 
 def _map_exemplar(llm: LLM, topic: str, b: VideoBundle, lang: str, wins: list[Window], run_dir: Path) -> dict:
@@ -92,14 +99,15 @@ def _map_exemplar(llm: LLM, topic: str, b: VideoBundle, lang: str, wins: list[Wi
     sp = exemplar.speech(b.transcript)
     measured = {k: v for k, v in m.items() if k not in ("frames", "thumbnail", "video_id")} | {"speech": sp}
     images = ([m["thumbnail"]] if m["thumbnail"] else []) + m["frames"]
-    system = load_prompt("map_exemplar.md", lang, topic=topic,
+    system = load_prompt("map_exemplar.md", lang, topic=topic, beats=BEATS, quote_words=QUOTE_WORDS,
+                         examples=STYLE_EXAMPLES,
                          frame_times=", ".join(f"{t}s" for t in m["frame_times"][:len(m["frames"])]))
     user = _video_input(b, wins) + f"\n\nMEASURED BY CODE:\n{json.dumps(measured, ensure_ascii=False)}"
     ext = ExemplarExtraction.model_validate(
         llm.json("extract", system, user, ExemplarExtraction.model_json_schema(), images=images))
     grounding = ground(ext, wins, field="beats") | {"concepts": ground(ext.teaching, wins, field="concepts")}
     full = " ".join(w.text for w in wins)
-    ext.language.examples = [x for x in ext.language.examples if fuzz.partial_ratio(x, full) >= QUOTE_MATCH_MIN]
+    ext.language.examples = [x for x in ext.language.examples if quote_score(x, full) >= QUOTE_MATCH_MIN]
     return {"prompt_version": EXEMPLAR_PROMPT_VERSION, "mode": "exemplar", "video_id": b.meta.id,
             "windows": [w.__dict__ for w in wins], "speech": sp, "video": ext.model_dump(mode="json"),
             "comments": None, "grounding": grounding}

@@ -27,7 +27,7 @@ Do this:
    contradiction_local: if sources disagree, explain WHY (different budget, vertical, period...).
 6. basis tells where each member's claim comes from. Repeating the platform's docs (platform_docs)
    or another creator is NOT independent practitioner evidence, however many channels do it.
-   practice_vs_docs: compare first-hand members (own_experience, client_data) with docs-based
+   practice_vs_docs: compare first-hand members ({first_hand}) with docs-based
    members and the official doc check. When practice contradicts the docs, do not pick a
    winner blindly: explain the likely reason (docs describe the ideal, practitioners describe
    a budget/vertical/period) and judge which is more plausible for the reader.

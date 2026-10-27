@@ -23,11 +23,18 @@ RUBRIC_VERSION = "r3"
 COMMENT_CONFIRM, COMMENT_CONFIRM_CAP = 0.4, 1.6
 COMMENT_REFUTE, COMMENT_REFUTE_CAP = -0.5, -2.0  # asymmetric: creators can delete criticism
 DOC_SUPPORT, DOC_CONTRADICT = 2.0, -3.0
-FIRST_HAND = {"own_experience", "client_data"}
+# Practitioner evidence (PRINCIPLES 9). A tuple: the verify prompt and schema list it in this order.
+FIRST_HAND = ("own_experience", "client_data")
 # Bands from strongest to weakest; reports sort and filter by this order.
 BANDS = ("well_supported", "likely", "contested", "doubtful", "single_source", "unverifiable")
 BASIS_FACTOR = {"own_experience": 1.0, "client_data": 1.0, "general_knowledge": 0.7, "other_creator": 0.5,
                 "platform_docs": 1.0}
+# Evidence the platform's own dashboard or another company's data shows on screen (PRINCIPLES 10).
+SHOWN_EVIDENCE = ("screen_ads_manager", "third_party")
+# Conflict of interest halves efficacy claims, not "how the interface works" claims (PRINCIPLES 11).
+COI_EXEMPT_TYPES = ("platform_mechanic", "setup_instruction")
+# Claim types halved again when made before a platform breakpoint (PRINCIPLES 12).
+BREAKPOINT_TYPES = ("platform_mechanic", "tactic_efficacy")
 DOCS_ECHO = "DOCS_ECHO"
 SCRIPT_DUP = 88  # token-set similarity of quotes above which two channels count as one script
 
@@ -63,8 +70,9 @@ def independence_groups(members: list[Member]) -> dict[str, str]:
     return {m.ref: find(parent[m.ref]) if m.basis != "platform_docs" else DOCS_ECHO for m in members}
 
 
+HALF_LIFE_MONTHS = 12.0  # a source's weight halves every 12 months (PRINCIPLES 12)
 # A source with no upload date is weighted as one half-life old: neither fresh nor discarded.
-UNKNOWN_AGE_MONTHS = 12.0
+UNKNOWN_AGE_MONTHS = HALF_LIFE_MONTHS
 
 
 def age_months(upload_date: str | None) -> float:
@@ -74,12 +82,12 @@ def age_months(upload_date: str | None) -> float:
 
 
 def _source_weight(m: Member, breakpoints: list[date]) -> float:
-    w = 1.0 if m.evidence_shown in ("screen_ads_manager", "third_party") else 0.6
-    w *= BASIS_FACTOR.get(m.basis, 0.7)
-    if m.coi and m.claim_type not in ("platform_mechanic", "setup_instruction"):
-        w *= 0.5  # COI lowers efficacy claims, not "how the UI works" claims
-    w *= 0.5 ** (age_months(m.upload_date) / 12)
-    if m.upload_date and m.claim_type in ("platform_mechanic", "tactic_efficacy"):
+    w = 1.0 if m.evidence_shown in SHOWN_EVIDENCE else 0.6
+    w *= BASIS_FACTOR[m.basis]
+    if m.coi and m.claim_type not in COI_EXEMPT_TYPES:
+        w *= 0.5
+    w *= 0.5 ** (age_months(m.upload_date) / HALF_LIFE_MONTHS)
+    if m.upload_date and m.claim_type in BREAKPOINT_TYPES:
         if any(date.fromisoformat(m.upload_date) < bp for bp in breakpoints):
             w *= 0.5
     if m.clickbait > 0.7:
@@ -127,7 +135,7 @@ def score_cluster(c: Cluster, verdict: dict | None, breakpoints: list[date]) -> 
             continue
         flip = st == "contradicts"  # comment stance is toward the member claim
         for e in m.comments:
-            k = _like_factor(int(e.get("likes", 0)))
+            k = _like_factor(int(e["likes"]))
             s = e["stance"]
             if s == "confirms" and e["experiential"]:
                 if flip:
