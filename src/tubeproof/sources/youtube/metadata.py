@@ -85,7 +85,7 @@ def playlist_meta(playlist_id: str, max_items: int = 200) -> PlaylistMeta:
     http.throttle(http.YOUTUBE_HOME)
     opts = ydl_opts(extract_flat="in_playlist", playlistend=max_items)
     with yt_dlp.YoutubeDL(opts) as ydl:
-        info = ydl.extract_info(f"https://www.youtube.com/playlist?list={playlist_id}", download=False)
+        info = ydl.extract_info(http.playlist_url(playlist_id), download=False)
     entries = [e for e in info.get("entries") or [] if e and e.get("id")]
     return PlaylistMeta(
         id=playlist_id, title=info.get("title") or "",
@@ -100,14 +100,12 @@ def playlist_meta(playlist_id: str, max_items: int = 200) -> PlaylistMeta:
 _PAID_RE = re.compile(r'"paidContentOverlay"\s*:\s*\{')
 
 
-def has_paid_promotion(video_id: str) -> bool | None:
-    """YouTube's own "Includes paid promotion" disclosure on the watch page."""
+def has_paid_promotion(video_id: str) -> bool:
+    """YouTube's own "Includes paid promotion" disclosure on the watch page. A page that cannot be read
+    raises (with YouTube's text, so `bot_checked` sees a bot check): "unknown" must not pass silently."""
     url = http.watch_url(video_id, hl="en")
-    try:
-        with http.client() as c:
-            resp = http.request(c, "GET", url)
-        if resp.status_code != 200:
-            return None
-        return bool(_PAID_RE.search(resp.text))
-    except Exception:
-        return None
+    with http.client() as c:
+        resp = http.request(c, "GET", url)
+    if resp.status_code != 200:
+        raise RuntimeError(f"paid-promotion check of {video_id}: HTTP {resp.status_code}: {resp.text[:200]}")
+    return bool(_PAID_RE.search(resp.text))

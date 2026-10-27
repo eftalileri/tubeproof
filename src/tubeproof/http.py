@@ -16,14 +16,19 @@ _lock = threading.Lock()
 
 YOUTUBE_HOSTS = ("youtube.com", "youtu.be")
 
-
-YOUTUBE_HOME = "https://www.youtube.com/"  # throttle key for every YouTube request
+YOUTUBE_HOME = "https://www.youtube.com/"  # throttle key for every YouTube request; base of every fetch URL
+SEARCH_URL = YOUTUBE_HOME + "youtubei/v1/search?prettyPrint=false"  # InnerTube web search endpoint
 
 
 def watch_url(video_id: str, **query) -> str:
     """The canonical watch-page URL (fetching: metadata, captions, audio, comments)."""
     extra = "".join(f"&{k}={v}" for k, v in query.items())
-    return f"https://www.youtube.com/watch?v={video_id}{extra}"
+    return f"{YOUTUBE_HOME}watch?v={video_id}{extra}"
+
+
+def playlist_url(playlist_id: str) -> str:
+    """The playlist page yt-dlp lists (search playlists and a channel's uploads playlist)."""
+    return f"{YOUTUBE_HOME}playlist?list={playlist_id}"
 
 
 def short_url(video_id: str, t: int | float | None = None) -> str:

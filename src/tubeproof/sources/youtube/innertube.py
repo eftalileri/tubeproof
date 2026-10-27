@@ -16,7 +16,6 @@ from tubeproof.config import DAYS_PER_MONTH
 from tubeproof import http
 from tubeproof.models import SearchHit
 
-SEARCH_URL = "https://www.youtube.com/youtubei/v1/search?prettyPrint=false"
 CLIENT_VERSION = "2.20261020.00.00"
 
 SORT = {"relevance": 0, "popularity": 3}
@@ -50,12 +49,14 @@ def upload_bucket(months: float) -> str | None:
     return None  # wider windows: no server filter, post-filter only
 
 
+# A year is 12 months of DAYS_PER_MONTH, so "2 years ago" and a 24-month window use the same day count.
 _AGE_UNITS = {"second": 1 / 86400, "minute": 1 / 1440, "hour": 1 / 24, "day": 1,
-              "week": 7, "month": DAYS_PER_MONTH, "year": 365.25}
+              "week": 7, "month": DAYS_PER_MONTH, "year": 12 * DAYS_PER_MONTH}
+_AGE_RE = re.compile(rf"(\d+)\s+({'|'.join(_AGE_UNITS)})")
 
 
 def parse_age_days(text: str | None) -> int | None:
-    m = re.search(r"(\d+)\s+(second|minute|hour|day|week|month|year)", text or "")
+    m = _AGE_RE.search(text or "")
     return round(int(m.group(1)) * _AGE_UNITS[m.group(2)]) if m else None
 
 
@@ -118,11 +119,8 @@ def _playlist(lv: dict, query: str) -> SearchHit | None:
                 if ep.get("browseId", "").startswith("UC") and not channel_id:
                     channel_id = ep["browseId"]
                     channel = part["text"]["content"].strip()
-    count = None
-    blob = str(lv.get("contentImage", {}))
-    m = re.search(r"'text': '([\d,]+) videos?'", blob)
-    if m:
-        count = int(m.group(1).replace(",", ""))
+    m = re.search(r"'text': '([\d,]+ videos?)'", str(lv.get("contentImage", {})))
+    count = parse_count(m.group(1)) if m else None
     return SearchHit(kind="playlist", id=lv["contentId"],
                      title=meta.get("title", {}).get("content", ""),
                      channel=channel, channel_id=channel_id, video_count=count, query=query)
@@ -162,7 +160,7 @@ def search(query: str, *, kind: str = "video", months: float = 12, sort: str = "
     rank = 0
     with http.client() as c:
         for _page in range(10):
-            resp = http.request(c, "POST", SEARCH_URL, json=body)
+            resp = http.request(c, "POST", http.SEARCH_URL, json=body)
             resp.raise_for_status()
             hits: list[SearchHit] = []
             tokens: list[str] = []

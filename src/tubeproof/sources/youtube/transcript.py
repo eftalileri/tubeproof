@@ -153,8 +153,6 @@ def split_audio(video: Path, dest_dir: str | Path) -> Path:
     return out
 
 
-
-
 def _decode(path: Path, tempo: float = 1.0):
     import numpy as np
 
@@ -166,20 +164,19 @@ def _decode(path: Path, tempo: float = 1.0):
     return np.frombuffer(raw, np.int16).astype(np.float32) / 32768
 
 
-
-
 def _mlx_ready() -> bool:
     """Prefer mlx-whisper (Apple GPU, large-v3-turbo) when installed and its model is in the
     shared Hugging Face cache; never trigger a download implicitly."""
     try:
         import mlx_whisper  # type: ignore  # noqa: F401
-        from huggingface_hub import scan_cache_dir
+        from huggingface_hub import CacheNotFound, scan_cache_dir
     except ImportError:
         return False
     try:
-        return any(r.repo_id == settings.whisper_mlx_model and r.size_on_disk > 500_000_000 for r in scan_cache_dir().repos)
-    except Exception:
+        repos = scan_cache_dir().repos
+    except CacheNotFound:  # no Hugging Face cache yet = the model is not there; any other error is raised
         return False
+    return any(r.repo_id == settings.whisper_mlx_model and r.size_on_disk > 500_000_000 for r in repos)
 
 
 GPU_BUSY_GRACE = 90  # s: a low-priority run waits while a normal run used Whisper this recently

@@ -28,7 +28,6 @@ class Settings:
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/141.0 Safari/537.36",
     )
-    youtube_api_key: str | None = os.environ.get("YOUTUBE_API_KEY") or None
     js_runtime: str = _env("JS_RUNTIME", "node")
     # LLM backend and the model per tier (stages ask for a tier, never a model name).
     llm_backend: str = _env("LLM", "claude_cli")

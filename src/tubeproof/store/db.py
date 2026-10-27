@@ -15,6 +15,8 @@ from typing import Any
 
 from tubeproof.config import settings
 
+_DAY_S = 86400
+
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS cache (
     kind TEXT NOT NULL,
@@ -34,6 +36,12 @@ CREATE TABLE IF NOT EXISTS runs (
 """
 
 
+def _cutoff(max_age_days: float | None = None) -> float:
+    """Oldest `fetched_at` still valid; default age is the cache TTL (`settings.cache_ttl_days`)."""
+    days = max_age_days if max_age_days is not None else settings.cache_ttl_days
+    return time.time() - days * _DAY_S
+
+
 class Store:
     def __init__(self, path: Path | None = None):
         self.path = path or settings.db_path
@@ -46,11 +54,10 @@ class Store:
 
     # --- cache -----------------------------------------------------------
     def get(self, kind: str, key: str, max_age_days: float | None = None) -> Any | None:
-        max_age = (max_age_days if max_age_days is not None else settings.cache_ttl_days) * 86400
         row = self._conn.execute(
             "SELECT value, fetched_at FROM cache WHERE kind=? AND key=?", (kind, key)
         ).fetchone()
-        if not row or time.time() - row[1] > max_age:
+        if not row or row[1] < _cutoff(max_age_days):
             return None
         return json.loads(row[0])
 
@@ -63,9 +70,8 @@ class Store:
             self._conn.commit()
 
     def purge_expired(self) -> int:
-        cutoff = time.time() - settings.cache_ttl_days * 86400
         with self._lock:
-            cur = self._conn.execute("DELETE FROM cache WHERE fetched_at < ?", (cutoff,))
+            cur = self._conn.execute("DELETE FROM cache WHERE fetched_at < ?", (_cutoff(),))
             self._conn.commit()
         return cur.rowcount
 

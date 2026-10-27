@@ -16,11 +16,13 @@ from tubeproof import http
 from tubeproof.filters.linkclass import classify, is_shortener
 from tubeproof.models import Link
 
-URL_RE = re.compile(r"https?://[^\s<>\"')\]]+", re.I)
+_URL_BODY = r"[^\s<>\"')\]]+"  # a URL runs until whitespace, a quote, a bracket or an angle bracket
+URL_RE = re.compile(r"https?://" + _URL_BODY, re.I)
 # Same pattern, also counting scheme-less "www." links (spam: "visit www.x.com").
-URL_OR_WWW_RE = re.compile(r"(?:https?://|www\.)[^\s<>\"')\]]+", re.I)
+URL_OR_WWW_RE = re.compile(r"(?:https?://|www\.)" + _URL_BODY, re.I)
 MAX_CONTENT_CHARS = 12_000
 NEEDS_BROWSER = "needs_browser"
+FREE_CLASSES = ("article", "doc_reference")  # link classes whose page text is fetched
 
 
 def extract_urls(text: str) -> list[str]:
@@ -36,7 +38,7 @@ def extract_urls(text: str) -> list[str]:
 
 def _unwrap_youtube_redirect(url: str) -> str:
     p = urlparse(url)
-    if http.host_match((p.hostname or "").lower(), http.YOUTUBE_HOSTS) and p.path == "/redirect":
+    if http.host_match(http.norm_host(url), http.YOUTUBE_HOSTS) and p.path == "/redirect":
         q = parse_qs(p.query).get("q")
         if q:
             return unquote(q[0])
@@ -59,12 +61,15 @@ def process_links(description: str, *, fetch_free: bool = True, max_links: int =
     urls = extract_urls(description)[:max_links]
     links: list[Link] = []
     fetched = 0
+
+    def fetchable(link: Link) -> bool:  # a free page whose text is kept, while the fetch budget lasts
+        return fetch_free and not link.is_paid and link.link_class in FREE_CLASSES and fetched < max_fetch
+
     with http.client() as c:
         for url in urls:
             link = classify(Link(url=url))
             # Resolve shorteners (and fetch free pages) with one GET.
-            want_fetch = fetch_free and not link.is_paid and link.link_class in ("article", "doc_reference")
-            if is_shortener(url) or link.link_class == "link_hub" or (want_fetch and fetched < max_fetch):
+            if is_shortener(url) or link.link_class == "link_hub" or fetchable(link):
                 try:
                     resp = http.request(c, "GET", url, retries=1)
                     link.resolved_url = str(resp.url)
@@ -72,8 +77,7 @@ def process_links(description: str, *, fetch_free: bool = True, max_links: int =
                     if link.link_class == "link_hub":
                         for child_url in _linktree_children(resp.text)[:20]:
                             link.children.append(classify(Link(url=child_url)))
-                    elif fetch_free and not link.is_paid and link.link_class in ("article", "doc_reference") \
-                            and fetched < max_fetch:
+                    elif fetchable(link):
                         _extract(link, resp)
                         fetched += 1
                 except Exception as e:

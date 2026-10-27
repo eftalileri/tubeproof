@@ -10,7 +10,7 @@ from __future__ import annotations
 import re
 from urllib.parse import parse_qs, urlparse
 
-from tubeproof.http import YOUTUBE_HOSTS, host_match, norm_host
+from tubeproof.http import YOUTUBE_HOSTS, host_match, norm_host, url_under
 from tubeproof.models import Link
 
 _AFFILIATE_HOSTS = (
@@ -24,7 +24,10 @@ _COURSE_HOSTS = (
     "shopier.com", "payhip.com", "lemonsqueezy.com", "systeme.io", "clickfunnels.com",
     "kartra.com", "samcart.com", "thrivecart.com", "circle.so", "memberstack.com", "buymeacoffee.com",
 )
-_BOOKING_HOSTS = ("calendly.com", "cal.com", "wa.me", "api.whatsapp.com", "whatsapp.com", "t.me", "tidycal.com")
+# Messenger short links (WhatsApp, Telegram): a booking/DM funnel in a description, a scam contact in
+# a comment (`filters/spam.py` builds its pattern from this tuple).
+MESSENGER_HOSTS = ("wa.me", "t.me")
+_BOOKING_HOSTS = ("calendly.com", "cal.com", *MESSENGER_HOSTS, "api.whatsapp.com", "whatsapp.com", "tidycal.com")
 _HUB_HOSTS = ("linktr.ee", "beacons.ai", "lnk.bio", "bio.link", "campsite.bio", "taplink.cc", "linkin.bio")
 _SOCIAL_HOSTS = (
     "instagram.com", "facebook.com", "fb.com", "twitter.com", "x.com", "tiktok.com", "linkedin.com",
@@ -32,8 +35,9 @@ _SOCIAL_HOSTS = (
 )
 _DOC_HOSTS = (
     "docs.google.com", "drive.google.com", "notion.so", "notion.site", "github.com", "medium.com",
-    "substack.com", "developers.facebook.com", "facebook.com/business", "transparency.meta.com",
+    "substack.com", "developers.facebook.com", "transparency.meta.com",
 )
+_DOC_PATHS = ["facebook.com/business"]  # host + path prefixes (`url_under`): docs under a social host
 _AFFILIATE_PARAMS = {"ref", "via", "fpr", "aff", "affiliate", "aff_id", "affid", "tag", "coupon", "promo", "irclickid"}
 _SALES_PATH = re.compile(
     r"/(checkout|cart|buy|pricing|enroll|order|join|apply|coaching|mentorship|masterclass|webinar|"
@@ -49,7 +53,6 @@ def classify(link: Link, creator_domains: set[str] | None = None) -> Link:
     url = link.resolved_url or link.url
     p = urlparse(url)
     host = norm_host(url)
-    full = host + p.path
     params = {k.lower() for k in parse_qs(p.query)}
     reasons: list[str] = []
 
@@ -66,9 +69,7 @@ def classify(link: Link, creator_domains: set[str] | None = None) -> Link:
         cls, paid = "link_hub", False
     elif host_match(host, YOUTUBE_HOSTS):
         cls, paid = "youtube", False
-    elif any(full.startswith(h) or host_match(host, (h,)) for h in _DOC_HOSTS if "/" in h) or host_match(
-        host, tuple(h for h in _DOC_HOSTS if "/" not in h)
-    ):
+    elif url_under(url, _DOC_PATHS) or host_match(host, _DOC_HOSTS):
         cls, paid = "doc_reference", False
     elif host_match(host, _SOCIAL_HOSTS):
         cls, paid = "social", False
@@ -92,5 +93,4 @@ def classify(link: Link, creator_domains: set[str] | None = None) -> Link:
 
 
 def is_shortener(url: str) -> bool:
-    host = norm_host(url)
-    return host_match(host, SHORTENERS)
+    return host_match(norm_host(url), SHORTENERS)

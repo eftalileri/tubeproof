@@ -14,12 +14,13 @@ from collections import Counter
 from rapidfuzz import fuzz
 
 from tubeproof.fetch.links import URL_OR_WWW_RE
+from tubeproof.filters.linkclass import MESSENGER_HOSTS
 from tubeproof.models import Comment
 
 _PHONE = re.compile(r"(\+?\d[\d\s\-().]{8,}\d)")
 # "WhatsApp" alone is a legit ad topic (click-to-WhatsApp funnels); flag only contact solicitations.
 _MESSENGER = re.compile(
-    r"(wa\.me/|t\.me/|"
+    "(" + "".join(re.escape(h) + "/|" for h in MESSENGER_HOSTS) +
     r"(contact|message|text|reach|write to|dm)\b.{0,40}\b(on|via|through)\s+(whatsapp|telegram|ig|insta)|"
     r"(whatsapp|telegram)\s*[:\-]?\s*\+?\d{6,})",
     re.I,
