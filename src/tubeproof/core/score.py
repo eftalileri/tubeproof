@@ -37,6 +37,8 @@ COI_EXEMPT_TYPES = ("platform_mechanic", "setup_instruction")
 BREAKPOINT_TYPES = ("platform_mechanic", "tactic_efficacy")
 DOCS_ECHO = "DOCS_ECHO"
 SCRIPT_DUP = 88  # token-set similarity of quotes above which two channels count as one script
+# Clickbait score above which a source is down-weighted and its video listed as high-hype in the report.
+CLICKBAIT_HIGH = 0.7
 
 
 def org_key(channel: str) -> str:
@@ -90,7 +92,7 @@ def _source_weight(m: Member, breakpoints: list[date]) -> float:
     if m.upload_date and m.claim_type in BREAKPOINT_TYPES:
         if any(date.fromisoformat(m.upload_date) < bp for bp in breakpoints):
             w *= 0.5
-    if m.clickbait > 0.7:
+    if m.clickbait > CLICKBAIT_HIGH:
         w *= 0.7
     if m.is_withheld_teaser:
         w *= 0.5

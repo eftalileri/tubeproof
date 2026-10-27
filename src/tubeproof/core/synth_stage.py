@@ -20,7 +20,7 @@ from pydantic import BaseModel
 from tubeproof.core import exemplar
 from tubeproof.core.harvest import read_manifest, video_titles
 from tubeproof.core.reduce_stage import CLUSTER_PREFIX, load_clusters
-from tubeproof.core.score import BANDS, FIRST_HAND, RUBRIC_VERSION, score_cluster
+from tubeproof.core.score import BANDS, CLICKBAIT_HIGH, RUBRIC_VERSION, score_cluster
 from tubeproof.core.segment import fmt_ts
 from tubeproof.core.verify_stage import cluster_key, needs_llm
 from tubeproof.config import layout, settings
@@ -73,7 +73,9 @@ def build_scored(run_dir: Path, breakpoints: list[date]) -> list[dict]:
 
 
 def _first_hand(r: dict) -> bool:
-    return any(m["basis"] in FIRST_HAND for m in r["members"])
+    """First-hand as the score counts it: a first-hand member that takes a side, not one the verifier
+    found unrelated, so the digest line and its ordering agree."""
+    return r["score"]["first_hand_supporting"] + r["score"]["first_hand_contradicting"] > 0
 
 
 def _digest(scored: list[dict], run_dir: Path, max_single: int = 60) -> str:
@@ -109,7 +111,7 @@ def _digest(scored: list[dict], run_dir: Path, max_single: int = 60) -> str:
         tips += (ex.get("comments") or {}).get("new_tips", [])[:4]
         v = ex["video"]
         sales += [f"{o['kind']}: {o['description'][:90]}" for o in v["offers"]][:3]
-        if v["hype"]["clickbait_score"] >= 0.6:
+        if v["hype"]["clickbait_score"] > CLICKBAIT_HIGH:
             hype.append(f"{f.stem}: {v['hype']['rationale'][:160]}")
     return ("SCORED CLAIM CLUSTERS:\n" + "\n".join(lines)
             + "\n\nCOMMENT TIPS (unscored, from viewers):\n" + "\n".join(f"- {t}" for t in tips[:60])

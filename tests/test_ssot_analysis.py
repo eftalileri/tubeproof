@@ -151,3 +151,12 @@ def test_claims_report_links_citations_and_cites_only_what_it_uses(tmp_path, mon
     out = synth_stage.render_report("r", False, [row, other], {}, "en").read_text()
     assert out.startswith("A [K1](#k1) and test [K1 test](#k1).")
     assert '<a id="k1">' in out and '<a id="k2">' not in out
+
+
+def test_digest_first_hand_is_the_scores_count():
+    """A first-hand member the verifier found unrelated does not make the cluster first-hand."""
+    side = {"score": {"first_hand_supporting": 0, "first_hand_contradicting": 0},
+            "members": [{"basis": FIRST_HAND[0]}]}
+    taken = {"score": {"first_hand_supporting": 0, "first_hand_contradicting": 1}, "members": []}
+    assert not synth_stage._first_hand(side)
+    assert synth_stage._first_hand(taken)

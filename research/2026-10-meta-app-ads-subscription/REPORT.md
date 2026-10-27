@@ -208,31 +208,31 @@ Raporda geçen her küme için kaynak videolar ve iddianın geçtiği an. Bant v
 *Kendi verinle test:* Kendi verinizle 60–90 günlük kohort LTV'nizi (brüt kâr bazlı) hesaplayın, hedef CAC = LTV/3 olarak belirleyin ve kampanyada bu değeri cost cap/hedef maliyet olarak deneyin. Başarı ölçütü: ödeyen müşteri başı maliyetin hedef CAC altında kalması ve geri ödeme süresi.
 
 
-- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=78) @1:18 · Steven Cravotta · 2026-07-30 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, affiliate
+- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=78) @1:18 · Steven Cravotta · 2026-07-30 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, satış ortaklığı
   > The golden ratio for this is one to three.
 
-- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=791) @13:11 · Gui Costa · 2026-07-28 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=791) @13:11 · Gui Costa · 2026-07-28 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > your LTV to CAC needs to be three per one to be healthy.
 
-- [How This B2B SaaS Scaled to $2M/Month Using Meta Ads (Full Breakdown)](https://youtu.be/feR7eaNNq8g?t=233) @3:53 · Lorenzo Pravatà · 2026-03-26 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How This B2B SaaS Scaled to $2M/Month Using Meta Ads (Full Breakdown)](https://youtu.be/feR7eaNNq8g?t=233) @3:53 · Lorenzo Pravatà · 2026-03-26 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > So usually, you want to have an LTV2COG that is at least 3x.
 
-- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1348) @22:28 · App Leaders by Adapty · 2026-09-11 · *supports* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services
+- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1348) @22:28 · App Leaders by Adapty · 2026-09-11 · *destekliyor* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor
   > Every successful, and by that I mean 100K plus meta-spenders have an LTV of 2 to 3x minimal.
 
-- [How This B2B SaaS Scaled to $2M/Month Using Meta Ads (Full Breakdown)](https://youtu.be/feR7eaNNq8g?t=311) @5:11 · Lorenzo Pravatà · 2026-03-26 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How This B2B SaaS Scaled to $2M/Month Using Meta Ads (Full Breakdown)](https://youtu.be/feR7eaNNq8g?t=311) @5:11 · Lorenzo Pravatà · 2026-03-26 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > even higher LTV2COG, maybe out 5x or more
 
-- [How I Run Facebook Ads For a B2B SaaS Company](https://youtu.be/6802r3zLtdo?t=75) @1:15 · Alessandro Cutri · 2026-06-04 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Run Facebook Ads For a B2B SaaS Company](https://youtu.be/6802r3zLtdo?t=75) @1:15 · Alessandro Cutri · 2026-06-04 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > ideally, you want that to be in that $2,000 to $3,000 range
 
-- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=868) @14:28 · Gui Costa · 2026-07-28 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=868) @14:28 · Gui Costa · 2026-07-28 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > the average of people stay for three months. Right? Your LTV is $75.
 
-- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=685) @11:25 · Aprendamos Marketing · 2026-01-13 · *contradicts* · kaynak: genel bilgi
+- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=685) @11:25 · Aprendamos Marketing · 2026-01-13 · *çelişiyor* · kaynak: genel bilgi
   > Yo debería estar dispuesto a invertir hasta 2 mil pesos para generar un cliente.
 
-- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=1296) @21:36 · Ben Heath · 2026-02-20 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_course, sells_agency_services, affiliate, sponsored, community_paid
+- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=1296) @21:36 · Ben Heath · 2026-02-20 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, satış ortaklığı, sponsorlu, ücretli topluluk
   > So what are you willing to pay to get that customer?
 
 ### <a id="k2"></a>K2 · sağlam · güven 0.90
@@ -248,28 +248,28 @@ Meta'nın Andromeda sonrası dağıtımında reklamı kimin göreceğini belirle
 
 - Resmi kaynak: [https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/](https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/) — “”
 
-- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=233) @3:53 · Steven Cravotta · 2026-07-30 · *supports* · kaynak: platform dokümanı · çıkar çatışması: sells_course, affiliate
+- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=233) @3:53 · Steven Cravotta · 2026-07-30 · *destekliyor* · kaynak: platform dokümanı · çıkar çatışması: kurs satıyor, satış ortaklığı
   > The creative in this new update is now the targeting
 
-- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=912) @15:12 · Aprendamos Marketing · 2026-01-13 · *supports* · kaynak: platform dokümanı
+- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=912) @15:12 · Aprendamos Marketing · 2026-01-13 · *destekliyor* · kaynak: platform dokümanı
   > analizando y literal así dice en la documentación, pixel por pixel de la imagen o el video que tú le pongas
 
-- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=152) @2:32 · Mark Builds Brands · 2026-05-11 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, community_paid
+- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=152) @2:32 · Mark Builds Brands · 2026-05-11 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ücretli topluluk
   > Facebook is mostly looking at creative to determine targeting, not what you have going on within your ad sets.
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=556) @9:16 · Benji · 2026-10-20 · *supports* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=556) @9:16 · Benji · 2026-10-20 · *destekliyor* · kaynak: genel bilgi
   > They're going to transcribe your video. They're going to read the text on your static ads, and they're going to try to find the best ICP.
 
-- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=0) @0:00 · Menaf Avcı · 2025-12-28 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=0) @0:00 · Menaf Avcı · 2025-12-28 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > Meta bugün reklamları sizin seçtiğiniz hedef kitlelere göre değil, yüklediğiniz kreatifin içeriğine göre kime göstereceğini biliyor
 
-- [Why 90% of their paid traffic goes to a quiz, not the App Store](https://youtu.be/EyoYQU6JyV8?t=1436) @23:56 · Sub Club by RevenueCat · 2026-09-02 · *supports* · kaynak: genel bilgi
+- [Why 90% of their paid traffic goes to a quiz, not the App Store](https://youtu.be/EyoYQU6JyV8?t=1436) @23:56 · Sub Club by RevenueCat · 2026-09-02 · *destekliyor* · kaynak: genel bilgi
   > a lot of the targeting on Meta is specifically done through the creatives
 
-- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=148) @2:28 · Sabri Suby · 2026-06-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=148) @2:28 · Sabri Suby · 2026-06-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > So, if you want to target different people, you actually have to put that in the creative and in the body copy.
 
-- [Meta Ads for B2B: What Actually Works in 2026](https://youtu.be/9lfItyusOmw?t=776) @12:56 · AdConversion · 2025-11-12 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Ads for B2B: What Actually Works in 2026](https://youtu.be/9lfItyusOmw?t=776) @12:56 · AdConversion · 2025-11-12 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > you want to make sure that you are explicitly calling out who the ad is for and who it's not for.
 
 ### <a id="k3"></a>K3 · sağlam · güven 0.91
@@ -288,22 +288,22 @@ Meta uygulama/yeni müşteri kampanyalarında tek kampanya ve tek geniş reklam 
 
 - Resmi kaynak: [https://developers.facebook.com/docs/app-ads/advantage-app-campaigns](https://developers.facebook.com/docs/app-ads/advantage-app-campaigns) — “Manually test up to 50 creative combinations.”
 
-- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=388) @6:28 · Menaf Avcı · 2025-12-28 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=388) @6:28 · Menaf Avcı · 2025-12-28 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > Bu reklam setinin altına da olabildiğince çok fazla kreatif ekliyoruz.
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1097) @18:17 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: platform dokümanı
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1097) @18:17 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: platform dokümanı
   > Yani hatta başlangıçta tek kampanya yapın.
 
-- [How I Run Facebook Ads For a B2B SaaS Company](https://youtu.be/6802r3zLtdo?t=703) @11:43 · Alessandro Cutri · 2026-06-04 · *contradicts* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Run Facebook Ads For a B2B SaaS Company](https://youtu.be/6802r3zLtdo?t=703) @11:43 · Alessandro Cutri · 2026-06-04 · *çelişiyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > if you have these formats within a different ad set, you're giving yourself the best shot at success
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=1181) @19:41 · Burak Mermi · 2026-07-06 · *supports* · kaynak: kendi tecrübesi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=1181) @19:41 · Burak Mermi · 2026-07-06 · *destekliyor* · kaynak: kendi tecrübesi
   > bir reklam grubu içerisine farklı formatlarda reklamlar eklemek.
 
-- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=310) @5:10 · Steven Cravotta · 2026-07-30 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, affiliate
+- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=310) @5:10 · Steven Cravotta · 2026-07-30 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, satış ortaklığı
   > You need one campaign, one ad set, and a lot of creatives in that ad set.
 
-- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=304) @5:04 · Gui Costa · 2026-07-25 · *contradicts* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=304) @5:04 · Gui Costa · 2026-07-25 · *çelişiyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > But Meta was sending the budget here to G's one.
 
 ### <a id="k4"></a>K4 · sağlam · güven 0.96
@@ -319,22 +319,22 @@ Abonelikli bir uygulamada Meta kampanyasını yüklemeye (install) optimize etme
 
 - Resmi kaynak: [https://developers.facebook.com/docs/app-ads/optimizing-your-app-ad](https://developers.facebook.com/docs/app-ads/optimizing-your-app-ad) — “display mobile app install ads to people likely to take a specific action in your app”
 
-- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=389) @6:29 · Sub Club by RevenueCat · 2026-09-15 · *supports* · kaynak: başka içerik üreticisi
+- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=389) @6:29 · Sub Club by RevenueCat · 2026-09-15 · *destekliyor* · kaynak: başka içerik üreticisi
   > The common failure case is targeting for installs because they look cheap.
 
-- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=791) @13:11 · Gui Costa · 2026-07-28 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=791) @13:11 · Gui Costa · 2026-07-28 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > It doesn't necessarily mean that people downloaded this and created an account and paid for it.
 
-- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1431) @23:51 · App Leaders by Adapty · 2026-09-11 · *qualifies* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services
+- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1431) @23:51 · App Leaders by Adapty · 2026-09-11 · *koşullu* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor
   > Please do not use cost gaps. Do not use cost per purchase optimizations.
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=238) @3:58 · Benji · 2026-10-20 · *qualifies* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=238) @3:58 · Benji · 2026-10-20 · *koşullu* · kaynak: genel bilgi
   > Most likely if you're running a hard paywall consumer app, you want to optimize for purchase.
 
-- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=459) @7:39 · App Masters · 2026-10-20 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, affiliate, sponsored
+- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=459) @7:39 · App Masters · 2026-10-20 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, satış ortaklığı, sponsorlu
   > if you optimize for installs, you might get a cheap install, maybe a dollar to $2, but nobody pays.
 
-- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=389) @6:29 · Sub Club by RevenueCat · 2026-09-15 · *supports* · kaynak: başka içerik üreticisi
+- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=389) @6:29 · Sub Club by RevenueCat · 2026-09-15 · *destekliyor* · kaynak: başka içerik üreticisi
   > I haven't seen a case where an install optimized campaigns got anywhere near the performance of a deeper funnel event
 
 ### <a id="k5"></a>K5 · sağlam · güven 0.81
@@ -350,19 +350,19 @@ Uygulama tanıtımı kampanyalarında her reklam setinde Meta'nın test edebilec
 
 - Resmi kaynak: [https://www.facebook.com/business/ads/meta-advantage-plus/app-campaigns](https://www.facebook.com/business/ads/meta-advantage-plus/app-campaigns) — “”
 
-- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=1403) @23:23 · Steven Cravotta · 2026-07-30 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, affiliate
+- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=1403) @23:23 · Steven Cravotta · 2026-07-30 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, satış ortaklığı
   > you want to make sure that you have at least 10 ads per ad set
 
-- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=79) @1:19 · Burak Mermi · 2026-02-16 · *qualifies* · kaynak: platform dokümanı · çıkar çatışması: sells_course
+- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=79) @1:19 · Burak Mermi · 2026-02-16 · *koşullu* · kaynak: platform dokümanı · çıkar çatışması: kurs satıyor
   > More than 20 creatives, for example. This is because meta describes and recommends it this way.
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1097) @18:17 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: kendi tecrübesi
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1097) @18:17 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: kendi tecrübesi
   > Adset'in içerisinde de en az 5 tane
 
-- [1500+ B2B lead Meta Ads-ből ~620 Ft/lead kampánnyal [ESETTANULMÁNY]](https://youtu.be/OW74dQjjOBo?t=242) @4:02 · Fluid Digital · 2025-12-16 · *qualifies* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [1500+ B2B lead Meta Ads-ből ~620 Ft/lead kampánnyal [ESETTANULMÁNY]](https://youtu.be/OW74dQjjOBo?t=242) @4:02 · Fluid Digital · 2025-12-16 · *koşullu* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > 21 különböző kreatívot használtunk híret és sorozatonként, amelyek mindegyike, három különböző méretben volt létrehozva
 
-- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=544) @9:04 · Menaf Avcı · 2025-12-28 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=544) @9:04 · Menaf Avcı · 2025-12-28 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > Her reklam setinin altına 3-7 arası kreatif ekleyebiliriz.
 
 ### <a id="k6"></a>K6 · sağlam · güven 0.97
@@ -378,19 +378,19 @@ Gerçekten bir mobil uygulamanız varsa, uygulamayı tanıtmak için Meta'nın U
 
 - Resmi kaynak: [https://www.facebook.com/business/ads/meta-advantage-plus/app-campaigns](https://www.facebook.com/business/ads/meta-advantage-plus/app-campaigns) — “”
 
-- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=1093) @18:13 · Steven Cravotta · 2026-07-30 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, affiliate
+- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=1093) @18:13 · Steven Cravotta · 2026-07-30 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, satış ortaklığı
   > You absolutely have to turn iOS 14 plus on
 
-- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=1015) @16:55 · Kamil YILDIRIM · 2026-05-31 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=1015) @16:55 · Kamil YILDIRIM · 2026-05-31 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Uygulama tanıtım reklamlarında biz mobil uygulamamız varsa bunların tanıtımını yapıyoruz.
 
-- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=609) @10:09 · Gui Costa · 2026-07-25 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=609) @10:09 · Gui Costa · 2026-07-25 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > always that you create iOS campaigns you put app install campaigns as the goal.
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=742) @12:22 · Ben Heath · 2026-01-06 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=742) @12:22 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > If you've got an app, obviously the option to use. If you don't, don't use it.
 
-- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=703) @11:43 · Nida Yıldırım · 2026-04-29 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=703) @11:43 · Nida Yıldırım · 2026-04-29 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Yani bu uygulama tanıtımını kullanmanız için çok kullanan bir kampanya türü değildir.
 
 ### <a id="k7"></a>K7 · sağlam · güven 0.82
@@ -406,25 +406,25 @@ Meta (uygulama) kampanyalarını ölçeklerken bütçe kademeli artırılmalı: 
 
 - Resmi kaynak: [https://www.facebook.com/business/help/942374239243867](https://www.facebook.com/business/help/942374239243867) — “Changes to bid strategy or budget may also be significant, but it depends on the magnitude of the change.”
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=2436) @40:36 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: platform dokümanı
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=2436) @40:36 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: platform dokümanı
   > %20'nin üstüne çıktığında learning'i bozuyor hakikaten.
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=1947) @32:27 · Burak Mermi · 2026-07-06 · *supports* · kaynak: kendi tecrübesi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=1947) @32:27 · Burak Mermi · 2026-07-06 · *destekliyor* · kaynak: kendi tecrübesi
   > Bütçe arttırımını 3-4 günde bir 2-3 günde bir hadi %10-15 şeklinde arttırmanız gerekiyor.
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=635) @10:35 · Benji · 2026-10-20 · *supports* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=635) @10:35 · Benji · 2026-10-20 · *destekliyor* · kaynak: genel bilgi
   > A good rule is about 20% every 48 hours.
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=2436) @40:36 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: platform dokümanı
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=2436) @40:36 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: platform dokümanı
   > 3-4 günde bir %20'nin altında bu bütçe artışını yapabilirsiniz.
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=314) @5:14 · Burak Mermi · 2026-07-06 · *supports* · kaynak: kendi tecrübesi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=314) @5:14 · Burak Mermi · 2026-07-06 · *destekliyor* · kaynak: kendi tecrübesi
   > CBO kampanyamızın bütçesini %15-20 olacak şekilde 3 günde bir, 4 günde bir artırarak ölçekleyebiliyorduk.
 
-- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=229) @3:49 · Ben Heath · 2026-02-20 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_course, sells_agency_services, affiliate, sponsored, community_paid
+- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=229) @3:49 · Ben Heath · 2026-02-20 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, satış ortaklığı, sponsorlu, ücretli topluluk
   > So decide, I'm going to adjust my campaigns no more than once every seven days or 10 days.
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=314) @5:14 · Burak Mermi · 2026-07-06 · *supports* · kaynak: genel bilgi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=314) @5:14 · Burak Mermi · 2026-07-06 · *destekliyor* · kaynak: genel bilgi
   > her gün bütçesini artırırsanız, burada bu kampanyanın stabil ilerlemesini bozabilirsiniz.
 
 ### <a id="k8"></a>K8 · sağlam · güven 0.96
@@ -440,22 +440,22 @@ Meta'nın optimizasyonu (öğrenme aşamasından çıkış) reklam seti başına
 
 - Resmi kaynak: [https://www.facebook.com/business/help/269269737396981](https://www.facebook.com/business/help/269269737396981) — “Once it gets 50 events, it will move from learning limited to active.”
 
-- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=1076) @17:56 · App Masters · 2026-10-20 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, affiliate, sponsored
+- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=1076) @17:56 · App Masters · 2026-10-20 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, satış ortaklığı, sponsorlu
   > Meta needs at least 50 events per week.
 
-- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=1478) @24:38 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *supports* · kaynak: platform dokümanı · çıkar çatışması: sells_agency_services
+- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=1478) @24:38 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *destekliyor* · kaynak: platform dokümanı · çıkar çatışması: ajans hizmeti satıyor
   > Dediğim gibi haftada en az 50 event gerekiyor.
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1018) @16:58 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: platform dokümanı
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1018) @16:58 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: platform dokümanı
   > haftada yani 7 gün içerisinde 50 tane bu optimizasyon eventini toplarsa
 
-- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=75) @1:15 · Sub Club by RevenueCat · 2026-09-15 · *supports* · kaynak: başka içerik üreticisi
+- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=75) @1:15 · Sub Club by RevenueCat · 2026-09-15 · *destekliyor* · kaynak: başka içerik üreticisi
   > The ballpark is always like 50, 50 a week.
 
-- [LTV mastery: Getting high-value subscribers from Meta](https://youtu.be/kXXFtl0ocU0?t=774) @12:54 · App Leaders by Adapty · 2025-12-26 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sponsored
+- [LTV mastery: Getting high-value subscribers from Meta](https://youtu.be/kXXFtl0ocU0?t=774) @12:54 · App Leaders by Adapty · 2025-12-26 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: sponsorlu
   > you need to give at least a day five events to optimize for meta, for a campaign properly.
 
-- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1431) @23:51 · App Leaders by Adapty · 2026-09-11 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1431) @23:51 · App Leaders by Adapty · 2026-09-11 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > I want to see 10 events per day in at least one ad set. Sorry, in all ad sets, in all your campaigns.
 
 ### <a id="k9"></a>K9 · şüpheli · güven 0.38
@@ -471,19 +471,19 @@ Küçük bütçede hesap yapısını sade tutmak (az reklam seti, her sette birk
 
 - Resmi kaynak: [https://www.facebook.com/business/help/112167992830700](https://www.facebook.com/business/help/112167992830700) — “”
 
-- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=151) @2:31 · Gui Costa · 2026-07-25 · *contradicts* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=151) @2:31 · Gui Costa · 2026-07-25 · *çelişiyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > we were just putting $2 per ad set and we were running for United States and Europe
 
-- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=707) @11:47 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=707) @11:47 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Her adsetin altına en fazla 5 tane reklam koyun. Adsetlerin altına minimum bütçe koyun ki bütün o adsetler para harcayabilsin gibi.
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=391) @6:31 · Burak Mermi · 2026-07-06 · *contradicts* · kaynak: başka içerik üreticisi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=391) @6:31 · Burak Mermi · 2026-07-06 · *çelişiyor* · kaynak: başka içerik üreticisi
   > sepete ekleme başına maliyet düşükse buradaki reklamı başarılı olarak nitelendirip CBO kampanyasına atıyorsunuz.
 
-- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=1525) @25:25 · Ben Heath · 2026-02-20 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, sells_agency_services, affiliate, sponsored, community_paid
+- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=1525) @25:25 · Ben Heath · 2026-02-20 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, satış ortaklığı, sponsorlu, ücretli topluluk
   > So let's say we have five ad sets and we're generating 20 conversions a week. Well, that's four conversions per ad set on average.
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=1795) @29:55 · Burak Mermi · 2026-07-06 · *supports* · kaynak: kendi tecrübesi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=1795) @29:55 · Burak Mermi · 2026-07-06 · *destekliyor* · kaynak: kendi tecrübesi
   > eğer bütçeniz 2000 TL'nin altındaysa yani çok fazla bütçeniz yok
 
 ### <a id="k10"></a>K10 · muhtemel · güven 0.77
@@ -497,19 +497,19 @@ Meta dağıtımı, optimize edilen olaydan ve kullanıcı tepkilerinden öğreni
 *Kendi verinle test:* Aynı kreatiflerle iki kampanya kur: biri StartTrial (uygulama olayı) optimizasyonlu, diğeri link click/trafik optimizasyonlu; eşit bütçeyle en az 7-14 gün çalıştır. Başarı ölçütü: deneme başına maliyet ve denemeden ödemeye dönüşen müşteri başına maliyet (CAC).
 
 
-- [Meta'nın Gizli Kuralı: Reklam Maliyetlerini Düşüren Yapı](https://youtu.be/PwokUZ0NB9Q?t=879) @14:39 · Deniz Pulcu · 2026-07-29 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Meta'nın Gizli Kuralı: Reklam Maliyetlerini Düşüren Yapı](https://youtu.be/PwokUZ0NB9Q?t=879) @14:39 · Deniz Pulcu · 2026-07-29 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Tıklama geliyor ama satış gelmiyor. Metada ne oluyor? Yeni insanlara gitmiyor.
 
-- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=992) @16:32 · Ben Heath · 2026-02-20 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, sells_agency_services, affiliate, sponsored, community_paid
+- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=992) @16:32 · Ben Heath · 2026-02-20 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, satış ortaklığı, sponsorlu, ücretli topluluk
   > If you say you want traffic, they're going to find really clicky people. Those people won't necessarily go on and convert.
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=667) @11:07 · Ben Heath · 2026-01-06 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=667) @11:07 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > Meta is very good at finding people that are likely to click. But those people don't necessarily go on to convert.
 
-- [Meta Ads for B2B: What Actually Works in 2026](https://youtu.be/9lfItyusOmw?t=776) @12:56 · AdConversion · 2025-11-12 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Ads for B2B: What Actually Works in 2026](https://youtu.be/9lfItyusOmw?t=776) @12:56 · AdConversion · 2025-11-12 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > the people that are engaging with your ads, that are responding with your ads, these are all signs of validation to meta's algorithm
 
-- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=310) @5:10 · Sub Club by RevenueCat · 2026-09-15 · *qualifies* · kaynak: başka içerik üreticisi
+- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=310) @5:10 · Sub Club by RevenueCat · 2026-09-15 · *koşullu* · kaynak: başka içerik üreticisi
   > meta loves engagement and more engagement means a high quality score
 
 ### <a id="k11"></a>K11 · sağlam · güven 0.94
@@ -522,16 +522,16 @@ Optimizasyon olayı hacme göre seçilmelidir: satın alma/satış olayı ancak 
 
 - Resmi kaynak: [https://www.facebook.com/business/help/269269737396981](https://www.facebook.com/business/help/269269737396981) — “Meta suggests choosing a more frequent optimization event, such as add to cart instead of purchase”
 
-- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=80) @1:20 · Denis Shatalin · 2025-12-29 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, community_paid
+- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=80) @1:20 · Denis Shatalin · 2025-12-29 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, ücretli topluluk
   > If you can get 50 sales events in a two-week time frame, you can go for sales
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=2266) @37:46 · RevenueCat · 2026-09-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=2266) @37:46 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > you cannot send a signal that it's not happening quite often and that you cannot afford it
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=1558) @25:58 · Ben Heath · 2026-01-06 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=1558) @25:58 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > My preference would be to go for purchases provided you're generating enough purchases for Meta to be able to learn.
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1335) @22:15 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: genel bilgi
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1335) @22:15 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: genel bilgi
   > purchase olması için cost daha pahalı olacak elbette
 
 ### <a id="k12"></a>K12 · sağlam · güven 0.80
@@ -544,16 +544,16 @@ Reklam hesabı oluşturulurken para birimi ve saat dilimi doğru seçilmelidir; 
 
 - Resmi kaynak: [https://www.facebook.com/business/help/291404291014138](https://www.facebook.com/business/help/291404291014138) — “”
 
-- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=458) @7:38 · Aprendamos Marketing · 2026-01-13 · *qualifies* · kaynak: genel bilgi
+- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=458) @7:38 · Aprendamos Marketing · 2026-01-13 · *koşullu* · kaynak: genel bilgi
   > esa se va a quedar permanentemente en tu cuenta publicitaria
 
-- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=397) @6:37 · Nida Yıldırım · 2026-04-29 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=397) @6:37 · Nida Yıldırım · 2026-04-29 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Sonrasında buradaki saat dilimini kesinlikle değiştirelim.
 
-- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=472) @7:52 · Kamil YILDIRIM · 2026-05-31 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=472) @7:52 · Kamil YILDIRIM · 2026-05-31 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Para birimi kısmı çok kritik. Türkiye'de reklamlarınızı yayınlıyorsanız ve TL ile ödeme yapmak istiyorsanız burada İstanbul'u ve Türk lirasını seçmeniz gerekiyor.
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=222) @3:42 · Ben Heath · 2026-01-06 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=222) @3:42 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > Make sure you get these right. If you don't, uh it's very difficult to change them uh later on.
 
 ### <a id="k13"></a>K13 · muhtemel · güven 0.78
@@ -567,22 +567,22 @@ Meta uygulama kampanyalarında abonelikli uygulamalar için, ham "deneme başlad
 *Kendi verinle test:* Aynı bütçeyle iki ad set/kampanya aç: biri "StartTrial", diğeri "nitelikli deneme" (1–2 saat sonra aktif) olayına optimize olsun. En az 2 hafta veya her kolda ~50 olay boyunca çalıştır; başarı ölçütü: ödeyen müşteri başına maliyet (CAC) ve denemeden ücretliye dönüşüm oranı; nitelikli denemenin olay hacmi öğrenmeye yetmezse pencereyi kısalt.
 
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1249) @20:49 · RevenueCat · 2026-09-12 · *supports* · kaynak: platform dokümanı · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1249) @20:49 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: platform dokümanı · çıkar çatışması: ajans hizmeti satıyor
   > we check if after two hours the user didn't cancel the event okay if the trial started is still active then we will count that as a trial qualified
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1416) @23:36 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: müşteri verisi
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1416) @23:36 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: müşteri verisi
   > Bir saat ya da iki saat içerisinde iptal etmeyen kullanıcıların sinyalini metaya gönderelim.
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1409) @23:29 · RevenueCat · 2026-09-12 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1409) @23:29 · RevenueCat · 2026-09-12 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > so you should know that at least you should drop 25 to 30 percent of the data to make sure that it's like high quality
 
-- [LTV mastery: Getting high-value subscribers from Meta](https://youtu.be/kXXFtl0ocU0?t=1097) @18:17 · App Leaders by Adapty · 2025-12-26 · *supports* · kaynak: genel bilgi · çıkar çatışması: sponsored
+- [LTV mastery: Getting high-value subscribers from Meta](https://youtu.be/kXXFtl0ocU0?t=1097) @18:17 · App Leaders by Adapty · 2025-12-26 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: sponsorlu
   > You can create a custom event, which says, for instance, trial started, but not canceled in the same hour.
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1172) @19:32 · RevenueCat · 2026-09-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1172) @19:32 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > a 30 second cancellation from a trial started looks exactly like a six month subscriber for meta
 
-- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1185) @19:45 · App Leaders by Adapty · 2026-09-11 · *supports* · kaynak: başka içerik üreticisi · çıkar çatışması: sells_agency_services
+- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1185) @19:45 · App Leaders by Adapty · 2026-09-11 · *destekliyor* · kaynak: başka içerik üreticisi · çıkar çatışması: ajans hizmeti satıyor
   > We are just sending the signals if the user didn't cancel the trial in three hours.
 
 ### <a id="k14"></a>K14 · sağlam · güven 0.84
@@ -598,19 +598,19 @@ Yeni kreatifleri ABO'da (sabit reklam seti bütçesiyle) test edip kazananları 
 
 - Resmi kaynak: [https://developers.facebook.com/docs/marketing-api/bidding/guides/advantage-campaign-budget](https://developers.facebook.com/docs/marketing-api/bidding/guides/advantage-campaign-budget) — “you should provide budgets for all ad sets under the campaign.”
 
-- [Sıfırdan Reklam Eğitimi: Başa Baş Noktası, Kreatif ve Canlı Sonuçlar](https://youtu.be/AQVJnAho5Nc?t=1297) @21:37 · Gürkanzone · 2026-08-15 · *qualifies* · kaynak: kendi tecrübesi · çıkar çatışması: sells_course
+- [Sıfırdan Reklam Eğitimi: Başa Baş Noktası, Kreatif ve Canlı Sonuçlar](https://youtu.be/AQVJnAho5Nc?t=1297) @21:37 · Gürkanzone · 2026-08-15 · *koşullu* · kaynak: kendi tecrübesi · çıkar çatışması: kurs satıyor
   > Bak tek bir set içerisinde 10 tane kreatif var.
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=397) @6:37 · Benji · 2026-10-20 · *supports* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=397) @6:37 · Benji · 2026-10-20 · *destekliyor* · kaynak: genel bilgi
   > An ABO gives you control over how much budget goes into each ad set.
 
-- [Sıfırdan Reklam Eğitimi: Başa Baş Noktası, Kreatif ve Canlı Sonuçlar](https://youtu.be/AQVJnAho5Nc?t=1373) @22:53 · Gürkanzone · 2026-08-15 · *qualifies* · kaynak: kendi tecrübesi · çıkar çatışması: sells_course
+- [Sıfırdan Reklam Eğitimi: Başa Baş Noktası, Kreatif ve Canlı Sonuçlar](https://youtu.be/AQVJnAho5Nc?t=1373) @22:53 · Gürkanzone · 2026-08-15 · *koşullu* · kaynak: kendi tecrübesi · çıkar çatışması: kurs satıyor
   > Hem burada ölçekliyoruz. Hem de gidip CBO'nun içerisine atıyoruz.
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=397) @6:37 · Benji · 2026-10-20 · *supports* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=397) @6:37 · Benji · 2026-10-20 · *destekliyor* · kaynak: genel bilgi
   > Once something clearly works, move it out of testing and into a CBO campaign.
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=700) @11:40 · Burak Mermi · 2026-07-06 · *supports* · kaynak: kendi tecrübesi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=700) @11:40 · Burak Mermi · 2026-07-06 · *destekliyor* · kaynak: kendi tecrübesi
   > orta bütçelerde %28 çalışma oranı, yüksek bütçelerde ise %33 çalışma oranıyla
 
 ### <a id="k15"></a>K15 · muhtemel · güven 0.78
@@ -626,16 +626,16 @@ Meta kampanya ve reklam performansı, 1–2 günlük verilere tepki vermek yerin
 
 - Resmi kaynak: [https://www.facebook.com/business/help/304909959680406](https://www.facebook.com/business/help/304909959680406) — “”
 
-- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=627) @10:27 · Denis Shatalin · 2025-12-29 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, community_paid
+- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=627) @10:27 · Denis Shatalin · 2025-12-29 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, ücretli topluluk
   > I typically check in on results every seven days.
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=1490) @24:50 · Burak Mermi · 2026-07-06 · *supports* · kaynak: platform dokümanı
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=1490) @24:50 · Burak Mermi · 2026-07-06 · *destekliyor* · kaynak: platform dokümanı
   > Meta'nın 7 günlük dönüşüm penceresi kuralını unutmayın.
 
-- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=774) @12:54 · Mark Builds Brands · 2026-05-11 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, community_paid
+- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=774) @12:54 · Mark Builds Brands · 2026-05-11 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ücretli topluluk
   > Look at seven days. Look at the most amount of ads that you can.
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=2023) @33:43 · Burak Mermi · 2026-07-06 · *supports* · kaynak: kendi tecrübesi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=2023) @33:43 · Burak Mermi · 2026-07-06 · *destekliyor* · kaynak: kendi tecrübesi
   > bir kreatifi kapatıp kapatmama kararını 1 günlük 2 günlük sonuçlara göre kesinlikle vermemeniz gerekiyor.
 
 ### <a id="k16"></a>K16 · doğrulanamaz · güven 0.61
@@ -649,16 +649,16 @@ Meta reklamları B2B SaaS işletmelerine, ajansların bildirdiği müşteri sonu
 *Kendi verinle test:* Kendi panelinizde 4–6 hafta düşük bütçeyle kampanya çalıştırın. Deneme başına maliyet, denemeden ödemeye dönüşüm oranı ve gerçekleşen ilk 3 aylık gelirle CAC'yi hesaplayarak gerçek getirinin 3x'e ulaşıp ulaşmadığına bakın.
 
 
-- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=80) @1:20 · Denis Shatalin · 2025-12-29 · *supports* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services, community_paid
+- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=80) @1:20 · Denis Shatalin · 2025-12-29 · *destekliyor* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor, ücretli topluluk
   > Bilal, one of my clients, turned 3.1k in ad spend into 6.3k MRR within his first month
 
-- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=80) @1:20 · Denis Shatalin · 2025-12-29 · *qualifies* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services, community_paid
+- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=80) @1:20 · Denis Shatalin · 2025-12-29 · *koşullu* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor, ücretli topluluk
   > This means a nice 6x return on his ad spend.
 
-- [How I Run Facebook Ads For a B2B SaaS Company](https://youtu.be/6802r3zLtdo?t=1063) @17:43 · Alessandro Cutri · 2026-06-04 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Run Facebook Ads For a B2B SaaS Company](https://youtu.be/6802r3zLtdo?t=1063) @17:43 · Alessandro Cutri · 2026-06-04 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > put $1 in and get $3 out at a minimum
 
-- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=1220) @20:20 · Ben Heath · 2026-02-20 · *qualifies* · kaynak: müşteri verisi · çıkar çatışması: sells_course, sells_agency_services, affiliate, sponsored, community_paid
+- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=1220) @20:20 · Ben Heath · 2026-02-20 · *koşullu* · kaynak: müşteri verisi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, satış ortaklığı, sponsorlu, ücretli topluluk
   > We will also show businesses that get a 3.2x return on ad spend, but have done so at scale and that's really profitable
 
 ### <a id="k17"></a>K17 · muhtemel · güven 0.67
@@ -674,16 +674,16 @@ Abonelikli uygulamalarda paywall'u onboarding akışına koymak (deneme teklifi 
 
 - Resmi kaynak: [https://developers.facebook.com/docs/app-ads/optimizing-your-app-ad](https://developers.facebook.com/docs/app-ads/optimizing-your-app-ad) — “”
 
-- [How I Scaled An App To $4M/Year With Meta Ads (Step by step)](https://youtu.be/2WIiNEdsI60?t=1474) @24:34 · Aazar Shad · 2026-04-02 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Scaled An App To $4M/Year With Meta Ads (Step by step)](https://youtu.be/2WIiNEdsI60?t=1474) @24:34 · Aazar Shad · 2026-04-02 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > free trial increased, I think it was like 20% or 30%
 
-- [56% More Trials With This One Change](https://youtu.be/bg0_DavI-DE?t=152) @2:32 · App Masters · 2026-06-09 · *supports* · kaynak: müşteri verisi · çıkar çatışması: sells_course, sells_agency_services, sponsored
+- [56% More Trials With This One Change](https://youtu.be/bg0_DavI-DE?t=152) @2:32 · App Masters · 2026-06-09 · *destekliyor* · kaynak: müşteri verisi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, sponsorlu
   > those two screens led to a 56% increase in trial activations
 
-- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=943) @15:43 · Gui Costa · 2026-07-28 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=943) @15:43 · Gui Costa · 2026-07-28 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > We created a paywall in the onboarding process.
 
-- [56% More Trials With This One Change](https://youtu.be/bg0_DavI-DE?t=380) @6:20 · App Masters · 2026-06-09 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_course, sells_agency_services, sponsored
+- [56% More Trials With This One Change](https://youtu.be/bg0_DavI-DE?t=380) @6:20 · App Masters · 2026-06-09 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, sponsorlu
   > If you do a hard paywall, trial activations guaranteed will go up
 
 ### <a id="k18"></a>K18 · sağlam · güven 0.94
@@ -699,16 +699,16 @@ Abonelikli uygulamada Meta reklamlarına önce Meta SDK tabanlı dönüşüm kam
 
 - Resmi kaynak: [https://developers.facebook.com/docs/app-ads/measuring/measuring-installs-and-in-app-conversions](https://developers.facebook.com/docs/app-ads/measuring/measuring-installs-and-in-app-conversions) — “The Facebook SDK is required to enable install tracking.”
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=397) @6:37 · Benji · 2026-10-20 · *supports* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=397) @6:37 · Benji · 2026-10-20 · *destekliyor* · kaynak: genel bilgi
   > First, implement the meta SDK, set up your important conversion events and start running SDK conversion campaigns right away.
 
-- [Launching your first Start Trial mobile app campaign on Meta Ads with ](https://youtu.be/x2tKbtJoSrM?t=155) @2:35 · First Try · 2026-02-03 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Launching your first Start Trial mobile app campaign on Meta Ads with ](https://youtu.be/x2tKbtJoSrM?t=155) @2:35 · First Try · 2026-02-03 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > I recommend you to just use the Facebook SDK if this is your very first campaign.
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=397) @6:37 · Benji · 2026-10-20 · *qualifies* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=397) @6:37 · Benji · 2026-10-20 · *koşullu* · kaynak: genel bilgi
   > Understand a mobile measurement partner like AppSupplyer and AppStack will give you better attribution data compared to Metapixel.
 
-- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1819) @30:19 · App Leaders by Adapty · 2026-09-11 · *qualifies* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services
+- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1819) @30:19 · App Leaders by Adapty · 2026-09-11 · *koşullu* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor
   > If you share enough information through Cappy, you would get a better attribution to your meta campaigns on your MMP.
 
 ### <a id="k19"></a>K19 · muhtemel · güven 0.70
@@ -722,16 +722,16 @@ Bir kreatifi değerlendirmeden önce önceden belirlenmiş bir harcama eşiğine
 *Kendi verinle test:* Hedef CPA'nızın (ör. StartTrial başına maliyet) 3 katını kreatif başına eşik olarak belirleyin. 2–3 hafta boyunca bu eşiğe ulaşan ve hedefin üzerinde kalan kreatifleri kapatın; kapatılanlarla bırakılanların toplam StartTrial başına maliyetini karşılaştırın.
 
 
-- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=1636) @27:16 · Steven Cravotta · 2026-07-30 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, affiliate
+- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=1636) @27:16 · Steven Cravotta · 2026-07-30 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, satış ortaklığı
   > I recommend spending at least a hundred dollars on each creative before you decide
 
-- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=310) @5:10 · Sub Club by RevenueCat · 2026-09-15 · *qualifies* · kaynak: başka içerik üreticisi
+- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=310) @5:10 · Sub Club by RevenueCat · 2026-09-15 · *koşullu* · kaynak: başka içerik üreticisi
   > He would have killed that at like 2000 in ad spent.
 
-- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=310) @5:10 · Sub Club by RevenueCat · 2026-09-15 · *supports* · kaynak: başka içerik üreticisi
+- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=310) @5:10 · Sub Club by RevenueCat · 2026-09-15 · *destekliyor* · kaynak: başka içerik üreticisi
   > I could tell it after 500 bucks.
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=476) @7:56 · Benji · 2026-10-20 · *supports* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=476) @7:56 · Benji · 2026-10-20 · *destekliyor* · kaynak: genel bilgi
   > And if it's clearly worse after enough spend, kill it.
 
 ### <a id="k20"></a>K20 · muhtemel · güven 0.67
@@ -745,13 +745,13 @@ Düşük bütçeli Meta reklamlarında reklamlar çalıştığı gün sayısına
 *Kendi verinle test:* Aynı kampanyada harcama lideri 2–3 reklamı yeni bir kampanyada/ad sette tekrar çalıştır; en az 7 gün ve reklam başına ≥50 StartTrial olacak şekilde izle. Başarı ölçütü: deneme başına maliyetin ilk sonuca yakın kalması (±%25).
 
 
-- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=1094) @18:14 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=1094) @18:14 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Kayıplara odaklanmaktansa kazananlara odaklanmanın tekrar atlatmış olalım.
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=476) @7:56 · Benji · 2026-10-20 · *supports* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=476) @7:56 · Benji · 2026-10-20 · *destekliyor* · kaynak: genel bilgi
   > remember to judge ads by spend, not by days.
 
-- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=231) @3:51 · Sub Club by RevenueCat · 2026-09-15 · *qualifies* · kaynak: başka içerik üreticisi
+- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=231) @3:51 · Sub Club by RevenueCat · 2026-09-15 · *koşullu* · kaynak: başka içerik üreticisi
   > meta does some sort of a decision making around first five to 10,000 impressions.
 
 ### <a id="k21"></a>K21 · muhtemel · güven 0.64
@@ -765,13 +765,13 @@ Abonelikli uygulama/SaaS kampanyalarını ölçeklemek için ayda çok sayıda y
 *Kendi verinle test:* Aylık bütçenize uygun şekilde 4 hafta boyunca haftada 5–10 yeni kreatif test edin; her kreatifin deneme başına maliyetini (cost per trial) kaydedin. Hedef CPA'yı tutturan kreatif oranını hesaplayın; bu sizin gerçek 'kazanan oranınız' olur.
 
 
-- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=2688) @44:48 · App Leaders by Adapty · 2026-09-11 · *supports* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services
+- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=2688) @44:48 · App Leaders by Adapty · 2026-09-11 · *destekliyor* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor
   > I think the speed of creative production is a locomotive.
 
-- [How This B2B SaaS Scaled to $2M/Month Using Meta Ads (Full Breakdown)](https://youtu.be/feR7eaNNq8g?t=919) @15:19 · Lorenzo Pravatà · 2026-03-26 · *qualifies* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How This B2B SaaS Scaled to $2M/Month Using Meta Ads (Full Breakdown)](https://youtu.be/feR7eaNNq8g?t=919) @15:19 · Lorenzo Pravatà · 2026-03-26 · *koşullu* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > at least 50 new ads every month to just find one winner that actually scales the ad
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=934) @15:34 · RevenueCat · 2026-09-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=934) @15:34 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > it's expected that around five to ten percent of the ads will reach uh this campaign
 
 ### <a id="k23"></a>K23 · sağlam · güven 0.94
@@ -784,13 +784,13 @@ Yayınla'dan sonra Meta reklamları gösterimden önce incelemeye girer; bu sür
 
 - Resmi kaynak: [https://www.facebook.com/business/ads/review-policy-guidelines](https://www.facebook.com/business/ads/review-policy-guidelines) — “While ad review is typically completed within 24 hours, it may take longer and ads can be reviewed again, including after they're live.”
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=3850) @1:04:10 · Ben Heath · 2026-01-06 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=3850) @1:04:10 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > Normally takes about 30 minutes, but particularly with your first ads could take a while more.
 
-- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=1166) @19:26 · Nida Yıldırım · 2026-04-29 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=1166) @19:26 · Nida Yıldırım · 2026-04-29 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Bu birkaç saat olabilir, bir gün olabilir.
 
-- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=2112) @35:12 · Kamil YILDIRIM · 2026-05-31 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=2112) @35:12 · Kamil YILDIRIM · 2026-05-31 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > yayınla butonuna tıkladıktan sonra reklamlarımız önce incelemeye değerlendirmeye giriyor.
 
 ### <a id="k24"></a>K24 · sağlam · güven 0.94
@@ -803,13 +803,13 @@ Meta reklam kreatiflerini test ederken önce birbirinden belirgin biçimde farkl
 
 - Resmi kaynak: [https://www.facebook.com/business/ads/performance-marketing](https://www.facebook.com/business/ads/performance-marketing) — “Develop a variety of ad creative and enable AI to deliver the right message to the people most likely to be interested in it.”
 
-- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=924) @15:24 · App Masters · 2026-10-20 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, affiliate, sponsored
+- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=924) @15:24 · App Masters · 2026-10-20 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, satış ortaklığı, sponsorlu
   > We want to test out different concepts, right?
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=476) @7:56 · Benji · 2026-10-20 · *supports* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=476) @7:56 · Benji · 2026-10-20 · *destekliyor* · kaynak: genel bilgi
   > When you start, don't mix five slightly different versions of the same ad.
 
-- [Meta Ads for B2B: What Actually Works in 2026](https://youtu.be/9lfItyusOmw?t=389) @6:29 · AdConversion · 2025-11-12 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Ads for B2B: What Actually Works in 2026](https://youtu.be/9lfItyusOmw?t=389) @6:29 · AdConversion · 2025-11-12 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > we just test micro changes in our ads versus testing completely different look, feels, and concepts.
 
 ### <a id="k25"></a>K25 · sağlam · güven 0.94
@@ -822,13 +822,13 @@ Birden fazla reklam görselini/reklam setini tek kampanyada kampanya bütçesiyl
 
 - Resmi kaynak: [https://www.facebook.com/business/ads/meta-advantage-plus/budget](https://www.facebook.com/business/ads/meta-advantage-plus/budget) — “Your budget, enabled by Meta AI, continuously distributes to ad sets with the best opportunities in real time throughout the course of your campaign.”
 
-- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=761) @12:41 · Gui Costa · 2026-07-25 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=761) @12:41 · Gui Costa · 2026-07-25 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > if you have a big budget I recommend you to put all the creatives in the same campaign or in the same ad set
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=817) @13:37 · Ben Heath · 2026-01-06 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=817) @13:37 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > with campaign budget, the budget is set at the campaign level meaning that if you have multiple ad sets, budget will be distributed to those ad sets according to performance.
 
-- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=371) @6:11 · Sabri Suby · 2026-06-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=371) @6:11 · Sabri Suby · 2026-06-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > you chuck them in a CBO, you let Facebook's AI do its thing and it's going to basically pivot the spend towards the creatives
 
 ### <a id="k26"></a>K26 · muhtemel · güven 0.63
@@ -844,13 +844,13 @@ Reklamlar sabit bir ikna yapısını izlemelidir (kanca/teklif, sorun/çözüm, 
 
 - Resmi kaynak: [https://www.facebook.com/business/help/711378409718185](https://www.facebook.com/business/help/711378409718185) — “”
 
-- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=474) @7:54 · Denis Shatalin · 2025-12-29 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, community_paid
+- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=474) @7:54 · Denis Shatalin · 2025-12-29 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, ücretli topluluk
   > Direct offer, pain, solution, pain explained, solution explained, social proof, and CTA.
 
-- [How I Run Facebook Ads For a B2B SaaS Company](https://youtu.be/6802r3zLtdo?t=523) @8:43 · Alessandro Cutri · 2026-06-04 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Run Facebook Ads For a B2B SaaS Company](https://youtu.be/6802r3zLtdo?t=523) @8:43 · Alessandro Cutri · 2026-06-04 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > you have some form of a hook, and then you also have an offer, you have proof that you can support that offer and you have a CTA
 
-- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=1000) @16:40 · App Masters · 2026-10-20 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, affiliate, sponsored
+- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=1000) @16:40 · App Masters · 2026-10-20 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, satış ortaklığı, sponsorlu
   > And at the end, make sure your App Store page connects with that ad.
 
 ### <a id="k27"></a>K27 · doğrulanamaz · güven 0.59
@@ -861,13 +861,13 @@ Küçük reklam bütçeli müşteriler, düşük veya sabit reklam harcamasıyla
 *Değerlendirme:* Üç iddia da farklı dikeylerden (abonelik uygulaması, B2B SaaS, koçluk/bilgi ürünü) tek tek müşteri başarı hikâyeleridir ve hepsi ajans/kurs/araç satan kaynaklardan gelir. Ekranda doğrulanabilir veri yok; yalnızca sözlü rakamlar var. Seçilmiş en iyi vakalar olma ihtimali yüksek ve Meta uygulama tanıtımı (StartTrial) konusuna doğrudan genellenemez.
 
 
-- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1107) @18:27 · App Leaders by Adapty · 2026-09-11 · *qualifies* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services
+- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1107) @18:27 · App Leaders by Adapty · 2026-09-11 · *koşullu* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor
   > They tripled their MRR.
 
-- [How to build a $100k MRR B2B SaaS business with ads](https://youtu.be/NMl7-u2UaRk?t=0) @0:00 · Denis Shatalin · 2025-11-03 · *qualifies* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services, community_paid
+- [How to build a $100k MRR B2B SaaS business with ads](https://youtu.be/NMl7-u2UaRk?t=0) @0:00 · Denis Shatalin · 2025-11-03 · *koşullu* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor, ücretli topluluk
   > one of my recent clients went from 10k to 140k in MRR in less than a year on just a 3k a month ad budget
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=2962) @49:22 · Ben Heath · 2026-01-06 · *qualifies* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=2962) @49:22 · Ben Heath · 2026-01-06 · *koşullu* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > from 30 euros a day ad spend to a 100K month in sales in just 3 months
 
 ### <a id="k28"></a>K28 · sağlam · güven 0.94
@@ -880,13 +880,13 @@ Küçük bütçeyle yeni bir uygulama/dönüşüm kampanyasına başlarken varsa
 
 - Resmi kaynak: [https://www.facebook.com/business/help/317364032619502](https://www.facebook.com/business/help/317364032619502) — “”
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=1038) @17:18 · Ben Heath · 2026-01-06 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=1038) @17:18 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > Highest volume is the default. That's exactly what I want to go with here because that will determine how Meta optimizes the campaign.
 
-- [Launching your first Start Trial mobile app campaign on Meta Ads with ](https://youtu.be/x2tKbtJoSrM?t=1084) @18:04 · First Try · 2026-02-03 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Launching your first Start Trial mobile app campaign on Meta Ads with ](https://youtu.be/x2tKbtJoSrM?t=1084) @18:04 · First Try · 2026-02-03 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > I advise you to stick to highest volume or value because you are looking to understand the costs
 
-- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=1859) @30:59 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=1859) @30:59 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Bitcap koymayın derim. Çünkü siz atıyorum küçük bütçeniz de zaten en ucuz cost per purchase'ı alacaksınızdır.
 
 ### <a id="k29"></a>K29 · muhtemel · güven 0.65
@@ -902,13 +902,13 @@ Organik olarak iyi performans gösteren içerikler (TikTok, Instagram Reels, You
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/threads-ads/creation/use-posts-as-ads](https://developers.facebook.com/documentation/ads-commerce/marketing-api/ad-creative/threads-ads/creation/use-posts-as-ads) — “Existing Threads organic posts cannot be promoted as ads.”
 
-- [How I Scaled An App To $4M/Year With Meta Ads (Step by step)](https://youtu.be/2WIiNEdsI60?t=1090) @18:10 · Aazar Shad · 2026-04-02 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Scaled An App To $4M/Year With Meta Ads (Step by step)](https://youtu.be/2WIiNEdsI60?t=1090) @18:10 · Aazar Shad · 2026-04-02 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > the TikTok organic videos that go viral in TikTok, if we use them in meta, it's also like they're winner ads.
 
-- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=1068) @17:48 · Ben Heath · 2026-02-20 · *supports* · kaynak: müşteri verisi · çıkar çatışması: sells_course, sells_agency_services, affiliate, sponsored, community_paid
+- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=1068) @17:48 · Ben Heath · 2026-02-20 · *destekliyor* · kaynak: müşteri verisi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, satış ortaklığı, sponsorlu, ücretli topluluk
   > the ones that get significantly more engagement than others, you can take those, add a five, 10 second call to action to the end
 
-- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=445) @7:25 · Sabri Suby · 2026-06-12 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=445) @7:25 · Sabri Suby · 2026-06-12 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > I'm taking that winning creative and then I'm just running that as an ad because I already know that that content bangs organically
 
 ### <a id="k30"></a>K30 · sağlam · güven 0.94
@@ -924,13 +924,13 @@ Uygulama kampanyalarında yorgunluğu önlemek ve sürekli kazanan reklam havuzu
 
 - Resmi kaynak: [https://www.facebook.com/business/help/711378409718185](https://www.facebook.com/business/help/711378409718185) — “In order to maintain the best performance for your ads, we recommend that you upload a high volume of creative assets and refresh them a few times a month to avoid creative fatigue.”
 
-- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=686) @11:26 · Gui Costa · 2026-07-25 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=686) @11:26 · Gui Costa · 2026-07-25 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Be launching every week new creatives so you can start you can test more angles
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=934) @15:34 · RevenueCat · 2026-09-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=934) @15:34 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > don't forget to keep pushing ads every single week that's a really important thing
 
-- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=148) @2:28 · Sabri Suby · 2026-06-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=148) @2:28 · Sabri Suby · 2026-06-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > dedicate one hour per week where you take your winning offer, your winning product or service
 
 ### <a id="k31"></a>K31 · muhtemel · güven 0.67
@@ -946,13 +946,13 @@ Meta'da hedeflemeyi geniş tutmak (ör. tek ülke) ve dar ilgi alanı/kitle segm
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/app-ads/targeting](https://developers.facebook.com/documentation/app-ads/targeting) — “”
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=779) @12:59 · RevenueCat · 2026-09-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=779) @12:59 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > just be really broad just like i mean you can do one country but don't like start using audience segmentations
 
-- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=152) @2:32 · Mark Builds Brands · 2026-05-11 · *qualifies* · kaynak: kendi tecrübesi · çıkar çatışması: sells_course, community_paid
+- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=152) @2:32 · Mark Builds Brands · 2026-05-11 · *koşullu* · kaynak: kendi tecrübesi · çıkar çatışması: kurs satıyor, ücretli topluluk
   > I literally just still run completely broad and most high scale advertisers that I speak to, they're doing something relatively similar
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=2147) @35:47 · Ben Heath · 2026-01-06 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=2147) @35:47 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > Not something I'd recommend for most beginners. It overcomplicates it, and typically, we see better results now by giving Meta direction
 
 ### <a id="k32"></a>K32 · tartışmalı · güven 0.52
@@ -968,16 +968,16 @@ Meta'nın öğrenme aşamasının süresi dönüşüm hacmine bağlıdır (ad se
 
 - Resmi kaynak: [https://www.facebook.com/business/help/112167992830700?locale=en_US](https://www.facebook.com/business/help/112167992830700?locale=en_US) — “”
 
-- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=154) @2:34 · Ben Heath · 2026-02-20 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_course, sells_agency_services, affiliate, sponsored, community_paid
+- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=154) @2:34 · Ben Heath · 2026-02-20 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, satış ortaklığı, sponsorlu, ücretli topluluk
   > The learning phase lasts typically, let's say 24 to 48 hours, but it is dependent on conversion volume.
 
-- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=1155) @19:15 · Burak Mermi · 2026-02-16 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course
+- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=1155) @19:15 · Burak Mermi · 2026-02-16 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor
   > The reason you see sales immediately when you launch a campaign is because the algorithm is trying to understand who to show ads to.
 
-- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=384) @6:24 · Burak Mermi · 2026-02-16 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course
+- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=384) @6:24 · Burak Mermi · 2026-02-16 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor
   > By default, many accounts have a learning curve of seven days for 50 conversions.
 
-- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=384) @6:24 · Burak Mermi · 2026-02-16 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_course
+- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=384) @6:24 · Burak Mermi · 2026-02-16 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor
   > Some accounts have four days, four days for 20 conversions, and some have five days for 30 conversions.
 
 ### <a id="k34"></a>K34 · tartışmalı · güven 0.55
@@ -988,13 +988,13 @@ Meta'nın öğrenme aşamasının süresi dönüşüm hacmine bağlıdır (ad se
 *Değerlendirme:* "Küçük bütçe" resmî bir Meta tanımı değil, her üreticinin kendi sınıflandırması. Burak Mermi TL ile, Ben Heath USD ile ve kendi (satış çıkarı olan) pazar bakışıyla konuşuyor; eşikler doğrudan karşılaştırılamaz. Bir yorum 100 $/günün küçük sayılmayacağını söylüyor, yani tanım pazara ve satın alma gücüne bağlı. Düşük bütçeli B2B uygulama denemesi için kendi pazarınızdaki göreli ölçeği esas almak daha mantıklı.
 
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=75) @1:15 · Burak Mermi · 2026-07-06 · *qualifies* · kaynak: kendi tecrübesi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=75) @1:15 · Burak Mermi · 2026-07-06 · *koşullu* · kaynak: kendi tecrübesi
   > Bunların 56 tanesi küçük bütçeli dediğimiz yani günde 5000 TL ve 6 harcayan hesaplar.
 
-- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=0) @0:00 · Ben Heath · 2026-02-20 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_course, sells_agency_services, affiliate, sponsored, community_paid
+- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=0) @0:00 · Ben Heath · 2026-02-20 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, satış ortaklığı, sponsorlu, ücretli topluluk
   > I would classify a small Facebook ads budget as anything less than $3,000 per month, so $100 or so per day
 
-- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=0) @0:00 · Ben Heath · 2026-02-20 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_course, sells_agency_services, affiliate, sponsored, community_paid
+- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=0) @0:00 · Ben Heath · 2026-02-20 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, satış ortaklığı, sponsorlu, ücretli topluluk
   > I classify a tiny Facebook ads budget as $600 per month or less, or $20 or less per day
 
 ### <a id="k35"></a>K35 · muhtemel · güven 0.62
@@ -1010,13 +1010,13 @@ Meta uygulama kampanyalarında (abonelik uygulamaları) performansın temeli sin
 
 - Resmi kaynak: [https://developers.facebook.com/blog/post/2025/06/03/advantage-plus-campaign-experience-for-sales-and-app/](https://developers.facebook.com/blog/post/2025/06/03/advantage-plus-campaign-experience-for-sales-and-app/) — “”
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=785) @13:05 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: genel bilgi
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=785) @13:05 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: genel bilgi
   > İlki her zaman için sinyal yani sinyal kalitesi her şeyin temelinde.
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=785) @13:05 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: genel bilgi
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=785) @13:05 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: genel bilgi
   > İkinci sıraya ben aslında kreativi koyarım.
 
-- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=474) @7:54 · Gui Costa · 2026-07-28 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=474) @7:54 · Gui Costa · 2026-07-28 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > The creatives is what we're going to differentiate your campaign results
 
 ### <a id="k36"></a>K36 · muhtemel · güven 0.60
@@ -1032,13 +1032,13 @@ Meta kampanyasında veya reklamlarda birkaç günde bir değişiklik yapmak ya d
 
 - Resmi kaynak: [https://www.facebook.com/business/help/112167992830700/](https://www.facebook.com/business/help/112167992830700/) — “”
 
-- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=474) @7:54 · Denis Shatalin · 2025-12-29 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, community_paid
+- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=474) @7:54 · Denis Shatalin · 2025-12-29 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, ücretli topluluk
   > they just every two and every four days keep making changes to their campaigns
 
-- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=551) @9:11 · Denis Shatalin · 2025-12-29 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, community_paid
+- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=551) @9:11 · Denis Shatalin · 2025-12-29 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, ücretli topluluk
   > You switch off your ads too soon, or you keep making changes to your campaigns every day.
 
-- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=1558) @25:58 · Nida Yıldırım · 2026-04-29 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=1558) @25:58 · Nida Yıldırım · 2026-04-29 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > O yüzden reklam sürekli açmak ve kapamak doğru bir davranış değildir.
 
 ### <a id="k39"></a>K39 · muhtemel · güven 0.76
@@ -1051,10 +1051,10 @@ Meta teslimatı günlük değil çok günlük/haftalık pencerelerde optimize ed
 
 - Resmi kaynak: [https://www.facebook.com/business/help/112167992830700/](https://www.facebook.com/business/help/112167992830700/) — “”
 
-- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=551) @9:11 · Denis Shatalin · 2025-12-29 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, community_paid
+- [How to launch SaaS Meta ads with $100/day and actually get results](https://youtu.be/-3O8dR3rPu4?t=551) @9:11 · Denis Shatalin · 2025-12-29 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, ücretli topluluk
   > meta doesn't think in days, it thinks in weeks.
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=2401) @40:01 · Burak Mermi · 2026-07-06 · *supports* · kaynak: kendi tecrübesi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=2401) @40:01 · Burak Mermi · 2026-07-06 · *destekliyor* · kaynak: kendi tecrübesi
   > Meta yedi günlük bakıyor. Biz günlük bakıyoruz.
 
 ### <a id="k42"></a>K42 · muhtemel · güven 0.60
@@ -1068,10 +1068,10 @@ Meta uygulama kampanyalarında kreatif testi, birbirinden farklı en az ~5 konse
 *Kendi verinle test:* Kendi hesabınızda 2 hafta boyunca 3 farklı konsept × 2-3 hook ile 5+ konsept × 5 varyasyon yapısını karşılaştırın (aynı toplam bütçe). Başarı ölçütü: deneme başlatma (StartTrial) başına maliyet ve kreatif başına harcama dağılımı.
 
 
-- [How I Scaled An App To $3M/Month With Meta Ads (Step by step)](https://youtu.be/Re7wQSHK8mU?t=1632) @27:12 · Lorenzo Pravatà · 2025-12-17 · *supports* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services
+- [How I Scaled An App To $3M/Month With Meta Ads (Step by step)](https://youtu.be/Re7wQSHK8mU?t=1632) @27:12 · Lorenzo Pravatà · 2025-12-17 · *destekliyor* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor
   > Then we often test for a lot of our clients. Five, ten constants a week.
 
-- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=628) @10:28 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=628) @10:28 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > En az 5 tane birbirinden çok farklı konseptiniz var.
 
 ### <a id="k44"></a>K44 · tartışmalı · güven 0.59
@@ -1085,10 +1085,10 @@ Güçlü bir kreatif olduğunda, kazanan reklamı tek başına (tek reklam seti/
 *Kendi verinle test:* Aynı bütçeyle 14 gün: A) tek reklam setinde tek kazanan reklam, B) kazananın ayrı sette, diğer kreatiflerin ayrı sette olduğu yapı. Başarı ölçütü: deneme (StartTrial) başına maliyet ve ödeyen müşteri başına CAC; her kolda en az ~50 optimizasyon olayı hedefleyin.
 
 
-- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=1166) @19:26 · Nida Yıldırım · 2026-04-29 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=1166) @19:26 · Nida Yıldırım · 2026-04-29 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > tek bir reklam seti ve tek bir reklam olarak devam etmelisiniz
 
-- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=310) @5:10 · Sub Club by RevenueCat · 2026-09-15 · *qualifies* · kaynak: başka içerik üreticisi
+- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=310) @5:10 · Sub Club by RevenueCat · 2026-09-15 · *koşullu* · kaynak: başka içerik üreticisi
   > Pull that winning ad into its own ad set so everything else gets room to breathe
 
 ### <a id="k45"></a>K45 · tartışmalı · güven 0.60
@@ -1102,10 +1102,10 @@ Meta reklamverenlerin iyi sonuç için yüksek hacimde yeni kreatif test etmesi 
 *Kendi verinle test:* Düşük bütçede 4 hafta boyunca haftada 3–5 gerçekten farklı kreatif (farklı açı/format) ile haftada 15+ kreatif karşılaştır; başarı ölçütü StartTrial başına maliyet ve ödeyen müşteri başına maliyet (CAC).
 
 
-- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=75) @1:15 · Sub Club by RevenueCat · 2026-09-15 · *supports* · kaynak: başka içerik üreticisi
+- [Before you spend more on Meta Ads, watch this](https://youtu.be/E9NF-6AjQhs?t=75) @1:15 · Sub Club by RevenueCat · 2026-09-15 · *destekliyor* · kaynak: başka içerik üreticisi
   > serious accounts are testing at least 25 new creatives a week.
 
-- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=860) @14:20 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=860) @14:20 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Bu kreatiflerde benim anladığım 20-25 bile yetmeyebiliyor.
 
 ### <a id="k47"></a>K47 · muhtemel · güven 0.73
@@ -1118,10 +1118,10 @@ Meta, yapı ayrıştırılmadığında bütçeyi en kolay dönüşümlere (eski 
 
 - Resmi kaynak: [https://www.facebook.com/business/help/153514848493595](https://www.facebook.com/business/help/153514848493595) — “”
 
-- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=698) @11:38 · Menaf Avcı · 2025-12-28 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=698) @11:38 · Menaf Avcı · 2025-12-28 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > meta bütçenin çoğunu bu kampanya yapısı olmadan en kolay dönüşümlere, yani eski müşterilere yönlendirir.
 
-- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=543) @9:03 · Burak Mermi · 2026-07-06 · *supports* · kaynak: genel bilgi
+- [100 Meta Reklam Hesabını İnceledim | Meta Ads En İyi Ölçekleme Yönteml](https://youtu.be/yWNVkb32lXM?t=543) @9:03 · Burak Mermi · 2026-07-06 · *destekliyor* · kaynak: genel bilgi
   > Meta en kolay bir şekilde satabileceği reklam grubuna ağırlık vererek bütçeyi orada yoğunlaştırabilir demiştik.
 
 ### <a id="k49"></a>K49 · sağlam · güven 0.90
@@ -1137,10 +1137,10 @@ Reklam setleri yaklaşık 50 optimizasyon olayından sonra öğrenme aşamasınd
 
 - Resmi kaynak: [https://www.facebook.com/business/help/112167992830700/](https://www.facebook.com/business/help/112167992830700/) — “”
 
-- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=694) @11:34 · Mark Builds Brands · 2026-05-11 · *contradicts* · kaynak: genel bilgi · çıkar çatışması: sells_course, community_paid
+- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=694) @11:34 · Mark Builds Brands · 2026-05-11 · *çelişiyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ücretli topluluk
   > Your ads are always learning. They never stop learning.
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=2357) @39:17 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: platform dokümanı
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=2357) @39:17 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: platform dokümanı
   > Yani learning'e sıkışmış adsetler varsa kampanya içerisinde demek ki o an iskeyle etmeye hazır değil diyebiliriz.
 
 ### <a id="k50"></a>K50 · tartışmalı · güven 0.59
@@ -1156,10 +1156,10 @@ Bir kreatif konsept işe yaradığında, tamamen farklı bir formata geçmek yer
 
 - Resmi kaynak: [https://www.facebook.com/business/help/1738164643098669](https://www.facebook.com/business/help/1738164643098669) — “”
 
-- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=2390) @39:50 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=2390) @39:50 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Paralelde yine CPI kampanyası olarak olabilir ya da çok yakınsa varyasyon direkt kampanyanın içine de atabilirsiniz.
 
-- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=1087) @18:07 · Menaf Avcı · 2025-12-28 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=1087) @18:07 · Menaf Avcı · 2025-12-28 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > Başarılı olan bir görselin başlığını değiştirip, ortamı değiştirip, CT'yi değiştirip
 
 ### <a id="k51"></a>K51 · tartışmalı · güven 0.56
@@ -1175,10 +1175,10 @@ Meta'nın dağıtım algoritması statik reklamlara yanlıdır; bu yüzden stati
 
 - Resmi kaynak: [https://www.facebook.com/business/ads/meta-advantage-plus/app-campaigns](https://www.facebook.com/business/ads/meta-advantage-plus/app-campaigns) — “Kreatif çeşitliliği ve farklılığına öncelik verin.”
 
-- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=74) @1:14 · Sabri Suby · 2026-06-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=74) @1:14 · Sabri Suby · 2026-06-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > their algorithm is actually has a bias towards static ads because they can show way more statics to people within one session of Facebook
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1726) @28:46 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *qualifies* · kaynak: genel bilgi
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1726) @28:46 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *koşullu* · kaynak: genel bilgi
   > Farklı formatlarda 4'e 5'te 9-16 video gerek statik
 
 ### <a id="k52"></a>K52 · sağlam · güven 0.92
@@ -1191,10 +1191,10 @@ Meta'nın dağıtım algoritması statik reklamlara yanlıdır; bu yüzden stati
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/special-ad-category](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/special-ad-category) — “Ads may be rejected if the advertiser does not choose an appropriate Special Ad Category.”
 
-- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=761) @12:41 · Aprendamos Marketing · 2026-01-13 · *supports* · kaynak: genel bilgi
+- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=761) @12:41 · Aprendamos Marketing · 2026-01-13 · *destekliyor* · kaynak: genel bilgi
   > si tú tienes una que cae en estas categorías y no lo pones, lo que va a pasar después es que te van a restringir la campaña
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=1113) @18:33 · Ben Heath · 2026-01-06 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=1113) @18:33 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > a good chance not only your ads will be rejected, but your whole ad account can get disapproved
 
 ### <a id="k53"></a>K53 · muhtemel · güven 0.64
@@ -1207,10 +1207,10 @@ Meta kampanyasına sınırsız sayıda reklam seti/reklam eklenebilir, ancak tek
 
 - Resmi kaynak: [https://www.facebook.com/business/help/112167992830700](https://www.facebook.com/business/help/112167992830700) — “”
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=2111) @35:11 · RevenueCat · 2026-09-12 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=2111) @35:11 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > running one campaign with 50 ad set and one ad in each ad set and it's impossible to manage
 
-- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=1251) @20:51 · Kamil YILDIRIM · 2026-05-31 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=1251) @20:51 · Kamil YILDIRIM · 2026-05-31 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Canım sıkılırsa birer tane daha ekleyebilirim. Bunun bir limiti yok arkadaşlar.
 
 ### <a id="k54"></a>K54 · sağlam · güven 0.93
@@ -1223,10 +1223,10 @@ iOS App Tracking Transparency (ATT) kapsamında takibi reddeden kullanıcıları
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/app-events/guides/aggregated-event-measurement](https://developers.facebook.com/documentation/app-events/guides/aggregated-event-measurement) — “”
 
-- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=458) @7:38 · Gui Costa · 2026-07-25 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=458) @7:38 · Gui Costa · 2026-07-25 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > So people that accept it, Meta receives the information right away.
 
-- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=852) @14:12 · Mark Builds Brands · 2026-05-11 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_course, community_paid
+- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=852) @14:12 · Mark Builds Brands · 2026-05-11 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ücretli topluluk
   > The issue is because of what the update that iOS launched, all the users can now opt out of tracking from Facebook.
 
 ### <a id="k55"></a>K55 · tartışmalı · güven 0.59
@@ -1242,10 +1242,10 @@ Kaba/ev yapımı, organik görünümlü reklam kreatifleri, mesaj daha güçlüy
 
 - Resmi kaynak: [https://www.facebook.com/business/help/711378409718185](https://www.facebook.com/business/help/711378409718185) — “”
 
-- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=555) @9:15 · Gui Costa · 2026-07-28 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=555) @9:15 · Gui Costa · 2026-07-28 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > the ugly video is performing better or the ugly ads performing better because the message on it was better than the very polished ad video
 
-- [How I Scaled An App To $4M/Year With Meta Ads (Step by step)](https://youtu.be/2WIiNEdsI60?t=1550) @25:50 · Aazar Shad · 2026-04-02 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Scaled An App To $4M/Year With Meta Ads (Step by step)](https://youtu.be/2WIiNEdsI60?t=1550) @25:50 · Aazar Shad · 2026-04-02 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > sometimes what it looks more organic, homemade, made by normal people tends to work way better than really produced and perfect content.
 
 ### <a id="k63"></a>K63 · muhtemel · güven 0.65
@@ -1261,10 +1261,10 @@ Türkiye'de reklam hesabının faturalandırma/işletme bilgilerine vergi numara
 
 - Resmi kaynak: [https://www.facebook.com/business/help/155641834501332](https://www.facebook.com/business/help/155641834501332) — “”
 
-- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=319) @5:19 · Nida Yıldırım · 2026-04-29 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=319) @5:19 · Nida Yıldırım · 2026-04-29 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Diğer türlü her girdiğiniz reklamdan %20 KDV ödersiniz.
 
-- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=779) @12:59 · Kamil YILDIRIM · 2026-05-31 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=779) @12:59 · Kamil YILDIRIM · 2026-05-31 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Eğer reklamlarınıza fazladan ödeme yapıyorsanız bu vergi bilgilerinizi, işletme bilgilerinizi girmemenizden kaynaklanıyor.
 
 ### <a id="k65"></a>K65 · sağlam · güven 0.92
@@ -1280,10 +1280,10 @@ Potansiyel müşteri/satış gibi dönüşüm kampanyalarında reklam alanların
 
 - Resmi kaynak: [https://www.facebook.com/business/ads/meta-advantage-plus/placements](https://www.facebook.com/business/ads/meta-advantage-plus/placements) — “”
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=2221) @37:01 · Ben Heath · 2026-01-06 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=2221) @37:01 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > If you are using a leads campaign or a sales campaign, just leave it as is.
 
-- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=1721) @28:41 · Kamil YILDIRIM · 2026-05-31 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=1721) @28:41 · Kamil YILDIRIM · 2026-05-31 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Reklam alanları kısmına herhangi bir müdahale etmezsem benim reklamlarım arkadaşlar. Facebook'ta da gösterilir, Instagram'da da gösterilir.
 
 ### <a id="k66"></a>K66 · muhtemel · güven 0.64
@@ -1299,10 +1299,10 @@ Potansiyel müşteri/satış gibi dönüşüm kampanyalarında reklam alanların
 
 - Resmi kaynak: [https://www.facebook.com/business/help/112167992830700/](https://www.facebook.com/business/help/112167992830700/) — “”
 
-- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=154) @2:34 · Ben Heath · 2026-02-20 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, sells_agency_services, affiliate, sponsored, community_paid
+- [How to CRUSH Facebook Ads with a Small Budget in 2026](https://youtu.be/XLagiyzYYpE?t=154) @2:34 · Ben Heath · 2026-02-20 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ajans hizmeti satıyor, satış ortaklığı, sponsorlu, ücretli topluluk
   > potentially even change some of the settings at the campaign level, you will re-enter the learning phase.
 
-- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=1310) @21:50 · Burak Mermi · 2026-02-16 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_course
+- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=1310) @21:50 · Burak Mermi · 2026-02-16 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor
   > If you increase this budget by 50%, you will reset the learning process.
 
 ### <a id="k68"></a>K68 · muhtemel · güven 0.67
@@ -1318,10 +1318,10 @@ Abonelikli uygulamalarda soğuk reklam trafiğini doğrudan App Store sayfasına
 
 - Resmi kaynak: [https://www.facebook.com/business/help/711378409718185](https://www.facebook.com/business/help/711378409718185) — “”
 
-- [Why 90% of their paid traffic goes to a quiz, not the App Store](https://youtu.be/EyoYQU6JyV8?t=1513) @25:13 · Sub Club by RevenueCat · 2026-09-02 · *supports* · kaynak: kendi tecrübesi
+- [Why 90% of their paid traffic goes to a quiz, not the App Store](https://youtu.be/EyoYQU6JyV8?t=1513) @25:13 · Sub Club by RevenueCat · 2026-09-02 · *destekliyor* · kaynak: kendi tecrübesi
   > we've noticed that the quiz just has a much higher conversion
 
-- [How I Scaled An App To $3M/Month With Meta Ads (Step by step)](https://youtu.be/Re7wQSHK8mU?t=542) @9:02 · Lorenzo Pravatà · 2025-12-17 · *supports* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services
+- [How I Scaled An App To $3M/Month With Meta Ads (Step by step)](https://youtu.be/Re7wQSHK8mU?t=542) @9:02 · Lorenzo Pravatà · 2025-12-17 · *destekliyor* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor
   > that's why a quiz is much better than just sending to download the app.
 
 ### <a id="k69"></a>K69 · sağlam · güven 0.92
@@ -1337,10 +1337,10 @@ Meta'nın Andromeda sistemi altında, performansı korumak ve reklam yorgunluğu
 
 - Resmi kaynak: [https://www.facebook.com/business/news/ai-innovation-in-metas-ads-ranking-driving-advertiser-performance](https://www.facebook.com/business/news/ai-innovation-in-metas-ads-ranking-driving-advertiser-performance) — “as businesses upload more and more creatives to support a diversification strategy, Meta Andromeda works behind the scenes.”
 
-- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=0) @0:00 · Sabri Suby · 2026-06-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Learn 97% of Meta Ads in Under 19 minutes](https://youtu.be/NTmWqnPIb2s?t=0) @0:00 · Sabri Suby · 2026-06-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > you need to feed it with an absolutely absurd amount of fresh creatives in order for your ads not to fatigue
 
-- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=555) @9:15 · Gui Costa · 2026-07-28 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=555) @9:15 · Gui Costa · 2026-07-28 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > one of the most important things here on meta right now and Andromeda to perform pretty well is volume
 
 ### <a id="k87"></a>K87 · doğrulanamaz · güven 0.56
@@ -1348,10 +1348,10 @@ Meta'nın Andromeda sistemi altında, performansı korumak ve reklam yorgunluğu
 Video sahibi, 500 dolarlık bütçe için yükleme başına maliyetin yaklaşık 2 dolar olduğunu söylüyor; ancak bu rakam bildirilen toplamlarla (1.200 indirme için yaklaşık 0,42 dolar) uyuşmuyor.
 
 
-- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=0) @0:00 · Gui Costa · 2026-07-25 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=0) @0:00 · Gui Costa · 2026-07-25 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > Our budget is $500, right? So make the math $500, it's about $2 CPI, okay?
 
-- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=791) @13:11 · Gui Costa · 2026-07-28 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Scaled This App to 25K+ Downloads With Meta and Google Ads](https://youtu.be/gjLLdIrkS54?t=791) @13:11 · Gui Costa · 2026-07-28 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > 1.93 on Google, 2.38 CPI on Meta.
 
 ### <a id="k122"></a>K122 · tek kaynak · güven 0.58
@@ -1367,7 +1367,7 @@ Meta, iş e-posta adreslerini kişisel e-postalara ve LinkedIn gibi platformlara
 
 - Resmi kaynak: [https://www.facebook.com/business/help/341425252616329](https://www.facebook.com/business/help/341425252616329) — “”
 
-- [Meta Ads for B2B: What Actually Works in 2026](https://youtu.be/9lfItyusOmw?t=156) @2:36 · AdConversion · 2025-11-12 · *supports* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Ads for B2B: What Actually Works in 2026](https://youtu.be/9lfItyusOmw?t=156) @2:36 · AdConversion · 2025-11-12 · *destekliyor* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > meta does not do the best in terms of matching business email addresses
 
 ### <a id="k147"></a>K147 · sağlam · güven 0.90
@@ -1380,7 +1380,7 @@ Meta'nın Advantage+ hedef kitle ayarında kontrol bölümündeki ayarlar (konum
 
 - Resmi kaynak: [https://www.facebook.com/business/ads/meta-advantage-plus/audience](https://www.facebook.com/business/ads/meta-advantage-plus/audience) — “Hedef kitle önerileri eklediğinizde sistem, bu profille eşleşen hedef kitlelere öncelik verir.”
 
-- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=1706) @28:26 · Ben Heath · 2026-01-06 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, community_paid
+- [The BEST Facebook Ads Tutorial For Beginners in 2026](https://youtu.be/dAJyqo6wnq4?t=1706) @28:26 · Ben Heath · 2026-01-06 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, ücretli topluluk
   > anything set within the control section is a hard constraint, a hard boundary.
 
 ### <a id="k153"></a>K153 · tek kaynak · güven 0.55
@@ -1388,7 +1388,7 @@ Meta'nın Advantage+ hedef kitle ayarında kontrol bölümündeki ayarlar (konum
 CPI'si çok iyi olan bir kreatif bile trial ya da purchase'a dönüşmeyebilir; bu yüzden tek başına install verimliliği güvenilir bir başarı ölçütü değil.
 
 
-- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=1171) @19:31 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=1171) @19:31 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > Banner mesela çok iyi insul getiriyor. Hiçbir şekilde böyle purchase'a ya da trial'a dönüşmeyen çok iyi CPI'li şeylerim de oldu.
 
 ### <a id="k160"></a>K160 · tek kaynak · güven 0.59
@@ -1396,7 +1396,7 @@ CPI'si çok iyi olan bir kreatif bile trial ya da purchase'a dönüşmeyebilir; 
 Install veya satın alma maliyeti yerine değer optimizasyonu/ROAS (dalgalanmalarda daha istikrar için TROAS) önerilen Meta optimizasyon hedefidir.
 
 
-- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1431) @23:51 · App Leaders by Adapty · 2026-09-11 · *—* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=1431) @23:51 · App Leaders by Adapty · 2026-09-11 · *—* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > you can definitely optimize for return on ad spend, slash VO, whatever you call it, value optimization or return on ad spend.
 
 ### <a id="k172"></a>K172 · sağlam · güven 0.92
@@ -1409,7 +1409,7 @@ Yayınladıktan sonra bir reklam setinin işlenmesi/incelenmesi 24-48 saati bula
 
 - Resmi kaynak: [https://www.facebook.com/business/help/204798856225114](https://www.facebook.com/business/help/204798856225114) — “While ad review is typically completed within 24 hours, it may take longer and ads can be reviewed again, including after they're live.”
 
-- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=1823) @30:23 · Aprendamos Marketing · 2026-01-13 · *supports* · kaynak: genel bilgi
+- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=1823) @30:23 · Aprendamos Marketing · 2026-01-13 · *destekliyor* · kaynak: genel bilgi
   > puede tardar este proceso hasta 24 a 48 horas
 
 ### <a id="k190"></a>K190 · tek kaynak · güven 0.63
@@ -1441,7 +1441,7 @@ Abonelikli bir uygulama için Meta reklamlarına başlamadan önce yükleme baş
 
 - Resmi kaynak: [https://www.facebook.com/business/help/317364032619502](https://www.facebook.com/business/help/317364032619502) — “”
 
-- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=384) @6:24 · App Masters · 2026-10-20 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, affiliate, sponsored
+- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=384) @6:24 · App Masters · 2026-10-20 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, satış ortaklığı, sponsorlu
   > we're going to stick with at least a $3 LTV per install
 
 ### <a id="k199"></a>K199 · sağlam · güven 0.90
@@ -1454,7 +1454,7 @@ Meta panelinde raporlanan ROAS, web sitesi veya üçüncü taraf analizlerde öl
 
 - Resmi kaynak: [https://www.facebook.com/business/news/click-attribution](https://www.facebook.com/business/news/click-attribution) — “This difference in what is attributed as a "click" conversion can lead to inconsistency”
 
-- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=698) @11:38 · Menaf Avcı · 2025-12-28 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=698) @11:38 · Menaf Avcı · 2025-12-28 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > Facebook paneline baktığımızda Ruas 8 iken, belki web sitemizde Ruas 2 veya 3'tür.
 
 ### <a id="k241"></a>K241 · doğrulanamaz · güven 0.54
@@ -1470,7 +1470,7 @@ Meta'da abonelikli mobil uygulamaların ücretsiz deneme veya kredi kartı gerek
 
 - Resmi kaynak: [https://en-gb.facebook.com/business/help/636861880016583](https://en-gb.facebook.com/business/help/636861880016583) — “”
 
-- [How I Scaled An App To $3M/Month With Meta Ads (Step by step)](https://youtu.be/Re7wQSHK8mU?t=1397) @23:17 · Lorenzo Pravatà · 2025-12-17 · *supports* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services
+- [How I Scaled An App To $3M/Month With Meta Ads (Step by step)](https://youtu.be/Re7wQSHK8mU?t=1397) @23:17 · Lorenzo Pravatà · 2025-12-17 · *destekliyor* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor
   > You can, like we can see CPAs also $10, $15. For example, for a free trial or credit card.
 
 ### <a id="k253"></a>K253 · doğrulanamaz · güven 0.53
@@ -1484,7 +1484,7 @@ Abonelikli bir uygulamada install-to-paywall view oranı yaklaşık %80'in altı
 *Kendi verinle test:* Kendi panelinde install→paywall view oranını son 2-4 haftalık organik/ücretli kurulumlar için ölç. Oran %80 altındaysa onboarding'i kısaltıp paywall'u öne çek (A/B), en az 1-2 hafta ve ~1.000 kurulum sonrası paywall view oranını ve deneme başına maliyeti (cost per trial) karşılaştır.
 
 
-- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=320) @5:20 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Adapty Talks · Bölüm 9 — Subscription app’lerde Meta Ads’e ilk $10K’yı](https://youtu.be/or8ciNzg6Cw?t=320) @5:20 · App Leaders Club Türkiye by Adapty · 2026-02-09 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Benim fikrimce bu %80'nin altındaysa bence sıkıntılı. Yani %80'nin altında install to paywall view'niz varsa.
 
 ### <a id="k260"></a>K260 · doğrulanamaz · güven 0.55
@@ -1500,7 +1500,7 @@ Küçük bir Advantage+ uygulama kampanyası testinde yaklaşık 10–25 reklam 
 
 - Resmi kaynak: [https://developers.facebook.com/docs/marketing-api/advantage-campaigns](https://developers.facebook.com/docs/marketing-api/advantage-campaigns) — “ASC/AAC campaigns that have more than 50 ads within the adset and cannot be migrated.”
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=2733) @45:33 · RevenueCat · 2026-09-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=2733) @45:33 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > just deploy like 10 to 25 ads and see how it goes and maybe put 500 dollars
 
 ### <a id="k262"></a>K262 · sağlam · güven 0.90
@@ -1516,7 +1516,7 @@ Performans düşüşünü önlemek için kampanya başına en az 5–10 farklı 
 
 - Resmi kaynak: [https://www.facebook.com/business/help/711378409718185](https://www.facebook.com/business/help/711378409718185) — “upload a high volume of creative assets and refresh them a few times a month to avoid creative fatigue”
 
-- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=1138) @18:58 · Aprendamos Marketing · 2026-01-13 · *qualifies* · kaynak: müşteri verisi
+- [Cómo hacer Publicidad en Facebook 2026 (META ADS para negocios)](https://youtu.be/Dnh1Ki45zKw?t=1138) @18:58 · Aprendamos Marketing · 2026-01-13 · *koşullu* · kaynak: müşteri verisi
   > mínimo entre 5 y 10 diferentes y las tienes que ir rotando cada 2 semanas o cada mes
 
 ### <a id="k269"></a>K269 · sağlam · güven 0.93
@@ -1529,7 +1529,7 @@ Reklam kurulumunda form oluşturma zorunluluğu yalnızca potansiyel müşteri (
 
 - Resmi kaynak: [https://www.facebook.com/business/help/375478503258484?id=735435806665862](https://www.facebook.com/business/help/375478503258484?id=735435806665862) — “Go to Meta Ads Manager, click Create, and choose the Lead Generation objective; create a new form, duplicate an existing one, or edit a saved draft”
 
-- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=1172) @19:32 · Kamil YILDIRIM · 2026-05-31 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=1172) @19:32 · Kamil YILDIRIM · 2026-05-31 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > sadece bazı kampanya türlerinde işte potansiyel müşteri reklamlarında bir form oluşturmanızı beklemeniz gerekiyor.
 
 ### <a id="k279"></a>K279 · tek kaynak · güven 0.62
@@ -1550,7 +1550,7 @@ Ads Manager'da CBO (Kampanya Bütçesi Optimizasyonu) seçeneği artık "Advanta
 
 - Resmi kaynak: [https://developers.facebook.com/docs/marketing-api/bidding/guides/advantage-campaign-budget](https://developers.facebook.com/docs/marketing-api/bidding/guides/advantage-campaign-budget) — “An Advantage campaign budget is a way of optimizing the distribution of a campaign budget across your campaign's ad sets.”
 
-- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=397) @6:37 · Benji · 2026-10-20 · *supports* · kaynak: genel bilgi
+- [5 Steps to Scale Your App With Meta Ads in 2026](https://youtu.be/P3kJIY0-0xQ?t=397) @6:37 · Benji · 2026-10-20 · *destekliyor* · kaynak: genel bilgi
   > In Ads Manager, it's now called Advantage Campaign Budget.
 
 ### <a id="k281"></a>K281 · sağlam · güven 0.91
@@ -1563,7 +1563,7 @@ CBO (Advantage kampanya bütçesi) bütçeyi gerçek zamanlı olarak en iyi fır
 
 - Resmi kaynak: [https://developers.facebook.com/docs/marketing-api/bidding/guides/advantage-campaign-budget](https://developers.facebook.com/docs/marketing-api/bidding/guides/advantage-campaign-budget) — “Facebook automatically and continuously finds the best available opportunities for results across your ad sets”
 
-- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=232) @3:52 · Burak Mermi · 2026-02-16 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course
+- [Meta Andromeda Güncellemesi: Kampanya Yapınız YANLIŞ!](https://youtu.be/cSlGkDYU_tg?t=232) @3:52 · Burak Mermi · 2026-02-16 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor
   > the CBO campaign uses dynamic intelligent distribution.
 
 ### <a id="k288"></a>K288 · sağlam · güven 0.92
@@ -1576,7 +1576,7 @@ Events Manager'daki olay verisi Ads Manager'da her zaman aynen görünmez; hangi
 
 - Resmi kaynak: [https://www.facebook.com/business/help/337196340694086](https://www.facebook.com/business/help/337196340694086) — “Ads Manager and Ads Reporting only show events that are attributed to a Meta user who viewed your ad, excluding duplicate events.”
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=2187) @36:27 · RevenueCat · 2026-09-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=2187) @36:27 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > the data that is there doesn't mean that it's reflected on the ads manager
 
 ### <a id="k308"></a>K308 · tek kaynak · güven 0.60
@@ -1584,7 +1584,7 @@ Events Manager'daki olay verisi Ads Manager'da her zaman aynen görünmez; hangi
 Facebook SDK ile SKAN kullanılıyorsa Start Trial olayının dönüşüm değeri önceliği Düşük veya Orta, Purchase olayınınki ise Yüksek olarak ayarlanmalıdır.
 
 
-- [Launching your first Start Trial mobile app campaign on Meta Ads with ](https://youtu.be/x2tKbtJoSrM?t=1006) @16:46 · First Try · 2026-02-03 · *—* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Launching your first Start Trial mobile app campaign on Meta Ads with ](https://youtu.be/x2tKbtJoSrM?t=1006) @16:46 · First Try · 2026-02-03 · *—* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Select the Start Trial Event as Low or Medium.
 
 ### <a id="k309"></a>K309 · tek kaynak · güven 0.63
@@ -1605,7 +1605,7 @@ Meta'nın tahmini yaşam boyu değer (PLTV) optimizasyonu mevcut bir Conversions
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value) — “You have a minimum of 100 conversion events per week attributed to Meta for each of the last 4 weeks.”
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1639) @27:19 · RevenueCat · 2026-09-12 · *supports* · kaynak: platform dokümanı · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1639) @27:19 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: platform dokümanı · çıkar çatışması: ajans hizmeti satıyor
   > you need to have at least more than 100 conversions per week this could be the issue for new applications
 
 ### <a id="k346"></a>K346 · sağlam · güven 0.91
@@ -1618,7 +1618,7 @@ Andromeda güncellemesi reklam dağıtımının retrieval (aday seçme) aşamas�
 
 - Resmi kaynak: [https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/](https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/) — “Meta Andromeda is a personalized ads retrieval engine that leverages the NVIDIA Grace Hopper Superchip”
 
-- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=152) @2:32 · Mark Builds Brands · 2026-05-11 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, community_paid
+- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=152) @2:32 · Mark Builds Brands · 2026-05-11 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ücretli topluluk
   > Andromeda was an update to the sorting process of the retrieval steps specifically
 
 ### <a id="k347"></a>K347 · tek kaynak · güven 0.55
@@ -1626,7 +1626,7 @@ Andromeda güncellemesi reklam dağıtımının retrieval (aday seçme) aşamas�
 İçerik üreticisi bütçeyi kampanya seviyesi yerine reklam seti seviyesinde belirlemeyi tercih ediyor ve Andromeda güncellemesinden sonra reklam seti bütçesiyle daha iyi sonuç gördüğünü söylüyor.
 
 
-- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=781) @13:01 · Nida Yıldırım · 2026-04-29 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [0’dan İleri Seviyeye Meta Reklam Eğitimi (Gerçek Stratejilerle)](https://youtu.be/fevjPnlXjqM?t=781) @13:01 · Nida Yıldırım · 2026-04-29 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > ben reklam seti bütçesinde çok daha iyi sonuçlar alındığını görüyorum
 
 ### <a id="k348"></a>K348 · şüpheli · güven 0.05
@@ -1639,7 +1639,7 @@ Andromeda güncellemesi sonrası Meta reklam getirme sisteminde yaklaşık %6 iy
 
 - Resmi kaynak: [https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/](https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/) — “has achieved +6% recall improvement to the retrieval system”
 
-- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=236) @3:56 · Menaf Avcı · 2025-12-28 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Reklamları 2026: Algoritma, Kampanya Yapısı ve Kreatif Dönemi](https://youtu.be/PjvKJQfGg9Q?t=236) @3:56 · Menaf Avcı · 2025-12-28 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > %6 bir iyileşme görüyoruz burada. 100 kat daha az bekleme süresi.
 
 ### <a id="k380"></a>K380 · tek kaynak · güven 0.62
@@ -1660,7 +1660,7 @@ Meta, optimize ettiğiniz olayı (event) gerçekleştirmesi olası kişilere gö
 
 - Resmi kaynak: [https://developers.facebook.com/docs/app-ads/optimizing-your-app-ad](https://developers.facebook.com/docs/app-ads/optimizing-your-app-ad) — “display mobile app install ads to people likely to take a specific action in your app”
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1335) @22:15 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: platform dokümanı
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=1335) @22:15 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: platform dokümanı
   > hangi event için optimize ediyorsak Meta'da biz onu getiriyor
 
 ### <a id="k388"></a>K388 · sağlam · güven 0.91
@@ -1673,7 +1673,7 @@ Meta reklam dağıtımı dört aşamada işler: retrieval (aday seçimi), hafif 
 
 - Resmi kaynak: [https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/](https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/) — “Retrieval is the first step in our multi-stage ads recommendation system.”
 
-- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=75) @1:15 · Mark Builds Brands · 2026-05-11 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, community_paid
+- [the entire meta ads algorithm explained in 21 mins](https://youtu.be/JMw6SmRdYQY?t=75) @1:15 · Mark Builds Brands · 2026-05-11 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, ücretli topluluk
   > First, you have retrieval. Second is light ranking. Third is heavy ranking. And the final piece is the auction.
 
 ### <a id="k410"></a>K410 · tek kaynak · güven 0.63
@@ -1689,7 +1689,7 @@ Ucuz deneme başlatmaya odaklanan tıklama odaklı Meta reklamları deneme-ödem
 Video sahibi, bir müşterisinin iOS uygulamasının yaklaşık 500 dolarlık Meta reklam harcamasıyla yaklaşık 30 günde 1.200 ilk kez indirme aldığını bildiriyor.
 
 
-- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=0) @0:00 · Gui Costa · 2026-07-25 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=0) @0:00 · Gui Costa · 2026-07-25 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > how I got 1,200 first-time downloads for this client of mine in about 30 days
 
 ### <a id="k436"></a>K436 · doğrulanamaz · güven 0.55
@@ -1697,7 +1697,7 @@ Video sahibi, bir müşterisinin iOS uygulamasının yaklaşık 500 dolarlık Me
 İddia: B2B SaaS şirketleri Meta'yı birincil kanal olarak kullanıp ayda 200.000$'dan fazla harcayarak ayda 2M$'a ulaşıyor. Hiçbir vaka, ekran görüntüsü veya zaman aralığı gösterilmedi.
 
 
-- [How This B2B SaaS Scaled to $2M/Month Using Meta Ads (Full Breakdown)](https://youtu.be/feR7eaNNq8g?t=0) @0:00 · Lorenzo Pravatà · 2026-03-26 · *—* · kaynak: müşteri verisi · çıkar çatışması: sells_agency_services
+- [How This B2B SaaS Scaled to $2M/Month Using Meta Ads (Full Breakdown)](https://youtu.be/feR7eaNNq8g?t=0) @0:00 · Lorenzo Pravatà · 2026-03-26 · *—* · kaynak: müşteri verisi · çıkar çatışması: ajans hizmeti satıyor
   > These B2B SaaS scale to $2 million a month using Meta as their primary channel
 
 ### <a id="k448"></a>K448 · tek kaynak · güven 0.60
@@ -1705,7 +1705,7 @@ Video sahibi, bir müşterisinin iOS uygulamasının yaklaşık 500 dolarlık Me
 Yüklemeye değil ücretsiz deneme başlangıcına optimize etmek yükleme maliyetini yaklaşık iki katına çıkardı, ama ücretsiz deneme kampanyası toplamda daha kârlı çıktı.
 
 
-- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=1015) @16:55 · Steven Cravotta · 2026-07-30 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: sells_course, affiliate
+- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=1015) @16:55 · Steven Cravotta · 2026-07-30 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: kurs satıyor, satış ortaklığı
   > the cost per install was double on this free trial optimized campaign, but ultimately it ended up being more profitable for us
 
 ### <a id="k450"></a>K450 · tek kaynak · güven 0.55
@@ -1713,7 +1713,7 @@ Yüklemeye değil ücretsiz deneme başlangıcına optimize etmek yükleme maliy
 Tek bir deneme yerine birden fazla deneme seçeneği sunmak (örn. 7 gün ücretsiz ya da düşük fiyatlı bir aylık deneme) deneme başlatmaları artırdı.
 
 
-- [How I Scaled An App To $4M/Year With Meta Ads (Step by step)](https://youtu.be/2WIiNEdsI60?t=1474) @24:34 · Aazar Shad · 2026-04-02 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Scaled An App To $4M/Year With Meta Ads (Step by step)](https://youtu.be/2WIiNEdsI60?t=1474) @24:34 · Aazar Shad · 2026-04-02 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > instead of only giving the option of seven days, try for free, we give the option of you can try for free seven days
 
 ### <a id="k452"></a>K452 · doğrulanamaz · güven 0.55
@@ -1729,7 +1729,7 @@ Abonelikli bir uygulamada Meta reklamlarını ölçeklemeden önce denemeden üc
 
 - Resmi kaynak: [https://developers.facebook.com/docs/app-ads/advantage-app-campaigns](https://developers.facebook.com/docs/app-ads/advantage-app-campaigns) — “”
 
-- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=233) @3:53 · App Masters · 2026-10-20 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services, sells_course, affiliate, sponsored
+- [Before You Spend $1 on Meta Ads, Watch This](https://youtu.be/2jH64ziB7uM?t=233) @3:53 · App Masters · 2026-10-20 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor, satış ortaklığı, sponsorlu
   > the trial to paid should yield over 30%.
 
 ### <a id="k457"></a>K457 · sağlam · güven 0.93
@@ -1742,7 +1742,7 @@ SDK veya MMP bağlandığında Meta uygulama tanıtımı reklam seti, onboarding
 
 - Resmi kaynak: [https://developers.facebook.com/docs/app-ads/optimizing-your-app-ad](https://developers.facebook.com/docs/app-ads/optimizing-your-app-ad) — “Set `custom_event_type` in the promoted object to the app event you want to optimize.”
 
-- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=1169) @19:29 · Steven Cravotta · 2026-07-30 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_course, affiliate
+- [the meta ads strategy that made my app $283,273](https://youtu.be/04l69IvsW98?t=1169) @19:29 · Steven Cravotta · 2026-07-30 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: kurs satıyor, satış ortaklığı
   > You can choose onboarding completed, free trial started, customer purchased
 
 ### <a id="k459"></a>K459 · sağlam · güven 0.93
@@ -1755,7 +1755,7 @@ Meta'nın tahmini yaşam boyu değer (pLTV) optimizasyonu Purchase, Subscribe, S
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value) — “The following events support pLTV value optimization:”
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1487) @24:47 · RevenueCat · 2026-09-12 · *supports* · kaynak: platform dokümanı · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1487) @24:47 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: platform dokümanı · çıkar çatışması: ajans hizmeti satıyor
   > supports a set of standard events the first one is purchase the second is subscribe the third one is star trial complete registration and add payment info
 
 ### <a id="k462"></a>K462 · şüpheli · güven 0.08
@@ -1771,7 +1771,7 @@ Tahmini yaşam boyu değer (pLTV) optimizasyonu, aynı olay kimliği hem SDK'dan
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value) — “pLTV does not support app events at this time.”
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1487) @24:47 · RevenueCat · 2026-09-12 · *supports* · kaynak: platform dokümanı · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1487) @24:47 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: platform dokümanı · çıkar çatışması: ajans hizmeti satıyor
   > the cool thing about this new pltb logic is that it survives the att on ios
 
 ### <a id="k465"></a>K465 · sağlam · güven 0.91
@@ -1784,7 +1784,7 @@ Android'de Meta uygulama kampanyaları kurulumları GAID ve Install Referrer ile
 
 - Resmi kaynak: [https://developers.facebook.com/docs/app-ads/meta-install-referrer](https://developers.facebook.com/docs/app-ads/meta-install-referrer) — “The Meta install referrer provides last touch info for the install, including ad campaign metadata”
 
-- [Launching your first Start Trial mobile app campaign on Meta Ads with ](https://youtu.be/x2tKbtJoSrM?t=388) @6:28 · First Try · 2026-02-03 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Launching your first Start Trial mobile app campaign on Meta Ads with ](https://youtu.be/x2tKbtJoSrM?t=388) @6:28 · First Try · 2026-02-03 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Like they use GAID and another thing, which is called InstallRiffer.
 
 ### <a id="k480"></a>K480 · tek kaynak · güven 0.60
@@ -1792,7 +1792,7 @@ Android'de Meta uygulama kampanyaları kurulumları GAID ve Install Referrer ile
 Küçük bütçede tıklama maliyeti (CPC), CPI'dan daha yararlı bir yön gösterici sinyaldir; örnekte bir kreatifin CPC'si yaklaşık 0,11 dolar, diğerininki yaklaşık 0,25 dolardı.
 
 
-- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=534) @8:54 · Gui Costa · 2026-07-25 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services
+- [How I Got 1.2K App Installs for This iOS App With $500](https://youtu.be/81oWUwreWtk?t=534) @8:54 · Gui Costa · 2026-07-25 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor
   > Cost per click, 11 cents per click, right?
 
 ### <a id="k486"></a>K486 · sağlam · güven 0.93
@@ -1805,7 +1805,7 @@ Meta'nın Advantage+ Creative özelliği, uygulama kampanyalarında statik görs
 
 - Resmi kaynak: [https://developers.facebook.com/docs/marketing-api/creative/advantage-creative/get-started](https://developers.facebook.com/docs/marketing-api/creative/advantage-creative/get-started) — “By default, 4:5 and 9:16 placements are enabled.”
 
-- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=624) @10:24 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *supports* · kaynak: platform dokümanı
+- [Mobil Uygulamalarda Meta Ads: Sinyal Optimizasyonu, İleri Seviye UA Ta](https://youtu.be/V6cRfcRarAM?t=624) @10:24 · App Leaders Club Türkiye by Adapty · 2026-08-27 · *destekliyor* · kaynak: platform dokümanı
   > 9-16 video şeklinde çevirebiliyor.
 
 ### <a id="k492"></a>K492 · sağlam · güven 0.89
@@ -1818,7 +1818,7 @@ Kanal/reklam seti başına minimum günlük bütçe, optimizasyon olayı başın
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/games/acquire/click-to-play-ads/budget](https://developers.facebook.com/documentation/games/acquire/click-to-play-ads/budget) — “needs approximately 50 optimization events per week”
 
-- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=2214) @36:54 · App Leaders by Adapty · 2026-09-11 · *qualifies* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Scaling Subscription Apps Past $100K MRR: Advanced UA Tactics for Subs](https://youtu.be/QdIGi-tKr28?t=2214) @36:54 · App Leaders by Adapty · 2026-09-11 · *koşullu* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > you need to multiply that with 10 every day.
 
 ### <a id="k500"></a>K500 · tek kaynak · güven 0.54
@@ -1826,7 +1826,7 @@ Kanal/reklam seti başına minimum günlük bütçe, optimizasyon olayı başın
 Meta'da geniş hedefleme B2B için yalnızca ABM yapmıyorsanız ve toplam pazarınız büyükse (küçük işletme veya alt orta pazar) işe yarayabilir.
 
 
-- [Meta Ads for B2B: What Actually Works in 2026](https://youtu.be/9lfItyusOmw?t=699) @11:39 · AdConversion · 2025-11-12 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: sells_agency_services, sells_course
+- [Meta Ads for B2B: What Actually Works in 2026](https://youtu.be/9lfItyusOmw?t=699) @11:39 · AdConversion · 2025-11-12 · *—* · kaynak: kendi tecrübesi · çıkar çatışması: ajans hizmeti satıyor, kurs satıyor
   > If you have a large total addressable market, I'm talking about you're going after small business or lower mid-market
 
 ### <a id="k523"></a>K523 · tek kaynak · güven 0.62
@@ -1858,7 +1858,7 @@ Meta'nın tahmini yaşam boyu değer (pLTV) optimizasyonu, olayların Conversion
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value](https://developers.facebook.com/documentation/ads-commerce/conversions-api/guides/predicted-lifetime-value) — “Sending through the Conversions API is required.”
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1487) @24:47 · RevenueCat · 2026-09-12 · *qualifies* · kaynak: platform dokümanı · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=1487) @24:47 · RevenueCat · 2026-09-12 · *koşullu* · kaynak: platform dokümanı · çıkar çatışması: ajans hizmeti satıyor
   > with the app plus sdk is not uh going to work completely it needs to work through the conversions api
 
 ### <a id="k532"></a>K532 · doğrulanamaz · güven 0.56
@@ -1874,7 +1874,7 @@ RevenueCat'in Meta (Conversions API) ile doğrudan entegrasyonu 2026 başında b
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/ads-commerce/conversions-api/app-events.md](https://developers.facebook.com/documentation/ads-commerce/conversions-api/app-events.md) — “To implement a partner platform integration, please follow the instructions”
 
-- [Launching your first Start Trial mobile app campaign on Meta Ads with ](https://youtu.be/x2tKbtJoSrM?t=155) @2:35 · First Try · 2026-02-03 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [Launching your first Start Trial mobile app campaign on Meta Ads with ](https://youtu.be/x2tKbtJoSrM?t=155) @2:35 · First Try · 2026-02-03 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > I recommend you not to send the events to MetaAds from RevenueCat.
 
 ### <a id="k537"></a>K537 · sağlam · güven 0.92
@@ -1887,7 +1887,7 @@ Meta reklamları Facebook, Instagram, Threads ve Audience Network'te yayınlanab
 
 - Resmi kaynak: [https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/placement-targeting](https://developers.facebook.com/documentation/ads-commerce/marketing-api/audiences/reference/placement-targeting) — “To use the WhatsApp Status placement, you must select the Instagram story placement as well.”
 
-- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=2891) @48:11 · RevenueCat · 2026-09-12 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [How to scale Meta ads for subscription apps [Shipaton 26]](https://youtu.be/IAiTKh-FtF0?t=2891) @48:11 · RevenueCat · 2026-09-12 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > actually now i think they're releasing ads into whatsapp status
 
 ### <a id="k560"></a>K560 · sağlam · güven 0.93
@@ -1900,5 +1900,5 @@ Advantage+ kampanya bütçesi açıldığında Meta bütçeyi reklam setleri ara
 
 - Resmi kaynak: [https://developers.facebook.com/docs/marketing-api/bidding/guides/advantage-campaign-budget](https://developers.facebook.com/docs/marketing-api/bidding/guides/advantage-campaign-budget) — “If you disable the Advantage campaign budget, you should provide budgets for all ad sets under the campaign.”
 
-- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=1251) @20:51 · Kamil YILDIRIM · 2026-05-31 · *supports* · kaynak: genel bilgi · çıkar çatışması: sells_agency_services
+- [İnstagram Reklam Verme 2026 - Meta Business Kurulumu ve İnstagrama Rek](https://youtu.be/quwU3ZjWclw?t=1251) @20:51 · Kamil YILDIRIM · 2026-05-31 · *destekliyor* · kaynak: genel bilgi · çıkar çatışması: ajans hizmeti satıyor
   > Ama ben her reklam setime kendim bir bütçe tanımlamak istiyorum diyorsanız bu seçenekleri kapatmanız gerekir

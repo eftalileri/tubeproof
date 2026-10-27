@@ -1,0 +1,10 @@
+# tubeproof topic pack (public), exemplar mode: how a channel's own latest videos are built.
+name: 2026-10-3blue1brown-exemplar
+mode: exemplar
+report_lang: tr
+topic: 3Blue1Brown kanalının son uzun videoları izleyiciyi nasıl tutuyor ve ona nasıl bir şey öğretiyor — başlık
+  ve kapak, ilk 3/10/30 saniye, kapak sözünün karşılanma anı, omurga ve yeniden kancalar, tempo (kesme ve konuşma
+  hızı), senaryo dili, fikirlerin hangi sırayla ve hangi araçla (benzetme, hikâye, örnek, görsel) öğretildiği
+channels:
+- id: UCYO_jab_esuFRV4b17AJtAw
+  latest: 12
