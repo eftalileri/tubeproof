@@ -30,7 +30,7 @@ from tubeproof import http
 from tubeproof.config import settings
 from tubeproof.i18n import base_lang
 from tubeproof.models import Transcript, TranscriptSegment
-from tubeproof.sources.youtube.metadata import ydl_opts
+from tubeproof.sources.youtube.metadata import extract, ydl_opts
 
 
 class TranscriptUnavailable(Exception):
@@ -46,6 +46,11 @@ _model_lock = threading.Lock()
 def _is_block(e: Exception) -> bool:
     text = f"{type(e).__name__} {e}"
     return any(k in text for k in ("IpBlocked", "RequestBlocked", "429", "Too Many Requests"))
+
+
+# Written into a bundle's transcript_error when captions were skipped for the rate-limit, so a later
+# stage knows a retry may succeed (a video without captions is not retried).
+CAPTIONS_DEFERRED = "captions deferred"
 
 
 def captions_blocked() -> bool:
@@ -78,9 +83,10 @@ def _via_ytdlp(video_id: str, prefer_lang: str | None) -> Transcript:
     with tempfile.TemporaryDirectory() as tmp:
         opts = ydl_opts(writesubtitles=True, writeautomaticsub=True, subtitleslangs=langs,
                         subtitlesformat="json3", outtmpl=str(Path(tmp) / "%(id)s.%(ext)s"))
-        http.throttle(http.YOUTUBE_HOME)
+        info = extract(video_id)
+        http.throttle(http.YOUTUBE_HOME)  # the subtitle file is one more youtube.com request
         with yt_dlp.YoutubeDL(opts) as ydl:
-            ydl.download([http.watch_url(video_id)])
+            ydl.process_ie_result(info, download=True)
         files = sorted(Path(tmp).glob(f"{video_id}.*.json3"))
         if not files:
             raise TranscriptUnavailable("yt-dlp found no original-language subtitles")
@@ -131,7 +137,7 @@ def download_media(video_id: str, dest_dir: str | Path, kind: str = "audio") -> 
                     merge_output_format="mp4", outtmpl=str(dest / f"{video_id}.%(ext)s"),
                     socket_timeout=30, http_chunk_size=10 * 1024 * 1024)
     with yt_dlp.YoutubeDL(opts) as ydl:
-        ydl.download([http.watch_url(video_id)])
+        ydl.process_ie_result(extract(video_id), download=True)
     return next(p for p in dest.glob(f"{video_id}.*") if p.suffix not in (".part", ".ytdl"))
 
 
@@ -244,14 +250,15 @@ def fetch_transcript(video_id: str, prefer_lang: str | None = None,
                      allow_whisper: bool = False) -> Transcript:
     global _blocked_until
     errors = []
-    chain = []
-    if not captions_blocked():
-        chain = [lambda: _via_transcript_api(video_id, prefer_lang), lambda: _via_ytdlp(video_id, prefer_lang)]
-    else:
-        errors.append("captions deferred: YouTube rate-limit cooldown")
+    # (is a caption step, step): once one caption step hits the rate-limit, the next one would too.
+    chain = [(True, lambda: _via_transcript_api(video_id, prefer_lang)), (True, lambda: _via_ytdlp(video_id, prefer_lang))]
     if allow_whisper:
-        chain.append(lambda: _via_whisper(video_id, prefer_lang))
-    for step in chain:
+        chain.append((False, lambda: _via_whisper(video_id, prefer_lang)))
+    for is_caption, step in chain:
+        if is_caption and captions_blocked():
+            if CAPTIONS_DEFERRED not in errors:
+                errors.append(CAPTIONS_DEFERRED)
+            continue
         try:
             return step()
         except Exception as e:  # each backend fails differently; keep trying

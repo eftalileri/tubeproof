@@ -21,4 +21,6 @@ Working state for the next session. Decisions and their reasons: `ARCHITECTURE.m
 
 - The relevance gate uses the research's question; a public pack re-run without a private context selects
   more broadly.
-- The YouTube caption service rate-limits home IPs (HTTP 429); Whisper covers it, audio downloads are unaffected.
+- The YouTube caption service rate-limits home IPs (HTTP 429); Whisper covers it.
+- Too many watch-page loads trip YouTube's IP bot check (`/watch` answers 429; search and browse keep working). Runs stop
+  loudly and resume after it lifts; tubeproof never works around it (no cookies, no client spoofing).

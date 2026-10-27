@@ -77,7 +77,9 @@ def write_manifest(run_dir: Path, manifest: dict) -> None:
 
 # Exemplar analysis reads picture + transcript only. Comments (~22 s) and description links (~6 s) were
 # 28 of ~30 s per bundle on MrBeast videos and fed nothing (2026-10-27).
-EXEMPLAR_BUNDLE = {"comments_popular": 0, "comments_recent": 0, "fetch_links": False}
+# Exemplar bundles: no comments, links or paid-promotion check (each one is another YouTube request
+# per video, and exemplar mode reads none of them).
+EXEMPLAR_BUNDLE = {"comments_popular": 0, "comments_recent": 0, "fetch_links": False, "paid_promotion": False}
 
 
 def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] | None = None,
@@ -85,7 +87,7 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
             n_playlists: int = 5, playlist_videos: int = 5, per_channel: int = 2,
             market_lang: str | None = None, market_share: float = 0.25, plan_only: bool = False,
             min_views: int = 200, min_views_market: int = 100, on_bundle=None,
-            comments_popular: int = 150, comments_recent: int = 60, fetch_links: bool = True,
+            comments_popular: int = 150, comments_recent: int = 60, fetch_links: bool = True, paid_promotion: bool = True,
             allow_whisper: bool = False, pack_name: str | None = None, run_id: str | None = None,
             max_duration_s: int = 90 * 60, llm=None, question: str | None = None,
             relevance_notes: str | None = None, channels: list[dict] | None = None,
@@ -108,9 +110,10 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
                   queries=[q.__dict__ for q in queries])
     store.upsert_run(run_id, topic, params, "discover")
     cutoff = date.today() - timedelta(days=round(months * DAYS_PER_MONTH))
+    fill = dict(comments_popular=comments_popular, comments_recent=comments_recent, fetch_links=fetch_links,
+                allow_whisper=allow_whisper, paid_promotion=paid_promotion)
     if prev and prev.get("planned"):
-        return _harvest_plan(prev, run_dir, store, params, comments_popular, comments_recent, fetch_links,
-                             allow_whisper, log, on_bundle)
+        return _harvest_plan(prev, run_dir, store, params, fill, log, on_bundle)
 
     if channels:
         # Exemplar selection: a channel's own latest long-form uploads, no search and no gate.
@@ -275,7 +278,7 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
         m = metas[vid]
         b = VideoBundle(meta=m, rank_score=scored.get(vid), playlist_ids=in_playlists.get(vid, []),
                         found_by_queries=queries_by_id.get(vid, []))
-        _fill_bundle(b, store, comments_popular, comments_recent, fetch_links, allow_whisper)
+        _fill_bundle(b, store, **fill)
         out.write_text(b.model_dump_json(indent=1))
         spam = sum(1 for c in b.comments if c.spam_reasons)
         paid = sum(1 for l in b.links if l.is_paid)
@@ -358,8 +361,7 @@ def repair(run_id: str, *, allow_whisper: bool = True, log=print) -> dict:
     return {"fixed": fixed, "remaining": len(files) - fixed}
 
 
-def _harvest_plan(plan: dict, run_dir: Path, store: Store, params: dict, comments_popular: int,
-                  comments_recent: int, fetch_links: bool, allow_whisper: bool, log=print,
+def _harvest_plan(plan: dict, run_dir: Path, store: Store, params: dict, fill: dict, log=print,
                   on_bundle=None) -> Path:
     """Harvest exactly the videos of a saved plan (no new search, no re-selection)."""
     topic = plan["topic"]
@@ -372,7 +374,7 @@ def _harvest_plan(plan: dict, run_dir: Path, store: Store, params: dict, comment
         m = _cached(store, "meta", v["id"], lambda: yt_meta.video_meta(v["id"]), VideoMeta)
         b = VideoBundle(meta=m, rank_score=v.get("score"), playlist_ids=v.get("playlists", []),
                         found_by_queries=v.get("found_by_queries", []))
-        _fill_bundle(b, store, comments_popular, comments_recent, fetch_links, allow_whisper)
+        _fill_bundle(b, store, **fill)
         out.write_text(b.model_dump_json(indent=1))
         if on_bundle:
             on_bundle(b)
@@ -386,12 +388,12 @@ def _harvest_plan(plan: dict, run_dir: Path, store: Store, params: dict, comment
     return run_dir
 
 
-def _fill_bundle(b: VideoBundle, store: Store, comments_popular: int, comments_recent: int,
-                 fetch_links: bool, allow_whisper: bool) -> None:
+def _fill_bundle(b: VideoBundle, store: Store, *, comments_popular: int, comments_recent: int,
+                 fetch_links: bool, allow_whisper: bool, paid_promotion: bool) -> None:
     """The one place a bundle is filled (paid-promotion flag, transcript, comments, links), for both
     the direct harvest and the saved-plan harvest."""
     vid, m = b.meta.id, b.meta
-    if m.has_paid_promotion is None:
+    if paid_promotion and m.has_paid_promotion is None:
         m.has_paid_promotion = yt_meta.has_paid_promotion(vid)
     try:
         b.transcript = _cached(store, "transcript", vid,

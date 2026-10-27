@@ -28,8 +28,8 @@ from tubeproof.core.verify_stage import run_verify
 from tubeproof.llm.base import LLM
 from tubeproof.models import VideoBundle
 from tubeproof.sources.youtube.metadata import bot_checked
-from tubeproof.sources.youtube.transcript import (captions_blocked, download_media, fetch_transcript, split_audio,
-                                                transcribe_audio)
+from tubeproof.sources.youtube.transcript import (CAPTIONS_DEFERRED, captions_blocked, download_media,
+                                                fetch_transcript, split_audio, transcribe_audio)
 from tubeproof.store.db import Store
 
 
@@ -111,7 +111,10 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
             t = time.time()
             try:
                 tr = None
-                if not captions_blocked():  # block may have lifted: captions are instant
+                b = VideoBundle.model_validate_json(bundle_path(vid).read_text())
+                # Retry captions only where the harvest deferred them for a block that has since lifted;
+                # a video that simply has none would cost one more watch-page load for nothing.
+                if CAPTIONS_DEFERRED in (b.transcript_error or "") and not captions_blocked():
                     try:
                         tr = fetch_transcript(vid, lang, allow_whisper=False)
                     except Exception:
@@ -131,7 +134,6 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                     stats["whisper_failed"] += 1
                 log(f"   ✗ whisper {vid}: {str(e)[:140]}")
                 continue
-            b = VideoBundle.model_validate_json(bundle_path(vid).read_text())
             b.transcript, b.transcript_error = tr, None
             bundle_path(vid).write_text(b.model_dump_json(indent=1))
             store.put("transcript", vid, tr.model_dump(mode="json"))

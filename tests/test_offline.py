@@ -165,3 +165,46 @@ def test_ground_drops_unquoted_concepts():
     g = ground(t, wins, field="concepts")
     assert [c.name for c in t.concepts] == ["DI"] and t.concepts[0].seg_ids == ["s1"]
     assert g["dropped"][0]["id"] == "made up"
+
+
+def test_one_extraction_per_video(monkeypatch):
+    """The watch page is loaded once per video: meta, download and subtitles reuse the extraction."""
+    from tubeproof.sources.youtube import metadata
+
+    calls = []
+
+    class FakeYDL:
+        def __init__(self, opts):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def extract_info(self, url, download=False):
+            calls.append(url)
+            return {"id": "abc", "title": "t", "formats": [{"format_id": "18"}]}
+
+    monkeypatch.setattr(metadata.yt_dlp, "YoutubeDL", FakeYDL)
+    monkeypatch.setattr(metadata.http, "throttle", lambda *a: None)
+    metadata._info.clear()
+    assert metadata.video_meta("abc").title == "t"
+    info = metadata.extract("abc")
+    info["formats"].clear()  # a download mutates its copy, never the cached extraction
+    assert metadata.extract("abc")["formats"] and len(calls) == 1
+
+
+def test_caption_chain_stops_at_rate_limit(monkeypatch):
+    from tubeproof.sources.youtube import transcript as tr
+
+    later = []
+    monkeypatch.setattr(tr, "_blocked_until", 0.0)
+    monkeypatch.setattr(tr, "_via_transcript_api", lambda *a: (_ for _ in ()).throw(RuntimeError("429 Too Many Requests")))
+    monkeypatch.setattr(tr, "_via_ytdlp", lambda *a: later.append("ytdlp"))
+    try:
+        tr.fetch_transcript("abc", "en")
+    except tr.TranscriptUnavailable as e:
+        assert tr.CAPTIONS_DEFERRED in str(e)
+    assert later == [] and tr.captions_blocked()

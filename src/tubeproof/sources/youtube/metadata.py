@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import copy
 import re
+import threading
+import time
 from datetime import datetime
 
 import yt_dlp
@@ -34,10 +37,29 @@ def bot_checked(e: BaseException) -> bool:
     return BOT_CHECK in str(e)
 
 
+# The last full extraction per video, so the download and the subtitle fetch of the same run reuse it
+# instead of loading the watch page again: one watch-page load per video, not three (2026-10-27).
+# Stream URLs in it expire after ~6 h; INFO_TTL_S keeps well inside that.
+INFO_TTL_S = 3600
+_info: dict[str, tuple[float, dict]] = {}
+_info_lock = threading.Lock()
+
+
+def extract(video_id: str) -> dict:
+    """Full yt-dlp extraction of one video (a private copy; reused for INFO_TTL_S)."""
+    with _info_lock:
+        hit = _info.get(video_id)
+    if not hit or time.time() - hit[0] > INFO_TTL_S:
+        http.throttle(http.YOUTUBE_HOME)
+        with yt_dlp.YoutubeDL(ydl_opts()) as ydl:
+            hit = (time.time(), ydl.extract_info(http.watch_url(video_id), download=False))
+        with _info_lock:
+            _info[video_id] = hit
+    return copy.deepcopy(hit[1])  # yt-dlp mutates an info dict while it downloads from it
+
+
 def video_meta(video_id: str) -> VideoMeta:
-    http.throttle(http.YOUTUBE_HOME)
-    with yt_dlp.YoutubeDL(ydl_opts()) as ydl:
-        info = ydl.extract_info(http.watch_url(video_id), download=False)
+    info = extract(video_id)
     upload = info.get("upload_date")
     return VideoMeta(
         id=info["id"],

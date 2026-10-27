@@ -309,7 +309,9 @@ tubeproof/
 | Synthesis (Opus), ~300 KB digest | ~$1.7 per report |
 | Plan-bundle harvest, exemplar (no comments/links) | ~3 s per video instead of ~30 s (comments 22 s, links 6 s skipped) |
 | Whisper backlog, 2026-10-27 | RTF 0.076 (mlx turbo, 1.5×); 1366 min of audio ≈ 104 min of GPU |
-| Exemplar, 43-min video at 360p picture-only | 118 MB, ffmpeg cut detection 38 s, 25 cuts/min; frames + thumbnail + Haiku analysis ≈ $0.005–0.02 per video |
+| Exemplar, 43-min video at 360p picture | 118 MB, ffmpeg cut detection 38 s, 25 cuts/min; frames + thumbnail + Haiku analysis ≈ $0.005–0.02 per video |
+| YouTube watch-page loads per exemplar video | was 3–4 (meta, paid-promotion check, yt-dlp subtitles, picture download, audio download); now 1: `metadata.extract` is reused by download and subtitles, one download carries picture + original audio, no paid-promotion check in exemplar mode, captions retried only where they were deferred. ~45 videos at the old rate tripped YouTube's IP bot check (`/watch` → 429 "sorry" page; search, browse and thumbnails kept working), 2026-10-27 |
+| Visual changes (scene score > 0.02, merged within 1 s) | Code Aesthetic: 0 cuts/min but 2.2–10.9 changes/min; Kurzgesagt: 10–18 changes/min, ~3 s apart. Checked by eye on frames before/after |
 
 ## 13. CLI
 
