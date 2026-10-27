@@ -14,19 +14,21 @@ from __future__ import annotations
 import queue
 import threading
 import time
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from tubeproof.config import layout, settings
 from tubeproof.core import exemplar
 from tubeproof.i18n import base_lang, lang_of
-from tubeproof.core.harvest import EXEMPLAR_BUNDLE, harvest, read_manifest
+from tubeproof.core.harvest import EXEMPLAR_BUNDLE, harvest, read_manifest, set_transcript
 from tubeproof.core.map_stage import is_mapped, map_video, save_extraction, summary
 from tubeproof.core.reduce_stage import run_reduce
 from tubeproof.core.synth_stage import write_reports
 from tubeproof.core.verify_stage import run_verify
 from tubeproof.llm.base import LLM
 from tubeproof.models import VideoBundle
+from tubeproof.research import mode_of
 from tubeproof.sources.youtube.metadata import bot_checked
 from tubeproof.sources.youtube.transcript import (CAPTIONS_DEFERRED, captions_blocked, download_media,
                                                 fetch_transcript, split_audio, transcribe_audio)
@@ -34,12 +36,17 @@ from tubeproof.store.db import Store
 
 
 MIN_COVERAGE = 0.8
+# Per-video failure counters; any of them in exemplar mode stops the report (no partial sample).
+FAILURES = ("audio_failed", "exemplar_failed", "whisper_failed", "map_failed")
 
 
-def coverage(tr, duration_s: int | None) -> float:
-    """Share of the video the transcript reaches (1.0 when the duration is unknown)."""
-    if not duration_s or not tr.segments:
-        return 1.0 if not duration_s else 0.0
+def coverage(tr, duration_s: int | None) -> float | None:
+    """Share of the video the transcript reaches; None when the metadata has no duration (the
+    check cannot run, and the caller says so instead of passing it as full coverage)."""
+    if not duration_s:
+        return None
+    if not tr.segments:
+        return 0.0
     last = tr.segments[-1]
     return min(1.0, (last.start + last.duration) / duration_s)
 
@@ -50,16 +57,14 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
     manifest = read_manifest(run_dir)
     topic = manifest["topic"]
     report_lang = lang_of(cfg)
-    from tubeproof.research import mode_of
     mode = mode_of(cfg)
     audio_dir = settings.media_dir(run_id, "audio")
     video_dir = settings.media_dir(run_id, "video")
-    exemplar_dir = layout.exemplar(run_dir)
     ext_dir = layout.extractions(run_dir)
     ext_dir.mkdir(exist_ok=True)
     store = Store()
     t0 = time.time()
-    stats = {"audio": 0, "whisper": 0, "whisper_failed": 0, "mapped": 0, "map_failed": 0}
+    stats: Counter = Counter()
     lock = threading.Lock()
     dl_pool = ThreadPoolExecutor(downloads, thread_name_prefix="audio")
     map_pool = ThreadPoolExecutor(map_workers, thread_name_prefix="map")
@@ -69,11 +74,8 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
     def elapsed() -> str:
         return f"{(time.time() - t0) / 60:4.1f} min"
 
-    def bundle_path(vid: str) -> Path:
-        return layout.bundle(run_dir, vid)
-
     def map_one(vid: str) -> None:
-        b = VideoBundle.model_validate_json(bundle_path(vid).read_text())
+        b = VideoBundle.model_validate_json(layout.bundle(run_dir, vid).read_text())
         try:
             res = map_video(llm, topic, b, report_lang, mode, run_dir)
         except Exception as e:
@@ -97,8 +99,8 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
             path = download_media(vid, audio_dir)
         except Exception as e:
             with lock:
-                stats["whisper_failed"] += 1
-                stats["blocked"] = stats.get("blocked", 0) + bot_checked(e)
+                stats["audio_failed"] += 1
+                stats["blocked"] += bot_checked(e)
             log(f"   ✗ audio {vid}: {str(e)[:140]}")
             return
         with lock:
@@ -111,7 +113,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
             t = time.time()
             try:
                 tr = None
-                b = VideoBundle.model_validate_json(bundle_path(vid).read_text())
+                b = VideoBundle.model_validate_json(layout.bundle(run_dir, vid).read_text())
                 # Retry captions only where the harvest deferred them for a block that has since lifted;
                 # a video that simply has none would cost one more watch-page load for nothing.
                 if CAPTIONS_DEFERRED in (b.transcript_error or "") and not captions_blocked():
@@ -120,7 +122,9 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                     except Exception:
                         tr = None
                 tr = tr or transcribe_audio(vid, path, lang)
-                if tr.source == "whisper" and coverage(tr, dur) < MIN_COVERAGE:
+                if tr.source == "whisper" and coverage(tr, dur) is None:
+                    log(f"   ⚠ coverage {vid}: unknown (no duration in metadata), not checked")
+                elif tr.source == "whisper" and coverage(tr, dur) < MIN_COVERAGE:
                     # A cut-off audio file once gave 48 s of text for a 60 min talk (2026-10-27):
                     # fetch the audio again and transcribe once more before accepting it.
                     log(f"   ⚠ coverage {vid}: {coverage(tr, dur) * 100:.0f}% → re-downloading audio")
@@ -134,13 +138,10 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                     stats["whisper_failed"] += 1
                 log(f"   ✗ whisper {vid}: {str(e)[:140]}")
                 continue
-            b.transcript, b.transcript_error = tr, None
-            bundle_path(vid).write_text(b.model_dump_json(indent=1))
-            store.put("transcript", vid, tr.model_dump(mode="json"))
+            set_transcript(run_dir, b, tr, store)
             path.unlink(missing_ok=True)
             with lock:
-                stats["whisper" if tr.source == "whisper" else "captions_late"] = \
-                    stats.get("whisper" if tr.source == "whisper" else "captions_late", 0) + 1
+                stats["whisper" if tr.source == "whisper" else "captions_late"] += 1
             warn = ""
             if lang and tr.language and base_lang(tr.language) != base_lang(lang):
                 warn = f" · ⚠ language {tr.language} ≠ video {lang} (dub?)"
@@ -154,14 +155,14 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
         audio = None
         try:
             path = download_media(vid, video_dir, kind="video")
-            m = exemplar.measure(vid, path, b.meta.duration_s, exemplar_dir)
+            m = exemplar.measure(vid, path, b.meta.duration_s, run_dir)
             if not b.transcript:
                 audio = split_audio(path, audio_dir)
             path.unlink(missing_ok=True)
         except Exception as e:
             with lock:
-                stats["map_failed"] += 1
-                stats["blocked"] = stats.get("blocked", 0) + bot_checked(e)
+                stats["exemplar_failed"] += 1
+                stats["blocked"] += bot_checked(e)
             log(f"   ✗ exemplar {vid}: {str(e)[:140]}")
             return
         log(f"   ✓ exemplar {vid} · {m['cuts_per_min']} cuts/min · first 10 s {m['cuts_first_10s']} cuts · "
@@ -201,14 +202,16 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
             f.result()
     dl_pool.shutdown()
     map_pool.shutdown()
-    log(f"[flow] audio {stats['audio']} · whisper {stats['whisper']} (failed {stats['whisper_failed']}) · "
-        f"analysis {stats['mapped']} (failed {stats['map_failed']}) · {elapsed()} · ${llm.meter.usd:.2f}")
+    log(f"[flow] audio {stats['audio']} (failed {stats['audio_failed']}) · whisper {stats['whisper']} "
+        f"(failed {stats['whisper_failed']}, late captions {stats['captions_late']}) · "
+        + (f"exemplar failed {stats['exemplar_failed']} · " if mode == "exemplar" else "")
+        + f"analysis {stats['mapped']} (failed {stats['map_failed']}) · {elapsed()} · ${llm.meter.usd:.2f}")
 
-    if stats.get("blocked"):
+    if stats["blocked"]:
         raise RuntimeError(f"YouTube bot check on {stats['blocked']} downloads: wait for it to lift and re-run "
                            "(finished videos are kept)")
-    if mode == "exemplar" and stats["map_failed"] + stats["whisper_failed"]:
-        raise RuntimeError(f"{stats['map_failed'] + stats['whisper_failed']} videos failed: re-run to retry them "
+    if mode == "exemplar" and (failed := sum(stats[k] for k in FAILURES)):
+        raise RuntimeError(f"{failed} videos failed: re-run to retry them "
                            "before writing a report on a partial sample")
     if mode == "exemplar":  # no claims to cluster or verify: the report tests rules against the videos
         outs = write_reports(llm, run_id, cfg, log=log)

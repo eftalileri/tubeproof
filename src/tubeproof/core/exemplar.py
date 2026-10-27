@@ -108,10 +108,10 @@ def speech(tr: Transcript) -> dict:
     }
 
 
-def measure(video_id: str, video: Path, duration_s: int | None, out_root: Path) -> dict:
+def measure(video_id: str, video: Path, duration_s: int | None, run_dir: Path) -> dict:
     """Picture metrics, frames and thumbnail. Speech metrics need the final transcript, so the map
     stage adds them (`speech`) when it analyses the video."""
-    out_dir = out_root / video_id
+    out_dir = layout.exemplar(run_dir) / video_id
     if not duration_s:
         raise ValueError(f"{video_id}: no duration in metadata; cuts per minute would be invented")
     cs, ch = cuts(video)
@@ -123,7 +123,7 @@ def measure(video_id: str, video: Path, duration_s: int | None, out_root: Path) 
         "video_id": video_id,
         "duration_s": dur,
         "cuts": len(cs),
-        "cuts_per_min": round(len(cs) / (dur / 60), 1) if dur else None,
+        "cuts_per_min": round(len(cs) / (dur / 60), 1),
         **{f"cuts_first_{w}s": sum(1 for t in cs if t < w) for w in WINDOWS},
         "shot_s_median": round(statistics.median(shots), 2) if shots else None,
         "cut_times_first_60s": [round(t, 2) for t in cs if t < 60],
@@ -134,7 +134,9 @@ def measure(video_id: str, video: Path, duration_s: int | None, out_root: Path) 
         "thumbnail": str(p) if (p := thumbnail(video_id, out_dir)) else None,
         "frame_times": times,
     }
-    (out_root / f"{video_id}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
+    out = layout.exemplar_file(run_dir, video_id)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(res, ensure_ascii=False, indent=1))
     return res
 
 

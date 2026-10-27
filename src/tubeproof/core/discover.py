@@ -1,7 +1,8 @@
-"""Discovery: run every query (videos + playlists), merge, rank, pick a diverse set."""
+"""Discovery: run every query (videos + playlists), merge, rank."""
 
 from __future__ import annotations
 
+import inspect
 import math
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -11,11 +12,14 @@ from tubeproof.models import SearchHit
 from tubeproof.sources.youtube import innertube
 
 
+_SEARCH = inspect.signature(innertube.search).parameters  # the search owns the language/region defaults
+
+
 @dataclass
 class Query:
     text: str
-    hl: str = "en"
-    gl: str = "US"
+    hl: str = _SEARCH["hl"].default
+    gl: str = _SEARCH["gl"].default
 
 
 @dataclass
