@@ -3,7 +3,8 @@
 This module is the single place that turns a research's configuration into stage calls, so the
 CLI and the MCP server stay thin and cannot drift apart.
 
-- `pack.yaml`             public topic pack: topic, queries, official domains, breakpoints, report_lang
+- `pack.yaml`             public topic pack: topic, queries, official domains, breakpoints, report_lang,
+                          relevance_notes (topic-specific examples for the relevance gate)
 - `private/context.yaml`  the reader's question, context and hypotheses (never committed)
 """
 
@@ -57,5 +58,6 @@ def harvest(cfg: dict, *, topic: str | None = None, extra_queries: list[str] = (
     return core_harvest(topic, queries or [Query(text=topic)],
                         playlist_queries=[Query(**q) for q in cfg.get("playlist_queries", [])] or None,
                         months=opts.pop("months", None) or cfg.get("months", 12), run_id=run_id or cfg.get("name"),
-                        llm=llm, question=cfg.get("question"), market_lang=market.get("lang"),
+                        llm=llm, question=cfg.get("question"), relevance_notes=cfg.get("relevance_notes"),
+                        market_lang=market.get("lang"),
                         market_share=market.get("min_share", 0.25), log=log, **opts)

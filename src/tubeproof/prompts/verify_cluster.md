@@ -32,6 +32,6 @@ Do this:
    winner blindly: explain the likely reason (docs describe the ideal, practitioners describe
    a budget/vertical/period) and judge which is more plausible for the reader.
 7. test_local: when the claim is contested, contradicts docs, or rests on one source, propose ONE
-   cheap test the reader can run with their own panel data (what to change, minimum duration,
-   success metric such as cost per trial or CAC). Otherwise null.
+   cheap test the reader can run with their own dashboard data (what to change, minimum duration,
+   success metric such as cost per trial, CAC, click-through rate or retention at 30 s). Otherwise null.
 

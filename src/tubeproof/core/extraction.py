@@ -21,7 +21,7 @@ class SegmentLabel(BaseModel):
 class Conditions(BaseModel):
     budget_per_day: str | None = None
     currency: str | None = None
-    objective: str | None = Field(None, description="sales, leads, traffic, messages, app installs...")
+    objective: str | None = Field(None, description="sales, leads, installs, views, watch time, subscribers...")
     vertical: str | None = Field(None, description="ecommerce, local service, info product, saas...")
     country: str | None = None
     claimed_period: str | None = None

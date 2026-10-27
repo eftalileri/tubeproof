@@ -63,7 +63,7 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
             comments_popular: int = 150, comments_recent: int = 60, fetch_links: bool = True,
             allow_whisper: bool = False, pack_name: str | None = None, run_id: str | None = None,
             max_duration_s: int = 90 * 60, llm=None, question: str | None = None,
-            log=print) -> Path:
+            relevance_notes: str | None = None, log=print) -> Path:
     """Harvest into a new run, or with `run_id` add a focused pass to an existing run
     (already-harvested videos are excluded from selection, the manifest is merged)."""
     store = Store()
@@ -94,7 +94,7 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
     rel: dict[str, int] = {}
     if llm is not None:
         hits = [h for h in cand.videos.values() if h.id not in existing] + list(cand.playlists.values())
-        rel = screen(llm, topic, question, hits, log=log, store=store)
+        rel = screen(llm, topic, question, hits, log=log, store=store, notes=relevance_notes)
         kept_v = {k: v for k, v in cand.videos.items() if rel.get(k, 0) >= MIN_SCORE}
         kept_p = {k: v for k, v in cand.playlists.items() if rel.get(k, 0) >= MIN_SCORE}
         log(f"   relevance gate: videos {len(cand.videos)} → {len(kept_v)}, playlists {len(cand.playlists)} → "
@@ -198,7 +198,7 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
         if llm is not None and items:
             item_hits = [SearchHit(kind="video", id=v, title=m.title, channel=m.channel, views=m.views)
                          for v, m in items.items()]
-            item_rel = screen(llm, topic, question, item_hits, log=log, store=store)
+            item_rel = screen(llm, topic, question, item_hits, log=log, store=store, notes=relevance_notes)
             rel.update(item_rel)
             # a course earns corpus slots only with lessons on the reader's exact situation
             items = {v: m for v, m in items.items() if item_rel.get(v, 0) >= 3}

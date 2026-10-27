@@ -116,3 +116,8 @@ breakpoints:
   - delivery
   - targeting
   - creative
+relevance_notes: |
+  3 = same campaign type (app promotion / app install) or subscription-app business model, with results.
+  2 = Meta ads practice that transfers: delivery, learning phase, creative and hooks, budget, structure,
+      measurement; or a click-by-click setup walkthrough of an app campaign.
+  1 = other ad networks (Google, TikTok, Shopee), tax/admin how-tos.

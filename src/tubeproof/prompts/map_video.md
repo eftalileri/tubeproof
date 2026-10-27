@@ -29,13 +29,20 @@ Your jobs:
    - is_withheld_teaser = the creator names a step but says the real method is in a paid offer.
    - survivorship_flags only for outcome_income claims.
    - basis: WHERE the claim comes from. own_experience = the speaker reports RESULTS or
-     observed behaviour from campaigns they ran ("when we did X our CPA dropped", "in my
-     account Meta spent 90% on one ad"); merely walking through settings on screen is NOT
-     own_experience (use general_knowledge); client_data = "across our clients' accounts"; platform_docs = the platform's official help
-     pages, blog, announcements or reps ("Meta says", "YouTube recommends"); other_creator = repeats another creator
-     or course; general_knowledge = stated as common wisdom with no source. Judge from the
-     speaker's words; if they do not say, use general_knowledge. This separates real
-     practitioner evidence from people repeating the platform's documentation.
+     observed behaviour from their own work (campaigns, channels, videos, products they ran:
+     "when we did X our CPA dropped", "after we changed the intro, retention at 30 s went from
+     55% to 70%"); merely walking through settings on screen is NOT own_experience (use
+     general_knowledge); client_data = "across our clients' accounts/channels"; platform_docs =
+     the platform's official help pages, blog, announcements or reps ("Meta says", "YouTube
+     recommends"); other_creator = repeats another creator or course; general_knowledge =
+     stated as common wisdom with no source. Judge from the speaker's words; if they do not
+     say, use general_knowledge. This separates real practitioner evidence from people
+     repeating the platform's documentation.
+   - evidence_shown: screen_ads_manager = the platform's own dashboard is shown (Ads Manager,
+     YouTube Studio analytics, retention graph); verbal_numbers = numbers only narrated;
+     third_party = another tool's or company's data shown.
+   - conditions: fill only what the speaker states; vertical = niche or business type,
+     objective = the goal (sales, installs, views, watch time, subscribers...).
 
 3. TITLE PROMISES: list what the title promises; say whether the video actually delivers it.
 

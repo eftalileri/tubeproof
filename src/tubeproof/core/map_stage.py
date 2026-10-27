@@ -18,7 +18,7 @@ from tubeproof.prompts import load as load_prompt
 from tubeproof.llm.base import LLM, LLMError
 from tubeproof.models import VideoBundle
 
-PROMPT_VERSION = "map-v3"
+PROMPT_VERSION = "map-v4"  # v4: topic-neutral basis/evidence wording (2026-10-27)
 MAX_DESC_CHARS = 3000
 MAX_COMMENTS = 140
 MAX_COMMENT_CHARS = 450
