@@ -153,13 +153,12 @@ def test_store_one_ttl_cutoff(tmp_path, monkeypatch):
     assert sqlite3.connect(tmp_path / "c.sqlite").execute("SELECT key FROM cache").fetchall() == [("fresh",)]
 
 
-def test_video_download_uses_the_audio_chain():
-    """Both kinds fetch picture + audio (audio-only streams answer 403) with one audio chain, in order."""
-    from tubeproof.sources.youtube.transcript import _AUDIO, FORMAT_SORT, MEDIA_FORMATS
+def test_one_media_format_tries_the_audio_chain_in_order():
+    """Every video is fetched as one file (picture + audio, since audio-only streams answer 403);
+    the audio preferences are tried in order."""
+    from tubeproof.sources.youtube.transcript import _AUDIO, MEDIA_FORMAT
 
-    for kind in ("audio", "video"):
-        assert [alt.split("+", 1)[1] for alt in MEDIA_FORMATS[kind].split("/")[:-1]] == list(_AUDIO)
-    assert FORMAT_SORT.keys() == MEDIA_FORMATS.keys()
+    assert [alt.split("+", 1)[1] for alt in MEDIA_FORMAT.split("/")[:-1]] == list(_AUDIO)
 
 
 def test_empty_leftover_is_not_reused_as_a_download(tmp_path, monkeypatch):
@@ -184,7 +183,7 @@ def test_empty_leftover_is_not_reused_as_a_download(tmp_path, monkeypatch):
 
     monkeypatch.setattr(transcript.yt_dlp, "YoutubeDL", FakeYDL)
     monkeypatch.setattr(transcript, "extract", lambda vid: {"id": vid})
-    assert transcript.download_media("vid", tmp_path, kind="video").name == "vid.webm"
+    assert transcript.download_media("vid", tmp_path).name == "vid.webm"
     assert fetched and not (tmp_path / "vid.m4a").exists()
 
 

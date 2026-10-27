@@ -104,28 +104,22 @@ def _via_ytdlp(video_id: str, prefer_lang: str | None) -> Transcript:
     return Transcript(video_id=video_id, language=lang, is_generated=None, source="yt_dlp", segments=segs)
 
 
-# kind -> yt-dlp format. video: 360p picture (enough to see a frame and detect cuts; a 43 min video
-# is 118 MB, cut detection 38 s; 2026-10-27) merged with the original audio track, so exemplar mode
-# fetches each video once and `split_audio` hands Whisper its track (two fetches per video tripped
-# YouTube's bot check after ~45 videos; 2026-10-27).
-# One audio preference chain for both kinds. A video with a single audio track has no "original"
-# note; without the m4a step its fallback paired a webm picture with opus audio, which `split_audio`
-# could not copy out (Sebastian Lague 8BCdKJ4ObZ4, 2026-10-27).
+# One request per video: the whole video (360p picture + original audio) is downloaded once and
+# everything is cut from that file locally: `split_audio` for Whisper, `exemplar.measure` for cuts and
+# frames. Each extra YouTube request is a step toward its bot check (two fetches per video tripped it
+# after ~45 videos), and audio-only streams answer 403 since 2026-10-27 ~22:00 (2026-10-27).
+# 360p is enough to see a frame and detect cuts (a 43 min video is 118 MB, cut detection 38 s).
+# One audio preference chain: a video with a single audio track has no "original" note; without the
+# m4a step the fallback paired webm with opus, which `split_audio` could not copy into .m4a.
 _AUDIO = ("ba[format_note*=original][ext=m4a]", "ba[format_note*=original]", "ba[ext=m4a]", "ba")
-# Both kinds fetch picture + audio in one request: since 2026-10-27 22:00 YouTube answers every
-# audio-only stream with 403 (three channels, every audio format), while the same audio merged with a
-# picture downloads. "audio" takes the smallest picture and keeps only its track (`split_audio`).
-MEDIA_FORMATS = {
-    "audio": "/".join(f"bv*+{a}" for a in _AUDIO) + "/b",
-    "video": "/".join(f"bv*[height<=360]+{a}" for a in _AUDIO) + "/b[height<=360]",
-}
-FORMAT_SORT = {"audio": ["lang", "+res", "+size", "+abr"], "video": ["lang", "res:360", "+size", "+abr"]}
+MEDIA_FORMAT = "/".join(f"bv*[height<=360]+{a}" for a in _AUDIO) + "/b[height<=360]"
+FORMAT_SORT = ["lang", "res:360", "+size", "+abr"]
 
 
-def download_media(video_id: str, dest_dir: str | Path, kind: str = "audio") -> Path:
-    """Original-language audio track (`kind="audio"`, split out of the smallest picture download) or a
-    360p picture with the original audio (`kind="video"`). The media CDN is not covered by the caption rate-limit, so this is safe to
-    run in parallel. Keep the two kinds in separate folders: an existing file is reused."""
+def download_media(video_id: str, dest_dir: str | Path) -> Path:
+    """The video, once: 360p picture with the original audio track. An existing file is reused, so a
+    retry or a second consumer never asks YouTube again. The media CDN is not covered by the caption
+    rate-limit, so this is safe to run in parallel."""
 
     dest = Path(dest_dir)
     dest.mkdir(parents=True, exist_ok=True)
@@ -137,28 +131,20 @@ def download_media(video_id: str, dest_dir: str | Path, kind: str = "audio") -> 
             continue
         return old
     # Original track only: many videos carry 20+ AI-dubbed audio tracks, and "smallest audio"
-    # picked an Arabic dub of an English video (2026-10-27). lang sort prefers the original,
-    # +abr then takes its smallest bitrate (speech needs little).
+    # picked an Arabic dub of an English video (2026-10-27); lang sort prefers the original.
     # Whole file through yt-dlp's native chunked downloader, never download_ranges: a range hands
     # the stream to ffmpeg, which YouTube throttles to near playback speed (13 MB: 6 s native vs
     # 12+ min ranged, and one stall forever; 2026-10-27).
-    opts = ydl_opts(skip_download=False, noprogress=True,
-                    format=MEDIA_FORMATS[kind],
-                    format_sort=FORMAT_SORT[kind],
+    opts = ydl_opts(skip_download=False, noprogress=True, format=MEDIA_FORMAT, format_sort=FORMAT_SORT,
                     merge_output_format="mp4", outtmpl=str(dest / f"{video_id}.%(ext)s"),
                     socket_timeout=30, http_chunk_size=10 * 1024 * 1024)
     with yt_dlp.YoutubeDL(opts) as ydl:
         ydl.process_ie_result(extract(video_id), download=True)
-    got = next(p for p in dest.glob(f"{video_id}.*") if p.suffix not in (".part", ".ytdl"))
-    if kind == "audio":
-        audio = split_audio(got, dest)
-        got.unlink()
-        return audio
-    return got
+    return next(p for p in dest.glob(f"{video_id}.*") if p.suffix not in (".part", ".ytdl"))
 
 
 def split_audio(video: Path, dest_dir: str | Path) -> Path:
-    """The audio track of a `kind="video"` download as its own file (stream copy, no re-encode)."""
+    """The audio track of a `download_media` file as its own file (stream copy, no re-encode)."""
     dest = Path(dest_dir)
     dest.mkdir(parents=True, exist_ok=True)
     out = dest / f"{video.stem}.mka"  # Matroska holds any audio codec, so the copy never depends on the format

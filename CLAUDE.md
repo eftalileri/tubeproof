@@ -11,6 +11,7 @@ A tool that collects real practitioner experience from YouTube, strips out the p
 - Tests: `.venv/bin/pytest -q`. Model names live in `llm/base.py` → `DEFAULT_MODELS` (tiers: extract/verify/synth), not in the code.
 - The tool itself, code, logs and docs are written in English. The report language is set per pack (`report_lang`, e.g. `tr`).
 - Stage code and prompts MUST stay topic-neutral; topic-specific wording goes in the pack (e.g. `relevance_notes`). Reason: an ad-campaign rubric in code mis-screened a YouTube-craft research (2026-10-27).
+- Each video MUST be downloaded from YouTube once, as one file (`transcript.download_media`); audio, frames and picture metrics are cut from it locally, never fetched as separate audio/picture requests. Reason: every extra request moves the home IP toward YouTube's bot check (two fetches per video tripped it after ~45 videos), and audio-only streams answer 403 (2026-10-27).
 - Text written in Turkish must use correct characters (ç, ğ, ı, İ, ö, ş, ü).
 
 ## SSOT — every task

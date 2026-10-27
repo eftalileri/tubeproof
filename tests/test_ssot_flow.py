@@ -155,3 +155,50 @@ def test_query_claims_fails_loudly(tmp_path, monkeypatch):
         mcp_server.query_claims("missing")
     with pytest.raises(ValueError, match="unknown band"):
         mcp_server.query_claims("missing", band="great")
+
+
+def test_each_video_is_downloaded_once_for_picture_and_audio(tmp_path, monkeypatch):
+    """Exemplar mode measures the picture and transcribes the audio from one download of the video."""
+    from types import SimpleNamespace
+
+    from tubeproof.core import pipeline
+    from tubeproof.models import Transcript, TranscriptSegment, VideoBundle
+
+    s = Settings(data_dir=tmp_path / "cache", research_dir=tmp_path / "research")
+    monkeypatch.setattr(pipeline, "settings", s)
+    run_dir = s.run_dir("r")
+    layout.videos(run_dir).mkdir(parents=True)
+    layout.manifest(run_dir).write_text(json.dumps({"topic": "t", "planned": False}))
+    layout.bundle(run_dir, "v").write_text(VideoBundle(meta=VideoMeta(id="v", title="T", duration_s=10)).model_dump_json())
+    downloads, measured, mapped = [], [], []
+
+    def download(vid, dest):
+        downloads.append(vid)
+        dest.mkdir(parents=True, exist_ok=True)
+        (dest / f"{vid}.mp4").write_bytes(b"video")
+        return dest / f"{vid}.mp4"
+
+    def split(video, dest):
+        dest.mkdir(parents=True, exist_ok=True)
+        (dest / f"{video.stem}.mka").write_bytes(b"audio")
+        return dest / f"{video.stem}.mka"
+
+    monkeypatch.setattr(pipeline, "download_media", download)
+    monkeypatch.setattr(pipeline, "split_audio", split)
+    monkeypatch.setattr(pipeline, "exemplar", SimpleNamespace(
+        load=lambda rd, vid: None,
+        measure=lambda vid, path, dur, rd: measured.append(path.exists()) or {
+            "cuts_per_min": 0, "cuts_first_10s": 0, "changes_per_min": 0, "frames": []}))
+    monkeypatch.setattr(pipeline, "transcribe_audio", lambda vid, path, lang: Transcript(
+        video_id=vid, language="en", is_generated=None, source="whisper",
+        segments=[TranscriptSegment(start=0, duration=10, text="hi")]))
+    monkeypatch.setattr(pipeline, "set_transcript", lambda *a: None)
+    monkeypatch.setattr(pipeline, "map_video", lambda *a: mapped.append(a[2].meta.id) or "res")
+    monkeypatch.setattr(pipeline, "save_extraction", lambda *a: None)
+    monkeypatch.setattr(pipeline, "summary", lambda res: "")
+    monkeypatch.setattr(pipeline, "Store", lambda: None)
+    monkeypatch.setattr(pipeline, "write_reports", lambda *a, **kw: ["report"])
+    llm = SimpleNamespace(meter=SimpleNamespace(usd=0.0, by_tier={}))
+    assert pipeline.process("r", llm, {"mode": "exemplar"}, log=lambda m: None) == "report"
+    assert downloads == ["v"] and measured == [True] and mapped == ["v"]
+    assert not list(s.media_dir("r", "video").iterdir())  # the video is deleted once cut

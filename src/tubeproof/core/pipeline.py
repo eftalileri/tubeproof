@@ -1,12 +1,14 @@
 """Streaming pipeline for one run: nothing waits for a whole stage to finish.
 
-    harvest (plan) ──► bundle has transcript ──────────────────────────► map pool (LLM ×M)
-                   └─► no transcript ─► audio downloads (×N, media CDN) ─► Whisper (×1) ─┘
+    harvest (plan) ──► bundle has transcript (and exemplar measured) ──────────────────► map pool (LLM ×M)
+                   └─► otherwise ─► one video download (×N, media CDN) ─► measure picture
+                                                                     └─► split audio ─► Whisper (×1) ─┘
     then: reduce → verify → synthesize (once, over everything)
 
-Audio downloads run in parallel because the media CDN is not caption-rate-limited; Whisper
-runs one at a time because a second model on the same GPU only slows both; analysis of a
-video starts as soon as its transcript exists.
+Each video is downloaded from YouTube once and everything else is cut from that file locally.
+Downloads run in parallel because the media CDN is not caption-rate-limited; Whisper runs one
+at a time because a second model on the same GPU only slows both; analysis of a video starts as
+soon as its transcript exists.
 """
 
 from __future__ import annotations
@@ -37,7 +39,7 @@ from tubeproof.store.db import Store
 
 MIN_COVERAGE = 0.8
 # Per-video failure counters; any of them in exemplar mode stops the report (no partial sample).
-FAILURES = ("audio_failed", "exemplar_failed", "whisper_failed", "map_failed")
+FAILURES = ("media_failed", "whisper_failed", "map_failed")
 
 
 def coverage(tr, duration_s: int | None) -> float | None:
@@ -58,14 +60,14 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
     topic = manifest["topic"]
     report_lang = lang_of(cfg)
     mode = mode_of(cfg)
+    media_dir = settings.media_dir(run_id, "video")
     audio_dir = settings.media_dir(run_id, "audio")
-    video_dir = settings.media_dir(run_id, "video")
     layout.extractions(run_dir).mkdir(exist_ok=True)
     store = Store()
     t0 = time.time()
     stats: Counter = Counter()
     lock = threading.Lock()
-    dl_pool = ThreadPoolExecutor(downloads, thread_name_prefix="audio")
+    dl_pool = ThreadPoolExecutor(downloads, thread_name_prefix="media")
     map_pool = ThreadPoolExecutor(map_workers, thread_name_prefix="map")
     dl_futs, map_futs = [], []
     whisper_q: queue.Queue = queue.Queue()
@@ -93,19 +95,6 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
         with lock:
             map_futs.append(map_pool.submit(map_one, vid))
 
-    def download(vid: str, lang: str | None, duration_s: int | None) -> None:
-        try:
-            path = download_media(vid, audio_dir)
-        except Exception as e:
-            with lock:
-                stats["audio_failed"] += 1
-                stats["blocked"] += bot_checked(e)
-            log(f"   ✗ audio {vid}: {str(e)[:140]}")
-            return
-        with lock:
-            stats["audio"] += 1
-        whisper_q.put((vid, lang, path, duration_s))
-
     def whisper_worker() -> None:
         while (item := whisper_q.get()) is not None:
             vid, lang, path, dur = item
@@ -127,9 +116,9 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                 elif tr.source == "whisper" and coverage(tr, dur) < MIN_COVERAGE:
                     # A cut-off audio file once gave 48 s of text for a 60 min talk (2026-10-27):
                     # fetch the audio again and transcribe once more before accepting it.
-                    log(f"   ⚠ coverage {vid}: {coverage(tr, dur) * 100:.0f}% → re-downloading audio")
+                    log(f"   ⚠ coverage {vid}: {coverage(tr, dur) * 100:.0f}% → re-downloading the video")
                     path.unlink(missing_ok=True)
-                    path = download_media(vid, audio_dir)
+                    path = fetch_audio(vid)
                     tr = transcribe_audio(vid, path, lang)
                     if coverage(tr, dur) < MIN_COVERAGE:
                         log(f"   ⚠ coverage {vid}: still {coverage(tr, dur) * 100:.0f}%")
@@ -149,38 +138,48 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                 f"queue {whisper_q.qsize()} · {elapsed()}{warn}")
             submit_map(vid)
 
-    def prepare_exemplar(b: VideoBundle) -> None:
-        """Picture first (cuts, frames, thumbnail), then the usual transcript route."""
+    def fetch_audio(vid: str) -> Path:
+        """Only on a repair (cut-off audio): the one place a video is downloaded a second time."""
+        video = download_media(vid, media_dir)
+        try:
+            return split_audio(video, audio_dir)
+        finally:
+            video.unlink(missing_ok=True)
+
+    def prepare(b: VideoBundle) -> None:
+        """One download of the video; the picture is measured (exemplar mode) and the audio split for
+        Whisper from that same file, which is then deleted."""
         vid = b.meta.id
+        measure = mode == "exemplar" and exemplar.load(run_dir, vid) is None
         audio = None
         try:
-            path = download_media(vid, video_dir, kind="video")
-            m = exemplar.measure(vid, path, b.meta.duration_s, run_dir)
+            path = download_media(vid, media_dir)
+            if measure:
+                m = exemplar.measure(vid, path, b.meta.duration_s, run_dir)
             if not b.transcript:
                 audio = split_audio(path, audio_dir)
             path.unlink(missing_ok=True)
         except Exception as e:
             with lock:
-                stats["exemplar_failed"] += 1
+                stats["media_failed"] += 1
                 stats["blocked"] += bot_checked(e)
-            log(f"   ✗ exemplar {vid}: {str(e)[:140]}")
+            log(f"   ✗ media {vid}: {str(e)[:140]}")
             return
-        log(f"   ✓ exemplar {vid} · {m['cuts_per_min']} cuts/min · first 10 s {m['cuts_first_10s']} cuts · "
-            f"{m['changes_per_min']} changes/min · frames {len(m['frames'])} · {elapsed()}")
+        if measure:
+            log(f"   ✓ exemplar {vid} · {m['cuts_per_min']} cuts/min · first 10 s {m['cuts_first_10s']} cuts · "
+                f"{m['changes_per_min']} changes/min · frames {len(m['frames'])} · {elapsed()}")
         if b.transcript:
             submit_map(vid)
         else:
             with lock:
-                stats["audio"] += 1
+                stats["media"] += 1
             whisper_q.put((vid, b.meta.language, audio, b.meta.duration_s))
 
     def on_bundle(b: VideoBundle) -> None:
-        if mode == "exemplar" and exemplar.load(run_dir, b.meta.id) is None:
-            dl_futs.append(dl_pool.submit(prepare_exemplar, b))
-        elif b.transcript:
+        if b.transcript and not (mode == "exemplar" and exemplar.load(run_dir, b.meta.id) is None):
             submit_map(b.meta.id)
         else:
-            dl_futs.append(dl_pool.submit(download, b.meta.id, b.meta.language, b.meta.duration_s))
+            dl_futs.append(dl_pool.submit(prepare, b))
 
     worker = threading.Thread(target=whisper_worker, name="whisper", daemon=True)
     worker.start()
@@ -202,9 +201,8 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
             f.result()
     dl_pool.shutdown()
     map_pool.shutdown()
-    log(f"[flow] audio {stats['audio']} (failed {stats['audio_failed']}) · whisper {stats['whisper']} "
+    log(f"[flow] downloads → audio {stats['media']} (failed {stats['media_failed']}) · whisper {stats['whisper']} "
         f"(failed {stats['whisper_failed']}, late captions {stats['captions_late']}) · "
-        + (f"exemplar failed {stats['exemplar_failed']} · " if mode == "exemplar" else "")
         + f"analysis {stats['mapped']} (failed {stats['map_failed']}) · {elapsed()} · ${llm.meter.usd:.2f}")
 
     if stats["blocked"]:

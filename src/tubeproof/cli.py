@@ -91,7 +91,7 @@ def repair_cmd(run_id: str, whisper: Optional[bool] = typer.Option(
 
 
 @app.command()
-def process(run_id: str, downloads: Optional[int] = typer.Option(None, help="Parallel audio downloads "
+def process(run_id: str, downloads: Optional[int] = typer.Option(None, help="Parallel video downloads "
                                                                            "(default: the pipeline's)"),
             workers: Optional[int] = _WORKERS, backend: Optional[str] = _BACKEND, pack: Optional[str] = _PACK):
     """Streaming run: harvest the plan + parallel audio + one Whisper + analysis as transcripts land,
