@@ -13,6 +13,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from pathlib import Path
+from statistics import median
 
 from pydantic import BaseModel
 
@@ -21,7 +22,7 @@ from tubeproof.core.harvest import read_manifest, video_titles
 from tubeproof.core.reduce_stage import load_clusters
 from tubeproof.core.score import BANDS, FIRST_HAND, RUBRIC_VERSION, score_cluster
 from tubeproof.core.segment import fmt_ts
-from tubeproof.core.verify_stage import cluster_key
+from tubeproof.core.verify_stage import cluster_key, needs_llm
 from tubeproof.config import layout, settings
 from tubeproof.http import short_url
 from tubeproof.i18n import labels, lang_of
@@ -38,6 +39,12 @@ def build_scored(run_dir: Path, breakpoints: list[date]) -> list[dict]:
     if not vpath.exists():
         raise FileNotFoundError(f"{vpath} missing: run `tubeproof verify` before the report")
     verdicts = json.loads(vpath.read_text())
+    # A cluster that needs verification but has no verdict (its verify call failed) would be scored as an
+    # unverified single source with every member supporting: stop instead.
+    missing = [c.cluster_id for c in clusters if needs_llm(c) and cluster_key(c) not in verdicts]
+    if missing:
+        raise RuntimeError(f"{len(missing)} clusters not verified ({', '.join(missing[:10])}): "
+                           "re-run `tubeproof verify` before the report")
     scored = []
     for c in clusters:
         v = verdicts.get(cluster_key(c))
@@ -86,15 +93,15 @@ def _digest(scored: list[dict], extractions_dir: Path, max_single: int = 60) -> 
             f"[{r['cluster_id']}] band={s['band']} conf={s['confidence']} type={r['claim_type']} "
             f"label={r['label']} independent+={s['independent_supporting']} "
             f"independent-={s['independent_contradicting']} "
-            f"first_hand+={s.get('first_hand_supporting', 0)} first_hand-={s.get('first_hand_contradicting', 0)} "
-            f"docs_echo={s.get('docs_echo_members', 0)} channels={s.get('channels', '?')} "
+            f"first_hand+={s['first_hand_supporting']} first_hand-={s['first_hand_contradicting']} "
+            f"docs_echo={s['docs_echo_members']} channels={s['channels']} "
             f"comments+={s['comment_confirms']} comments-={s['comment_refutes']} doc={s['doc']} "
-            f"practice_vs_docs={r.get('practice_vs_docs')}\n"
+            f"practice_vs_docs={r['practice_vs_docs']}\n"
             f"   claim: {r['claim_local']}"
             + (f"\n   scope: {r['scope_local']}" if r["scope_local"] else "")
             + (f"\n   reasoning: {r['reasoning_local']}" if r["reasoning_local"] else "")
             + (f"\n   contradiction: {r['contradiction_local']}" if r["contradiction_local"] else "")
-            + (f"\n   test: {r['test_local']}" if r.get("test_local") else "")
+            + (f"\n   test: {r['test_local']}" if r["test_local"] else "")
         )
     tips, sales, hype = [], [], []
     for f in sorted(extractions_dir.glob("*.json")):
@@ -120,21 +127,21 @@ def _appendix(scored: list[dict], titles: dict[str, str], cited: set[str], lang:
             continue
         out.append(f"\n### <a id=\"{r['cluster_id'].lower()}\"></a>{r['cluster_id']} · {L['band'][s['band']]} "
                    f"· {L['confidence']} {s['confidence']:.2f}\n\n{r['claim_local']}\n")
-        if r.get("reasoning_local"):
+        if r["reasoning_local"]:
             out.append(f"\n*{L['assessment']}:* {r['reasoning_local']}\n")
-        if r.get("test_local"):  # the report cites these as "[K<n> <test_ref>]"
+        if r["test_local"]:  # the report cites these as "[K<n> <test_ref>]"
             out.append(f"\n*{L['test']}:* {r['test_local']}\n")
         if r["doc_url"]:
             out.append(f"\n- {L['official']}: [{r['doc_url']}]({r['doc_url']}) — “{(r['doc_quote'] or '')[:200]}”")
         for m in r["members"]:
-            st = r["stances"].get(m["ref"], "—")
+            st = r["stances"].get(m["ref"])  # None: single-source cluster, not verified
             if st == "unrelated":
                 continue
-            t = int(m["t"] or 0)
-            coi = f" · {L['coi']}: {', '.join(m['coi'])}" if m["coi"] else ""
-            basis = L["basis"].get(m.get("basis", ""), m.get("basis", ""))
-            out.append(f"\n- [{titles.get(m['video_id'], m['video_id'])[:70]}]({short_url(m['video_id'], t)}) "
-                       f"@{fmt_ts(t)} · {m['channel']} · {m['date']} · *{st}* · {L['basis_label']}: {basis}{coi}\n"
+            t = None if m["t"] is None else int(m["t"])  # unknown moment: link the video, never invent 0:00
+            coi = f" · {L['coi']}: {', '.join(L['coi_kind'][x] for x in m['coi'])}" if m["coi"] else ""
+            out.append(f"\n- [{titles[m['video_id']][:70]}]({short_url(m['video_id'], t)}) "
+                       f"{'' if t is None else '@' + fmt_ts(t) + ' · '}{m['channel']} · {m['date']} · "
+                       f"*{L['stance'][st] if st else '—'}* · {L['basis_label']}: {L['basis'][m['basis']]}{coi}\n"
                        f"  > {m['quote'][:220]}")
     return "\n".join(out)
 
@@ -144,20 +151,25 @@ REPORT_FILE = "REPORT.md"
 
 
 def report_dir(run_id: str, private: bool) -> Path:
-    base = settings.research_path(run_id)
-    return settings.private_dir(run_id) if private else base
+    return settings.private_dir(run_id) if private else settings.research_path(run_id)
+
+
+def _write_report(run_id: str, private: bool, cite: re.Pattern, link, tail) -> Path:
+    """The one writer of REPORT.md for both report kinds: the saved model body with every citation `cite`
+    matches turned into a link by `link`, then the code-built `tail(body)`. Free to redo (no model call)."""
+    d = report_dir(run_id, private)
+    body = (d / BODY_FILE).read_text()
+    out = d / REPORT_FILE
+    out.write_text(cite.sub(link, body) + tail(body))
+    return out
 
 
 def render_report(run_id: str, private: bool, scored: list[dict], titles: dict[str, str], lang: str) -> Path:
     """Model text + links + evidence appendix. Re-runnable without calling the model."""
-    d = report_dir(run_id, private)
-    body = (d / BODY_FILE).read_text()
     cite = re.compile(rf"\[(K\d+)( {re.escape(labels(lang)['test_ref'])})?\]")
-    cited = {m.group(1) for m in cite.finditer(body)}
-    md = cite.sub(lambda m: f"[{m.group(1)}{m.group(2) or ''}](#{m.group(1).lower()})", body)
-    out = d / REPORT_FILE
-    out.write_text(md + _appendix(scored, titles, cited, lang))
-    return out
+    return _write_report(run_id, private, cite,
+                         lambda m: f"[{m.group(1)}{m.group(2) or ''}](#{m.group(1).lower()})",
+                         lambda body: _appendix(scored, titles, {m.group(1) for m in cite.finditer(body)}, lang))
 
 
 _DECISIONS = """
@@ -175,6 +187,17 @@ the videos clearly do something else: state exactly what, with numbers and citat
 rule can be rewritten. Do not soften a difference; "no evidence" is valid.
 """
 
+# Per research mode (research.MODES): the report prompt, who the public report is for, how the reader's
+# situation is used, what their hypotheses are, and the section that tests them.
+_MODES = {
+    "claims": {"prompt": "synthesize.md", "audience": "practitioners researching this topic",
+               "situation": "their own data and plan; use it to make advice concrete",
+               "hypotheses": "current decisions to test against the evidence", "section": _DECISIONS},
+    "exemplar": {"prompt": "synthesize_exemplar.md", "audience": "creators studying this channel's craft",
+                 "situation": "use it to make findings concrete",
+                 "hypotheses": "rules to test against these videos", "section": _RULES},
+}
+
 
 def _exemplar_digest(run_dir: Path, vids: list[dict]) -> str:
     rows = {r["video_id"]: r for r in exemplar.table(run_dir)}
@@ -185,7 +208,7 @@ def _exemplar_digest(run_dir: Path, vids: list[dict]) -> str:
             continue
         ex = json.loads(f.read_text())
         x, m = ex["video"], rows.get(v["id"], {})
-        measured = {k: m.get(k) for k in exemplar.PICTURE_METRICS} | (ex.get("speech") or {})
+        measured = {k: m.get(k) for k in exemplar.PICTURE_METRICS} | (m.get("speech") or {})
         beats = "; ".join(f"{int(b['t'])}s {b['kind']}: {b['what']}" for b in x["beats"])
         loops = "; ".join(f"{l['question']} ({int(l['opened_at_s'])}s→"
                           f"{int(l['closed_at_s']) if l.get('closed_at_s') is not None else '-'}s)" for l in x["open_loops"])
@@ -206,11 +229,6 @@ _VCITE = re.compile(r"\[V(\d+)(?: (\d+)s)?\]")
 
 def render_exemplar(run_id: str, private: bool, vids: list[dict], lang: str) -> Path:
     """Model text with [V<n> <s>s] turned into links, plus the code-built measurement table."""
-    from statistics import median
-
-    d = report_dir(run_id, private)
-    body = (d / BODY_FILE).read_text()
-
     def link(mt: re.Match) -> str:
         i, t = int(mt.group(1)), mt.group(2)
         if not 1 <= i <= len(vids):
@@ -237,40 +255,7 @@ def render_exemplar(run_id: str, private: bool, vids: list[dict], lang: str) -> 
                      + " | ".join("" if x is None else str(x) for x in cells) + " |")
     lines.append(f"| | **{L['exemplar_cols']['median']}** | | "
                  + " | ".join(str(round(median(vals[c]), 1)) if vals[c] else "" for c in cols + scols) + " |")
-    out = d / REPORT_FILE
-    out.write_text(_VCITE.sub(link, body) + "\n".join(lines) + "\n")
-    return out
-
-
-def _run_exemplar_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> Path:
-    run_dir = settings.run_dir(run_id)
-    lang = lang_of(cfg)
-    manifest = read_manifest(run_dir)
-    vids = manifest["videos"]
-    topic = manifest["topic"]
-    hyps = cfg.get("hypotheses") if private else None
-    reader = ""
-    if private:
-        reader = ("\nThe reader's situation (use it to make findings concrete, never as evidence):\n"
-                  f"{(cfg.get('context') or '(none given)').strip()}\n")
-        if hyps:
-            reader += "\nThe reader's rules to test against these videos:\n" + \
-                      "\n".join(f"- {h['id']}: {h['text']}" for h in hyps) + "\n"
-    system = load_prompt(
-        "synthesize_exemplar.md", lang, topic=topic, question=(cfg.get("question") if private else None) or topic,
-        audience="the reader described below" if private else "creators studying this channel's craft",
-        n_videos=len(vids), channels=", ".join(sorted({v["channel"] or "?" for v in vids})), today=date.today(),
-        reader_block=reader, rules_section=_RULES if hyps else "")
-    kind = "private" if private else "public"
-    log(f"[synth] {kind} exemplar report from {len(vids)} videos")
-    rep = Report.model_validate(llm.json("synth", system, _exemplar_digest(run_dir, vids),
-                                         Report.model_json_schema()))
-    d = report_dir(run_id, private)
-    d.mkdir(parents=True, exist_ok=True)
-    (d / BODY_FILE).write_text(rep.markdown)
-    out = render_exemplar(run_id, private, vids, lang)
-    log(f"[synth] → {out} · ${llm.meter.usd:.2f}")
-    return out
+    return _write_report(run_id, private, _VCITE, link, lambda body: "\n".join(lines) + "\n")
 
 
 def run_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> Path:
@@ -279,40 +264,46 @@ def run_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> 
     exemplar report (how the videos are built, the reader's rules tested against them)."""
     from tubeproof.research import breakpoints, mode_of
 
-    if mode_of(cfg) == "exemplar":
-        return _run_exemplar_synth(llm, run_id, cfg, private=private, log=log)
+    mode = mode_of(cfg)
+    m = _MODES[mode]
     run_dir = settings.run_dir(run_id)
     lang = lang_of(cfg)
-    scored = build_scored(run_dir, breakpoints(cfg))
     manifest = read_manifest(run_dir)
-    titles = video_titles(manifest)
-    topic = manifest["topic"]
+    vids, topic = manifest["videos"], manifest["topic"]
     hyps = cfg.get("hypotheses") if private else None
     reader = ""
     if private:
-        reader = ("\nThe reader's situation (their own data and plan; use it to make advice concrete, "
-                  f"never as evidence):\n{(cfg.get('context') or '(none given)').strip()}\n")
+        reader = (f"\nThe reader's situation ({m['situation']}, never as evidence):\n"
+                  f"{(cfg.get('context') or '(none given)').strip()}\n")
         if hyps:
-            reader += "\nThe reader's current decisions to test against the evidence:\n" + \
-                      "\n".join(f"- {h['id']}: {h['text']}" for h in hyps) + "\n"
-    system = load_prompt(
-        "synthesize.md", lang, topic=topic,
-        question=(cfg.get("question") if private else None) or topic,
-        audience="the reader described below" if private else "practitioners researching this topic",
-        n_videos=len(manifest["videos"]), n_channels=len({v["channel"] for v in manifest["videos"]}),
-        today=date.today(), reader_block=reader, decision_section=_DECISIONS if hyps else "",
-        fit_column="Which fits the reader better, and why" if private else "When each one applies",
-        levers_rule=("The reader's goal is stated in their question." if private
-                     else "The goal is the one in the question."),
-        test_ref=labels(lang)["test_ref"])
-    kind = "private" if private else "public"
-    log(f"[synth] {kind} report from {len(scored)} clusters")
-    rep = Report.model_validate(llm.json("synth", system, _digest(scored, layout.extractions(run_dir)),
-                                         Report.model_json_schema()))
+            reader += (f"\nThe reader's {m['hypotheses']}:\n"
+                       + "\n".join(f"- {h['id']}: {h['text']}" for h in hyps) + "\n")
+    common = dict(topic=topic, question=(cfg.get("question") if private else None) or topic,
+                  audience="the reader described below" if private else m["audience"], n_videos=len(vids),
+                  today=date.today(), reader_block=reader, hypotheses_section=m["section"] if hyps else "")
+    if mode == "exemplar":
+        system = load_prompt(m["prompt"], lang, **common,
+                             channels=", ".join(sorted({v["channel"] or "?" for v in vids})))
+        what = f"exemplar report from {len(vids)} videos"
+        digest = lambda: _exemplar_digest(run_dir, vids)  # noqa: E731
+        render = lambda: render_exemplar(run_id, private, vids, lang)  # noqa: E731
+    else:
+        scored = build_scored(run_dir, breakpoints(cfg))
+        system = load_prompt(
+            m["prompt"], lang, **common, n_channels=len({v["channel"] for v in vids}),
+            fit_column="Which fits the reader better, and why" if private else "When each one applies",
+            levers_rule=("The reader's goal is stated in their question." if private
+                         else "The goal is the one in the question."),
+            test_ref=labels(lang)["test_ref"])
+        what = f"report from {len(scored)} clusters"
+        digest = lambda: _digest(scored, layout.extractions(run_dir))  # noqa: E731
+        render = lambda: render_report(run_id, private, scored, video_titles(manifest), lang)  # noqa: E731
+    log(f"[synth] {'private' if private else 'public'} {what}")
+    rep = Report.model_validate(llm.json("synth", system, digest(), Report.model_json_schema()))
     d = report_dir(run_id, private)
     d.mkdir(parents=True, exist_ok=True)
     (d / BODY_FILE).write_text(rep.markdown)  # the paid part; rendering below is free to redo
-    out = render_report(run_id, private, scored, titles, lang)
+    out = render()
     log(f"[synth] → {out} · ${llm.meter.usd:.2f}")
     return out
 

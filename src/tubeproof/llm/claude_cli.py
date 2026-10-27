@@ -24,10 +24,10 @@ _STRIP_ENV = ("CLAUDECODE", "CLAUDE_CODE_ENTRYPOINT", "CLAUDE_CODE_CHILD_SESSION
 
 
 class ClaudeCLI:
-    def __init__(self, models: dict[Tier, str] | None = None, timeout: int = 600, retries: int = 2):
+    def __init__(self, timeout: int = 600, retries: int = 2):
         if not shutil.which("claude"):
             raise LLMError("`claude` CLI not found on PATH")
-        self.models = {**DEFAULT_MODELS, **(models or {})}
+        self.models = DEFAULT_MODELS  # model names come only from config (via llm.base)
         self.timeout = timeout
         self.retries = retries
         self.meter = CostMeter()

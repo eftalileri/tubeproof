@@ -19,13 +19,13 @@ Your jobs:
    used, what has happened by 10 s and by 30 s, when (if ever) the creator introduces
    themselves or the channel, and whether the opening matches the thumbnail.
 
-3. BEATS: the structure in order, 8-30 beats, each with its start second, kind, one sentence and a
-   VERBATIM transcript quote (3-30 words, original language, keep ASR errors) with its seg_ids.
+3. BEATS: the structure in order, {beats} beats, each with its start second, kind, one sentence and a
+   VERBATIM transcript quote ({quote_words} words, original language, keep ASR errors) with its seg_ids.
    Mark re-hooks (new stakes, a twist, a countdown, "but then..."), sponsor reads and CTAs.
 
 4. OPEN LOOPS: questions or tensions left open, when opened and when closed.
 
-5. LANGUAGE: tone, concrete script techniques, and 2-5 verbatim example lines.
+5. LANGUAGE: tone, concrete script techniques, and {examples} verbatim example lines.
 
 6. VISUAL STYLE: from the frames only (framing, text on screen, colour, how busy each frame is).
 

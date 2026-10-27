@@ -17,7 +17,7 @@ Write Markdown with these sections, headings translated into {language}:
 ## Short answer
 Answer the question directly in 4-6 sentences: what the evidence supports and how strong it
 is. If the evidence does not support a confident answer, say so.
-{decision_section}
+{hypotheses_section}
 ## What the platform says vs what practitioners report
 Where first-hand practitioner evidence differs from the official documentation
 (practice_vs_docs = practice_contradicts_docs or practice_only), as a table: Topic | Platform /

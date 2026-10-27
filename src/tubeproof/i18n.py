@@ -22,6 +22,9 @@ LABELS = {
         "basis": {"own_experience": "own experience", "client_data": "client data",
                   "platform_docs": "platform docs", "other_creator": "other creator",
                   "general_knowledge": "general knowledge"},
+        "stance": {"supports": "supports", "contradicts": "contradicts", "qualifies": "qualifies"},
+        "coi_kind": {"sells_course": "sells a course", "sells_agency_services": "sells agency services",
+                     "affiliate": "affiliate", "sponsored": "sponsored", "community_paid": "paid community"},
         "appendix": "Evidence appendix",
         "appendix_intro": "Source videos and the moment each claim is made, for every cluster the report "
                           "cites. Band and confidence are computed by code (rubric `{rubric}`).",
@@ -49,6 +52,9 @@ LABELS = {
         "basis": {"own_experience": "kendi tecrübesi", "client_data": "müşteri verisi",
                   "platform_docs": "platform dokümanı", "other_creator": "başka içerik üreticisi",
                   "general_knowledge": "genel bilgi"},
+        "stance": {"supports": "destekliyor", "contradicts": "çelişiyor", "qualifies": "koşullu"},
+        "coi_kind": {"sells_course": "kurs satıyor", "sells_agency_services": "ajans hizmeti satıyor",
+                     "affiliate": "satış ortaklığı", "sponsored": "sponsorlu", "community_paid": "ücretli topluluk"},
         "appendix": "Kanıt eki",
         "appendix_intro": "Raporda geçen her küme için kaynak videolar ve iddianın geçtiği an. Bant ve güven "
                           "puanı kodla hesaplanır (kural sürümü `{rubric}`).",

@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field
 from tubeproof.config import layout
 from tubeproof.core.extraction import ClaimType
 from tubeproof.core.reduce_stage import Cluster, load_clusters
+from tubeproof.core.score import FIRST_HAND
 from tubeproof.core.segment import fmt_ts
 from tubeproof.llm.base import LLM
 from tubeproof.i18n import lang_of
@@ -56,7 +57,7 @@ class ClusterVerdict(BaseModel):
     reasoning_local: str
     contradiction_local: str | None = Field(None, description="Why sources disagree, if they do")
     practice_vs_docs: Literal["agree", "practice_contradicts_docs", "practice_only", "docs_only", "unclear"] = Field(
-        description="Do first-hand practitioners (basis own_experience/client_data) agree with what the platform's docs or "
+        description=f"Do first-hand practitioners (basis {'/'.join(FIRST_HAND)}) agree with what the platform's docs or "
                     "platform_docs-based members say?")
     test_local: str | None = Field(None, description="If contested, contradicting docs or only single-source: one cheap "
                                 "experiment the reader can run with their own data to decide (what, how long, "
@@ -82,11 +83,11 @@ def _input(c: Cluster) -> str:
             f"basis={m.basis} evidence={m.evidence_shown} coi={coi} clickbait={m.clickbait:.2f}"
             f"{' WITHHELD_TEASER' if m.is_withheld_teaser else ''}\n  claim: {m.text_en}\n"
             f"  conditions: {json.dumps({k: v for k, v in m.conditions.items() if v}, ensure_ascii=False)}\n"
-            f"  quote@{fmt_ts(m.t_start or 0)}: \"{m.quote}\""
+            f"  quote@{'?' if m.t_start is None else fmt_ts(m.t_start)}: \"{m.quote}\""
         )
         for e in m.comments[:6]:
             lines.append(f"    comment[{e['stance']}{', experiential' if e['experiential'] else ''}, "
-                         f"likes={e.get('likes', 0)}]: {e.get('specifics') or ''}")
+                         f"likes={e['likes']}]: {e.get('specifics') or ''}")
     return f"CLUSTER {c.cluster_id}\n<untrusted_data>\n" + "\n".join(lines) + "\n</untrusted_data>"
 
 
@@ -104,23 +105,22 @@ def verify_cluster(llm: LLM, c: Cluster, topic: str, cfg: dict) -> dict:
     mechanic = any(m.claim_type in DOC_CHECK_TYPES for m in c.members)
     system = load_prompt(
         "verify_cluster.md", lang_of(cfg), topic=topic, changes=_changes(cfg), domains=", ".join(official_domains) or "(none)",
+        first_hand=", ".join(FIRST_HAND),
         doc_rule=(DOC_RULE if mechanic and official_domains
                   else "Do not look anything up; set doc_check.result=not_checked."),
     )
     tools = ["WebSearch", "WebFetch"] if mechanic and official_domains else None
-    v = ClusterVerdict.model_validate(llm.json("verify", system, _input(c), ClusterVerdict.model_json_schema(),
-                                               tools=tools))
-    if v.doc_check.result in ("supports", "contradicts") and not _official(v.doc_check.url, official_domains):
-        v.doc_check = DocCheck(result="not_checked")  # never trust a non-official "doc"
-    if tools and v.doc_check.result == "not_checked":
+    user = _input(c)
+    for attempt in range(2):
+        v = ClusterVerdict.model_validate(llm.json("verify", system, user, ClusterVerdict.model_json_schema(),
+                                                   tools=tools))
+        if v.doc_check.result in ("supports", "contradicts") and not _official(v.doc_check.url, official_domains):
+            v.doc_check = DocCheck(result="not_checked")  # never trust a non-official "doc"
+        if attempt or not (tools and v.doc_check.result == "not_checked"):
+            break
         # The model skipped the lookup on 16 of 25 clusters (2026-10-27): one forced retry.
-        retry = _input(c) + ("\n\nYour previous answer returned doc_check=not_checked. That is not allowed "
-                             "here: search the allowed domains now; answer silent if they say nothing.")
-        v2 = ClusterVerdict.model_validate(llm.json("verify", system, retry, ClusterVerdict.model_json_schema(),
-                                                    tools=tools))
-        if v2.doc_check.result in ("supports", "contradicts") and not _official(v2.doc_check.url, official_domains):
-            v2.doc_check = DocCheck(result="not_checked")
-        v = v2
+        user += ("\n\nYour previous answer returned doc_check=not_checked. That is not allowed "
+                 "here: search the allowed domains now; answer silent if they say nothing.")
     refs = {m.ref for m in c.members}
     v.member_stances = [s for s in v.member_stances if s.ref in refs]
     return v.model_dump(mode="json")

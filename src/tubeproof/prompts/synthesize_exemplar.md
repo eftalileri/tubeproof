@@ -42,7 +42,7 @@ and whether a story or real case carries the teaching. Counts + examples.
 
 ## Script language
 Tone, techniques, sentence shape; quote 3-6 short example lines (verbatim, original language).
-{rules_section}
+{hypotheses_section}
 ## Limits
 Sample (one channel, latest {n_videos} videos), what code measured vs what a model described,
 no retention data (YouTube does not publish it), and that this reflects {today}.

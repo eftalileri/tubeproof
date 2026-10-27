@@ -10,6 +10,8 @@ SegLabel = Literal["free_knowledge", "sponsor", "own_offer_pitch", "lead_magnet"
                    "intro_outro", "mixed", "filler"]
 ClaimType = Literal["platform_mechanic", "tactic_efficacy", "numeric_threshold", "setup_instruction",
                     "outcome_income", "opinion"]
+# Where a claim comes from; the rubric weights (score.BASIS_FACTOR) and report labels (i18n) are keyed by it.
+Basis = Literal["own_experience", "client_data", "platform_docs", "other_creator", "general_knowledge"]
 
 
 # Unattributed common wisdom; also the basis of extractions made before `basis` existed (map-v1).
@@ -41,7 +43,7 @@ class Claim(BaseModel):
     polarity: Literal["do", "dont", "neutral"]
     specificity: int = Field(ge=0, le=3, description="0 vague … 3 concrete numbers/settings/steps")
     evidence_shown: Literal["none", "verbal_numbers", "screen_ads_manager", "third_party"]
-    basis: Literal["own_experience", "client_data", "platform_docs", "other_creator", "general_knowledge"] = Field(
+    basis: Basis = Field(
         description="Where the claim comes from: the speaker's own runs, their clients' accounts, the platform's docs/"
                     "announcements, another creator/course, or unattributed common wisdom")
     conditions: Conditions
@@ -69,9 +71,12 @@ class Hype(BaseModel):
     rationale: str
 
 
+NO_COI = "none_detected"
+Coi = Literal["sells_course", "sells_agency_services", "affiliate", "sponsored", "community_paid", "none_detected"]
+
+
 class CreatorSignals(BaseModel):
-    coi: list[Literal["sells_course", "sells_agency_services", "affiliate", "sponsored", "community_paid",
-                      "none_detected"]]
+    coi: list[Coi]
     shows_own_account_data: bool
     expertise_note: str = Field(description="One line: what in the video shows (or not) hands-on experience")
 
@@ -103,6 +108,11 @@ class CommentExtraction(BaseModel):
 
 
 # --- Exemplar mode: how a video is built (not what it advises) -----------------------------------
+
+# Sizes the exemplar schema asks for; map_exemplar.md states the same ones through its placeholders.
+BEATS = "8-30"
+QUOTE_WORDS = "3-30"  # verbatim span of a beat or a taught concept
+STYLE_EXAMPLES = "2-5"
 
 BeatKind = Literal["hook", "promise", "context", "setup", "escalation", "rehook", "twist", "payoff",
                    "explanation", "example", "recap", "cta", "sponsor", "outro"]
@@ -136,7 +146,7 @@ class Beat(BaseModel):
     t: float = Field(description="Start second")
     kind: BeatKind
     what: str = Field(description="What happens, one sentence, in the report language")
-    quote: str = Field(description="VERBATIM transcript span at this moment, 3-30 words")
+    quote: str = Field(description=f"VERBATIM transcript span at this moment, {QUOTE_WORDS} words")
     seg_ids: list[str] = []
 
 
@@ -150,7 +160,7 @@ class Language(BaseModel):
     tone: str = Field(description="Tone and register: e.g. hyped, calm, conversational, formal")
     techniques: list[str] = Field(description="Concrete script techniques heard (e.g. 'you'-address, "
                                               "numbers and stakes, short declaratives, cliff-hanger lines)")
-    examples: list[str] = Field(description="2-5 VERBATIM transcript lines that show the style")
+    examples: list[str] = Field(description=f"{STYLE_EXAMPLES} VERBATIM transcript lines that show the style")
 
 
 class Concept(BaseModel):
@@ -160,7 +170,7 @@ class Concept(BaseModel):
         description="How the idea first reaches the viewer")
     sequence: str = Field(description="The order of moves used to teach it, e.g. 'problem → analogy → definition → "
                                       "example', in the report language")
-    quote: str = Field(description="VERBATIM transcript span where the idea lands, 3-30 words")
+    quote: str = Field(description=f"VERBATIM transcript span where the idea lands, {QUOTE_WORDS} words")
     seg_ids: list[str] = []
 
 
@@ -179,7 +189,7 @@ class ExemplarExtraction(BaseModel):
     summary_local: str = Field(description="3-5 sentences in the report language: how this video holds attention")
     packaging: Packaging
     opening: Opening
-    beats: list[Beat] = Field(description="The video's structure in order, 8-30 beats")
+    beats: list[Beat] = Field(description=f"The video's structure in order, {BEATS} beats")
     open_loops: list[OpenLoop] = []
     rehook_interval_note: str = Field(description="How often new stakes/twists/re-hooks arrive, with examples")
     language: Language
