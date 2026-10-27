@@ -1,0 +1,54 @@
+# Topic pack: Meta (Facebook/Instagram) ads on a small budget.
+# Queries are deliberately multilingual: practitioner know-how is not only in Turkish/English.
+name: meta-ads
+topic: "Meta / Instagram Reels reklamlarında düşük bütçeyle öğrenme aşamasını geçmek"
+months: 12
+question: >-
+  Meta (Facebook/Instagram) reklamlarında, özellikle Reels reklamlarında, küçük bir bütçeyle
+  öğrenme aşaması geçilebilir mi? Ayda 150.000 TL harcamak gerçekten gerekli mi, yoksa daha
+  düşük bütçeyle aynı sonuca ulaşmanın kanıtlanmış yolları var mı?
+  Muhtemel hesap: gereken bütçe ≈ haftada ~50 optimizasyon olayı × olay başı maliyet. Şunları
+  açıkça cevapla: (1) 50 olay kuralı resmi olarak doğru mu, güncel mi? (2) Daha ucuz bir olaya
+  (sepete ekleme, ödeme başlatma, mesaj, lead) optimize etmek öğrenmeyi ucuza geçirir mi, bedeli
+  ne? (3) "Öğrenme sınırlı" kalmak gerçekten kötü mü? (4) Bütçeyi tek kampanya/reklam setinde
+  toplamak ne kadar yardımcı olur? (5) Kreatif (Reels) kalitesi olay başı maliyeti ne kadar
+  düşürür? (6) Türkiye/TL için somut maliyet örnekleri. Senaryoları ayrı yaz: e-ticaret satışı,
+  mesaj/lead (hizmet), yüksek fiyatlı ürün.
+
+queries:
+  - {text: "facebook ads learning phase low budget", hl: en, gl: US}
+  - {text: "meta ads small budget strategy 2026", hl: en, gl: US}
+  - {text: "instagram reels ads beginner tutorial", hl: en, gl: US}
+  - {text: "meta ads andromeda creative testing", hl: en, gl: US}
+  - {text: "advantage+ campaign small budget", hl: en, gl: US}
+  - {text: "facebook ads learning limited fix", hl: en, gl: US}
+  - {text: "meta reklam öğrenme aşaması", hl: tr, gl: TR}
+  - {text: "instagram reklam düşük bütçe", hl: tr, gl: TR}
+  - {text: "facebook reklam nasıl verilir 2026", hl: tr, gl: TR}
+  - {text: "meta ads presupuesto bajo fase de aprendizaje", hl: es, gl: ES}
+  - {text: "anúncios meta fase de aprendizado orçamento baixo", hl: pt, gl: BR}
+  - {text: "facebook werbung kleines budget lernphase", hl: de, gl: DE}
+
+# Course-style phrasings surface playlists (education sets) much better than how-to phrasings.
+playlist_queries:
+  - {text: "meta ads full course 2026", hl: en, gl: US}
+  - {text: "facebook ads course beginner to advanced", hl: en, gl: US}
+  - {text: "meta reklam eğitimi", hl: tr, gl: TR}
+  - {text: "curso meta ads completo", hl: es, gl: ES}
+
+# Official sources for verifying platform-mechanics claims (stage 7).
+official_domains:
+  - facebook.com/business/help
+  - developers.facebook.com
+  - engineering.fb.com
+  - transparency.meta.com
+  - about.fb.com
+
+# Platform changes that make older advice suspect (recency weighting).
+breakpoints:
+  - {date: 2024-12-02, name: "Andromeda retrieval engine", affects: [delivery, targeting, creative]}
+
+glossary:
+  learning phase: [öğrenme aşaması, fase de aprendizaje, fase de aprendizado, lernphase]
+  learning limited: [öğrenme sınırlı, aprendizaje limitado]
+  broad targeting: [geniş hedefleme, segmentación amplia]

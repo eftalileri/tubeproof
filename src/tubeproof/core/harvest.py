@@ -1,0 +1,367 @@
+"""Stage 1–4: discover → rank → harvest bundles → pre-filter. Resumable and cached."""
+
+from __future__ import annotations
+
+import json
+import math
+import re
+import time
+from datetime import date, timedelta
+from pathlib import Path
+
+from tubeproof.config import settings
+from tubeproof.core.discover import Query, discover, rank_score
+from tubeproof.core.screen import MIN_SCORE, screen
+from tubeproof.fetch.links import process_links
+from tubeproof.filters.spam import flag_spam
+from tubeproof.models import Comment, Link, PlaylistMeta, SearchHit, Transcript, VideoBundle, VideoMeta
+from tubeproof.sources.youtube import comments as yt_comments
+from tubeproof.sources.youtube import metadata as yt_meta
+from tubeproof.sources.youtube import transcript as yt_transcript
+from tubeproof.store.db import Store
+
+
+def slug(text: str) -> str:
+    s = re.sub(r"[^\w]+", "-", text.lower(), flags=re.UNICODE).strip("-")
+    return s[:40] or "run"
+
+
+def _cached(store: Store, kind: str, key: str, fn, model=None):
+    hit = store.get(kind, key)
+    if hit is not None:
+        if model is None:
+            return hit
+        return [model(**x) for x in hit] if isinstance(hit, list) else model(**hit)
+    value = fn()
+    if isinstance(value, list):
+        store.put(kind, key, [v.model_dump(mode="json") for v in value])
+    else:
+        store.put(kind, key, value.model_dump(mode="json") if hasattr(value, "model_dump") else value)
+    return value
+
+
+PLAN_FIELDS = ("id", "title", "channel", "upload_date", "views", "duration_s", "language", "relevance", "reason",
+               "playlists")
+
+
+def write_manifest(run_dir: Path, manifest: dict) -> None:
+    """The run's manifest (data/, private) plus its public video list `research/<id>/plan.json`:
+    which videos were selected and why, without queries or reader context."""
+    (run_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1))
+    public = {"topic": manifest["topic"], "cutoff": manifest.get("cutoff"),
+              "selected": manifest.get("harvested") or manifest.get("created"),
+              "videos": [{k: v.get(k) for k in PLAN_FIELDS} for v in manifest["videos"]],
+              "playlists": [{k: p.get(k) for k in ("id", "title", "channel")} for p in manifest.get("playlists", [])]}
+    (run_dir.parent / "plan.json").write_text(json.dumps(public, ensure_ascii=False, indent=1))
+
+
+def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] | None = None,
+            months: float = 12, n_videos: int = 30,
+            n_playlists: int = 5, playlist_videos: int = 5, per_channel: int = 2,
+            market_lang: str | None = None, market_share: float = 0.25, plan_only: bool = False,
+            min_views: int = 200, min_views_market: int = 100, on_bundle=None,
+            comments_popular: int = 150, comments_recent: int = 60, fetch_links: bool = True,
+            allow_whisper: bool = False, pack_name: str | None = None, run_id: str | None = None,
+            max_duration_s: int = 90 * 60, llm=None, question: str | None = None,
+            log=print) -> Path:
+    """Harvest into a new run, or with `run_id` add a focused pass to an existing run
+    (already-harvested videos are excluded from selection, the manifest is merged)."""
+    store = Store()
+    run_id = run_id or f"{date.today():%Y%m%d}-{slug(topic)}"
+    run_dir = settings.run_dir(run_id)
+    (run_dir / "videos").mkdir(parents=True, exist_ok=True)
+    prev = json.loads((run_dir / "manifest.json").read_text()) if (run_dir / "manifest.json").exists() else None
+    existing = {f.stem for f in (run_dir / "videos").glob("*.json")}
+    if prev:
+        topic = prev["topic"]
+        pack_name = prev["params"].get("pack") or pack_name
+    params = dict(months=months, n_videos=n_videos, n_playlists=n_playlists, pack=pack_name,
+                  market_lang=market_lang, market_share=market_share,
+                  queries=[q.__dict__ for q in queries])
+    store.upsert_run(run_id, topic, params, "discover")
+    cutoff = date.today() - timedelta(days=round(months * 30.44))
+    if prev and prev.get("planned"):
+        return _harvest_plan(prev, run_dir, store, params, comments_popular, comments_recent, fetch_links,
+                             allow_whisper, log, on_bundle)
+
+    # 1. discover
+    log(f"[1/4] Discovery: {len(queries)} queries")
+    cand = discover(queries, months, playlist_queries=playlist_queries,
+                    playlists_per_query=8 if n_playlists else 0,
+                    on_progress=lambda q, c: log(f"   · {q.text!r} → {len(c.videos)} video, {len(c.playlists)} playlist"))
+
+    # 1b. relevance gate (extract-tier LLM on titles), before any heavy fetching
+    rel: dict[str, int] = {}
+    if llm is not None:
+        hits = [h for h in cand.videos.values() if h.id not in existing] + list(cand.playlists.values())
+        rel = screen(llm, topic, question, hits, log=log, store=store)
+        kept_v = {k: v for k, v in cand.videos.items() if rel.get(k, 0) >= MIN_SCORE}
+        kept_p = {k: v for k, v in cand.playlists.items() if rel.get(k, 0) >= MIN_SCORE}
+        log(f"   relevance gate: videos {len(cand.videos)} → {len(kept_v)}, playlists {len(cand.playlists)} → "
+            f"{len(kept_p)} · ${llm.meter.usd:.3f}")
+        cand.videos, cand.playlists = kept_v, kept_p
+
+    # 2. metadata pool, then exact date/duration filter. Relevance comes first, popularity only
+    #    orders videos *within* a relevance tier; the reader's market language gets a quota so
+    #    low-view local videos are not crushed by English view counts.
+    hl_of_query = {q.text: q.hl for q in queries + (playlist_queries or [])}
+
+    def tier(vid: str) -> int:
+        return rel.get(vid, MIN_SCORE)
+
+    def pre_score(h) -> float:
+        return rank_score(h.views, h.approx_age_days, query_hits=len(cand.queries_by_id[h.id]))
+
+    def is_market(vid: str, meta: VideoMeta | None = None) -> bool:
+        if not market_lang:
+            return False
+        if meta and meta.language:
+            return meta.language.split("-")[0] == market_lang
+        return any(hl_of_query.get(q) == market_lang for q in cand.queries_by_id.get(vid, []))
+
+    ordered = sorted(cand.videos.values(), key=lambda h: (-tier(h.id), -pre_score(h)))
+    pool_ids: list[str] = []
+    for group, cap in (([h for h in ordered if tier(h.id) >= 3], 60),
+                       ([h for h in ordered if tier(h.id) == MIN_SCORE], n_videos * 2),
+                       ([h for h in ordered if is_market(h.id)], n_videos)):
+        pool_ids += [h.id for h in group[:cap] if h.id not in pool_ids]
+    log(f"[2/4] Metadata + ranking: {len(pool_ids)} candidates (total {len(cand.videos)})")
+    metas: dict[str, VideoMeta] = {}
+    dropped = {"old": 0, "long": 0}
+
+    def fetch_meta(vid: str) -> VideoMeta | None:
+        try:
+            m = _cached(store, "meta", vid, lambda: yt_meta.video_meta(vid), VideoMeta)
+        except Exception as e:
+            log(f"   ! meta {vid}: {str(e)[:120]}")
+            return None
+        if m.upload_date and m.upload_date < cutoff:
+            dropped["old"] += 1
+            return None
+        if m.duration_s and m.duration_s > max_duration_s:
+            dropped["long"] += 1  # multi-hour streams: costly to analyse, rarely denser than a focused video
+            return None
+        return m
+
+    for vid in pool_ids:
+        if (m := fetch_meta(vid)) is not None:
+            metas[vid] = m
+
+    def age(m: VideoMeta) -> int | None:
+        return (date.today() - m.upload_date).days if m.upload_date else None
+
+    def popular_enough(vid: str, m: VideoMeta) -> bool:
+        # views are a weak validation signal; local-language videos get a lower bar
+        return (m.views or 0) >= (min_views_market if is_market(vid, m) else min_views)
+
+    low = [v for v, m in metas.items() if not popular_enough(v, m)]
+    scored = {vid: rank_score(m.views, age(m), m.likes, m.comment_count, len(cand.queries_by_id[vid]))
+              for vid, m in metas.items() if vid not in existing and popular_enough(vid, m)}
+    chosen: list[str] = []
+    reason: dict[str, str] = {}
+    per_ch: dict[str, int] = {}
+
+    def pick(ids: list[str], k: int, why: str) -> None:
+        for vid in sorted(ids, key=lambda v: (-tier(v), -scored[v])):
+            if k <= 0:
+                return
+            ch = metas[vid].channel_id or vid
+            if vid in chosen or per_ch.get(ch, 0) >= per_channel:
+                continue
+            chosen.append(vid)
+            reason[vid] = why
+            per_ch[ch] = per_ch.get(ch, 0) + 1
+            k -= 1
+
+    if market_lang:
+        pick([v for v in scored if is_market(v, metas[v])], math.ceil(n_videos * market_share),
+             f"market language ({market_lang})")
+    pick([v for v in scored if tier(v) >= 3], n_videos - len(chosen), "relevance 3")
+    pick(list(scored), n_videos - len(chosen), "relevance 2")
+
+    # playlists = course sets; their items pass the same date, duration and relevance gates
+    playlists: list[PlaylistMeta] = []
+    pl_hits = sorted(cand.playlists.values(),
+                     key=lambda h: (-tier(h.id), -len(cand.queries_by_id[h.id]), -(h.video_count or 0)))
+    for h in pl_hits[:n_playlists]:
+        try:
+            pl = _cached(store, "playlist", h.id, lambda: yt_meta.playlist_meta(h.id), PlaylistMeta)
+        except Exception as e:
+            log(f"   ! playlist {h.id}: {str(e)[:120]}")
+            continue
+        items: dict[str, VideoMeta] = {}
+        for vid in pl.video_ids[: playlist_videos * 3]:
+            if vid in chosen or vid in existing:
+                continue
+            if (m := fetch_meta(vid)) is not None:
+                items[vid] = m
+        if llm is not None and items:
+            item_hits = [SearchHit(kind="video", id=v, title=m.title, channel=m.channel, views=m.views)
+                         for v, m in items.items()]
+            item_rel = screen(llm, topic, question, item_hits, log=log, store=store)
+            rel.update(item_rel)
+            # a course earns corpus slots only with lessons on the reader's exact situation
+            items = {v: m for v, m in items.items() if item_rel.get(v, 0) >= 3}
+        taken = 0
+        for vid, m in items.items():
+            if taken >= playlist_videos:
+                break
+            metas[vid] = m
+            scored[vid] = rank_score(m.views, age(m), m.likes, m.comment_count)
+            chosen.append(vid)
+            reason[vid] = f"course set: {pl.title[:40]}"
+            taken += 1
+        if taken:
+            playlists.append(pl)
+    log(f"   dropped: {dropped['old']} old (<{cutoff}), {dropped['long']} long (>{max_duration_s // 60} min), "
+        f"{len(low)} low-view (<{min_views})")
+    log(f"   selected: {len(chosen)} videos (incl. {len(playlists)} course sets)")
+
+    rel_of = {v: rel.get(v) for v in chosen}
+    if plan_only:
+        plan = {"run_id": run_id, "topic": topic, "planned": True, "created": time.strftime("%Y-%m-%d %H:%M"),
+                "params": params, "cutoff": str(cutoff),
+                "videos": [{"id": v, "title": metas[v].title, "channel": metas[v].channel, "views": metas[v].views,
+                            "upload_date": str(metas[v].upload_date), "duration_s": metas[v].duration_s,
+                            "language": metas[v].language, "relevance": rel_of[v], "reason": reason.get(v),
+                            "score": scored.get(v), "found_by_queries": cand.queries_by_id.get(v, []),
+                            "playlists": [p.id for p in playlists if v in p.video_ids]} for v in chosen],
+                "playlists": [p.model_dump(mode="json") for p in playlists]}
+        write_manifest(run_dir, plan)
+        store.upsert_run(run_id, topic, params, "planned")
+        log(f"   plan saved ({len(chosen)} videos) → {run_dir / 'manifest.json'}")
+        return run_dir
+
+    # 3. harvest bundles
+    store.upsert_run(run_id, topic, params, "harvest")
+    log("[3/4] Harvest: transcript, comments, links")
+    in_playlists = {vid: [p.id for p in playlists if vid in p.video_ids] for vid in chosen}
+    for i, vid in enumerate(chosen, 1):
+        out = run_dir / "videos" / f"{vid}.json"
+        if out.exists():
+            continue
+        m = metas[vid]
+        if m.has_paid_promotion is None:
+            m.has_paid_promotion = yt_meta.has_paid_promotion(vid)
+        b = VideoBundle(meta=m, rank_score=scored.get(vid), playlist_ids=in_playlists.get(vid, []),
+                        found_by_queries=cand.queries_by_id.get(vid, []))
+        try:
+            b.transcript = _cached(store, "transcript", vid,
+                                   lambda: yt_transcript.fetch_transcript(vid, m.language, allow_whisper),
+                                   Transcript)
+        except Exception as e:
+            b.transcript_error = str(e)[:400]
+        try:
+            raw = _cached(store, "comments", vid,
+                          lambda: yt_comments.fetch_comments(vid, m.channel_id, comments_popular, comments_recent),
+                          Comment)
+            b.comments = flag_spam(raw)
+        except Exception as e:
+            b.comments_error = str(e)[:400]
+        if fetch_links:
+            b.links = _cached(store, "links", vid, lambda: process_links(m.description), Link)
+        out.write_text(b.model_dump_json(indent=1))
+        spam = sum(1 for c in b.comments if c.spam_reasons)
+        paid = sum(1 for l in b.links if l.is_paid)
+        log(f"   {i:>2}/{len(chosen)} {vid} · {(m.title or '')[:48]!r} · "
+            f"transcript={'✓ ' + (b.transcript.language or '') if b.transcript else '✗'} · "
+            f"comments={len(b.comments)} (spam {spam}) · links={len(b.links)} (paid {paid})"
+            f"{' · PAID-PROMO' if m.has_paid_promotion else ''}")
+
+    # 4. manifest
+    store.upsert_run(run_id, topic, params, "harvested")
+    manifest = {
+        "run_id": run_id, "topic": topic, "created": time.strftime("%Y-%m-%d %H:%M"),
+        "params": params, "cutoff": str(cutoff),
+        "videos": [{"id": v, "title": metas[v].title, "channel": metas[v].channel,
+                    "views": metas[v].views, "upload_date": str(metas[v].upload_date),
+                    "language": metas[v].language, "relevance": rel.get(v), "reason": reason.get(v),
+                    "score": scored.get(v), "playlists": in_playlists.get(v, [])} for v in chosen],
+        "playlists": [p.model_dump(mode="json") for p in playlists],
+    }
+    if prev:
+        seen_v = {v["id"] for v in manifest["videos"]}
+        seen_p = {p["id"] for p in manifest["playlists"]}
+        manifest["videos"] = [v for v in prev["videos"] if v["id"] not in seen_v] + manifest["videos"]
+        manifest["playlists"] = [p for p in prev["playlists"] if p["id"] not in seen_p] + manifest["playlists"]
+        manifest["params"] = {**prev["params"], "passes": prev["params"].get("passes", [prev["params"]["queries"]])
+                              + [params["queries"]]}
+    write_manifest(run_dir, manifest)
+    log(f"[4/4] Done → {run_dir}")
+    return run_dir
+
+
+def repair(run_id: str, *, allow_whisper: bool = True, log=print) -> dict:
+    """Retry transcripts for bundles harvested without one (e.g. during a caption rate-limit).
+
+    Captions are tried first (fast, if the block has lifted), Whisper on the audio last.
+    """
+    store = Store()
+    run_dir = settings.run_dir(run_id)
+    files = [f for f in sorted((run_dir / "videos").glob("*.json"))
+             if not json.loads(f.read_text()).get("transcript")]
+    log(f"[repair] {len(files)} videos missing a transcript")
+    fixed = 0
+    for i, f in enumerate(files, 1):
+        b = VideoBundle.model_validate_json(f.read_text())
+        t0 = time.time()
+        try:
+            b.transcript = yt_transcript.fetch_transcript(b.meta.id, b.meta.language, allow_whisper)
+            b.transcript_error = None
+            store.put("transcript", b.meta.id, b.transcript.model_dump(mode="json"))
+            f.write_text(b.model_dump_json(indent=1))
+            fixed += 1
+            log(f"   ✓ {i}/{len(files)} {b.meta.id} · {b.transcript.source} · {b.transcript.language} · "
+                f"{time.time() - t0:.0f}s")
+        except Exception as e:
+            log(f"   ✗ {i}/{len(files)} {b.meta.id} · {str(e)[:160]}")
+    return {"fixed": fixed, "remaining": len(files) - fixed}
+
+
+def _harvest_plan(plan: dict, run_dir: Path, store: Store, params: dict, comments_popular: int,
+                  comments_recent: int, fetch_links: bool, allow_whisper: bool, log=print,
+                  on_bundle=None) -> Path:
+    """Harvest exactly the videos of a saved plan (no new search, no re-selection)."""
+    topic = plan["topic"]
+    log(f"[plan] harvesting {len(plan['videos'])} videos from the saved plan")
+    store.upsert_run(run_dir.name, topic, params, "harvest")
+    for i, v in enumerate(plan["videos"], 1):
+        out = run_dir / "videos" / f"{v['id']}.json"
+        if out.exists():
+            continue
+        m = _cached(store, "meta", v["id"], lambda: yt_meta.video_meta(v["id"]), VideoMeta)
+        if m.has_paid_promotion is None:
+            m.has_paid_promotion = yt_meta.has_paid_promotion(v["id"])
+        b = VideoBundle(meta=m, rank_score=v.get("score"), playlist_ids=v.get("playlists", []),
+                        found_by_queries=v.get("found_by_queries", []))
+        _fill_bundle(b, store, comments_popular, comments_recent, fetch_links, allow_whisper)
+        out.write_text(b.model_dump_json(indent=1))
+        if on_bundle:
+            on_bundle(b)
+        log(f"   {i:>2}/{len(plan['videos'])} {v['id']} · {(m.title or '')[:48]!r} · "
+            f"transcript={'✓ ' + (b.transcript.language or '') + ' ' + b.transcript.source if b.transcript else '✗'}"
+            f" · comments={len(b.comments)} · links={len(b.links)}")
+    plan = {**plan, "planned": False, "harvested": time.strftime("%Y-%m-%d %H:%M")}
+    write_manifest(run_dir, plan)
+    store.upsert_run(run_dir.name, topic, params, "harvested")
+    log(f"[plan] done → {run_dir}")
+    return run_dir
+
+
+def _fill_bundle(b: VideoBundle, store: Store, comments_popular: int, comments_recent: int,
+                 fetch_links: bool, allow_whisper: bool) -> None:
+    vid, m = b.meta.id, b.meta
+    try:
+        b.transcript = _cached(store, "transcript", vid,
+                               lambda: yt_transcript.fetch_transcript(vid, m.language, allow_whisper), Transcript)
+    except Exception as e:
+        b.transcript_error = str(e)[:400]
+    try:
+        raw = _cached(store, "comments", vid,
+                      lambda: yt_comments.fetch_comments(vid, m.channel_id, comments_popular, comments_recent),
+                      Comment)
+        b.comments = flag_spam(raw)
+    except Exception as e:
+        b.comments_error = str(e)[:400]
+    if fetch_links:
+        b.links = _cached(store, "links", vid, lambda: process_links(m.description), Link)

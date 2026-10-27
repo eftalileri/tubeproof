@@ -1,0 +1,26 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+.DS_Store
+.env
+.env.*
+*.log
+
+# Harvested data: YouTube policy forbids redistribution; never commit it.
+tubeproof-data/
+# Each research: only pack.yaml, plan.json and REPORT.md are public.
+research/*/data/
+research/*/private/
+# Audio and model files never belong in the repo.
+*.m4a
+*.webm
+*.mp3
+*.wav
+*.sqlite*
+
+# Local MCP wiring holds machine paths; see README for the snippet.
+.mcp.json

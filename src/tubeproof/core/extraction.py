@@ -1,0 +1,98 @@
+"""Map-stage output models (VideoExtraction v1). The LLM fills these; code validates them."""
+
+from __future__ import annotations
+
+from typing import Literal
+
+from pydantic import BaseModel, Field
+
+SegLabel = Literal["free_knowledge", "sponsor", "own_offer_pitch", "lead_magnet", "interaction",
+                   "intro_outro", "mixed", "filler"]
+ClaimType = Literal["platform_mechanic", "tactic_efficacy", "numeric_threshold", "setup_instruction",
+                    "outcome_income", "opinion"]
+
+
+class SegmentLabel(BaseModel):
+    seg_id: str
+    label: SegLabel
+    note: str | None = Field(None, description="For mixed/sales segments: what is being sold")
+
+
+class Conditions(BaseModel):
+    budget_per_day: str | None = None
+    currency: str | None = None
+    objective: str | None = Field(None, description="sales, leads, traffic, messages, app installs...")
+    vertical: str | None = Field(None, description="ecommerce, local service, info product, saas...")
+    country: str | None = None
+    claimed_period: str | None = None
+
+
+class Claim(BaseModel):
+    claim_id: str = Field(description="C1, C2, ...")
+    text_en: str = Field(description="One self-contained assertion in English, understandable without the video")
+    text_local: str = Field(description="Same assertion in natural prose in the report language")
+    quote: str = Field(description="VERBATIM span copied from the transcript (original language), 5-40 words")
+    seg_ids: list[str]
+    claim_type: ClaimType
+    polarity: Literal["do", "dont", "neutral"]
+    specificity: int = Field(ge=0, le=3, description="0 vague … 3 concrete numbers/settings/steps")
+    evidence_shown: Literal["none", "verbal_numbers", "screen_ads_manager", "third_party"]
+    basis: Literal["own_experience", "client_data", "platform_docs", "other_creator", "general_knowledge"] = Field(
+        description="Where the claim comes from: the speaker's own runs, their clients' accounts, the platform's docs/"
+                    "announcements, another creator/course, or unattributed common wisdom")
+    conditions: Conditions
+    is_withheld_teaser: bool = Field(description="The step is mentioned but deferred to a paid offer")
+    survivorship_flags: list[Literal["no_spend_disclosed", "revenue_not_profit", "no_timeframe",
+                                     "cherry_picked_period", "unverifiable_screenshot"]] = []
+
+
+class TitlePromise(BaseModel):
+    promise: str
+    delivered: Literal["fully", "partially", "withheld_to_paid", "not_addressed"]
+    seg_ids: list[str] = []
+
+
+class Offer(BaseModel):
+    kind: Literal["course", "coaching", "agency_service", "affiliate_tool", "webinar_upsell",
+                  "dm_funnel", "sponsor", "community"]
+    description: str
+    seg_ids: list[str] = []
+
+
+class Hype(BaseModel):
+    clickbait_score: float = Field(ge=0, le=1, description="0 = title/thumbnail honest, 1 = pure bait")
+    markers: list[str] = []
+    rationale: str
+
+
+class CreatorSignals(BaseModel):
+    coi: list[Literal["sells_course", "sells_agency_services", "affiliate", "sponsored", "community_paid",
+                      "none_detected"]]
+    shows_own_account_data: bool
+    expertise_note: str = Field(description="One line: what in the video shows (or not) hands-on experience")
+
+
+class VideoExtraction(BaseModel):
+    summary_local: str = Field(description="3-5 sentence summary of the FREE knowledge only, in the report language")
+    segments: list[SegmentLabel]
+    claims: list[Claim]
+    title_promises: list[TitlePromise]
+    offers: list[Offer]
+    hype: Hype
+    creator: CreatorSignals
+
+
+Stance = Literal["confirms", "refutes", "questions", "adds_nuance", "complains_clickbait"]
+
+
+class CommentEvidence(BaseModel):
+    comment_id: str
+    claim_id: str | None = Field(None, description="Claim this comment speaks to; null for video-level remarks")
+    stance: Stance
+    experiential: bool = Field(description="Commenter reports own result ('I tried X and Y happened')")
+    specifics: str | None = Field(None, description="Budget, period, numbers, niche the commenter gives")
+
+
+class CommentExtraction(BaseModel):
+    evidence: list[CommentEvidence]
+    new_tips: list[str] = Field(default=[], description="Concrete tips from comments not in the video (report language)")

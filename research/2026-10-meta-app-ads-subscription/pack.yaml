@@ -1,0 +1,118 @@
+# tubeproof topic pack (public). Reader-specific question, context and hypotheses live in
+# private/context.yaml next to it and are never committed.
+name: 2026-10-meta-app-ads-subscription
+report_lang: tr
+topic: Meta uygulama tanıtımı (Advantage+ app) kampanyasıyla abonelikli B2B uygulamaya düşük bütçede deneme
+  (StartTrial) ve ödeyen müşteri getirmek
+months: 12
+market:
+  lang: tr
+  min_share: 0.25
+queries:
+- text: meta app install campaign subscription app
+  hl: en
+  gl: US
+- text: facebook app event optimization start trial
+  hl: en
+  gl: US
+- text: meta ads mobile app small budget 2026
+  hl: en
+  gl: US
+- text: advantage+ app campaign
+  hl: en
+  gl: US
+- text: optimize for trial or purchase meta ads app
+  hl: en
+  gl: US
+- text: subscription app paid acquisition meta ads
+  hl: en
+  gl: US
+- text: meta ads for saas b2b
+  hl: en
+  gl: US
+- text: facebook ads targeting business owners b2b
+  hl: en
+  gl: US
+- text: app install ads not converting to paid users
+  hl: en
+  gl: US
+- text: ugc ads for mobile apps
+  hl: en
+  gl: US
+- text: meta ads app event attribution sdk conversions api
+  hl: en
+  gl: US
+- text: how we got our first paying users app facebook ads
+  hl: en
+  gl: US
+- text: uygulama yükleme reklamı meta
+  hl: tr
+  gl: TR
+- text: mobil uygulama reklamı nasıl verilir
+  hl: tr
+  gl: TR
+- text: meta uygulama tanıtım kampanyası
+  hl: tr
+  gl: TR
+- text: b2b meta reklam
+  hl: tr
+  gl: TR
+- text: uygulama reklamı maliyet düşürme
+  hl: tr
+  gl: TR
+- text: meta reklam dönüşüm maliyeti yüksek
+  hl: tr
+  gl: TR
+- text: instagram reels reklam uygulama indirme
+  hl: tr
+  gl: TR
+- text: saas müşteri edinme maliyeti
+  hl: tr
+  gl: TR
+- text: meta reklam advantage plus uygulama
+  hl: tr
+  gl: TR
+- text: reduce cost per trial subscription app meta
+  hl: en
+  gl: US
+- text: meta app campaign low quality installs
+  hl: en
+  gl: US
+- text: improve install to trial to paid conversion app
+  hl: en
+  gl: US
+- text: app ads creative hooks that convert
+  hl: en
+  gl: US
+- text: campaña de instalación de aplicaciones meta ads
+  hl: es
+  gl: ES
+- text: anúncios para aplicativo meta ads
+  hl: pt
+  gl: BR
+playlist_queries:
+- text: mobile app marketing course
+  hl: en
+  gl: US
+- text: facebook ads for apps
+  hl: en
+  gl: US
+- text: uygulama pazarlama eğitimi
+  hl: tr
+  gl: TR
+- text: meta reklam eğitimi 2026
+  hl: tr
+  gl: TR
+official_domains:
+- facebook.com/business
+- developers.facebook.com
+- engineering.fb.com
+- transparency.meta.com
+- about.fb.com
+breakpoints:
+- date: 2024-12-02
+  name: Andromeda retrieval engine
+  affects:
+  - delivery
+  - targeting
+  - creative

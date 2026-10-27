@@ -1,0 +1,141 @@
+"""Stage 5 (map): per-video LLM extraction, then code-side grounding checks.
+
+Output: runs/<id>/extractions/<video_id>.json = {video, comments, grounding}.
+Resumable: videos with an existing extraction are skipped.
+"""
+
+from __future__ import annotations
+
+import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+
+from rapidfuzz import fuzz
+
+from tubeproof.core.extraction import CommentExtraction, VideoExtraction
+from tubeproof.core.segment import Window, fmt_ts, windows
+from tubeproof.prompts import load as load_prompt
+from tubeproof.llm.base import LLM, LLMError
+from tubeproof.models import VideoBundle
+
+PROMPT_VERSION = "map-v3"
+MAX_DESC_CHARS = 3000
+MAX_COMMENTS = 140
+MAX_COMMENT_CHARS = 450
+QUOTE_MATCH_MIN = 80
+
+
+def claim_budget(duration_s: int | None) -> int:
+    """25 claims flattened long talks: a 59 min interview gave as many as an 11 min video
+    (2026-10-27). Up to ~31 min stays 25; longer talks get 0.8 per minute, at most 50."""
+    return max(25, min(50, round((duration_s or 0) / 60 * 0.8)))
+
+
+def _video_input(b: VideoBundle, wins: list[Window]) -> str:
+    m = b.meta
+    links = "\n".join(
+        f"- [{l.link_class}{', PAID' if l.is_paid else ''}] {l.resolved_url or l.url}" for l in b.links
+    ) or "(none)"
+    segs = "\n".join(f"[{w.seg_id} {fmt_ts(w.t_start)}-{fmt_ts(w.t_end)}] {w.text}" for w in wins)
+    return (
+        f"<untrusted_data>\nTITLE: {m.title}\nCHANNEL: {m.channel} ({m.channel_followers or '?'} subscribers)\n"
+        f"PUBLISHED: {m.upload_date} · VIEWS: {m.views} · LIKES: {m.likes} · "
+        f"YOUTUBE PAID-PROMOTION DISCLOSURE: {m.has_paid_promotion}\n"
+        f"CHAPTERS: {', '.join(f'{fmt_ts(c.start)} {c.title}' for c in m.chapters) or '(none)'}\n\n"
+        f"DESCRIPTION:\n{m.description[:MAX_DESC_CHARS]}\n\nDESCRIPTION LINKS (pre-classified):\n{links}\n\n"
+        f"TRANSCRIPT SEGMENTS:\n{segs}\n</untrusted_data>"
+    )
+
+
+def _comment_input(b: VideoBundle, ext: VideoExtraction) -> tuple[str, int]:
+    clean = [c for c in b.comments if not c.spam_reasons]
+    top = sorted(clean, key=lambda c: -c.likes)[: MAX_COMMENTS * 2 // 3]
+    ids = {c.id for c in top}
+    rest = [c for c in clean if c.id not in ids][: MAX_COMMENTS - len(top)]
+    chosen = top + rest
+    claims = "\n".join(f"{c.claim_id}: {c.text_en}" for c in ext.claims)
+    lines = "\n".join(
+        f"[{c.id}] likes={c.likes}{' by_creator=true' if c.by_creator else ''}"
+        f"{' reply' if c.is_reply else ''}: {c.text[:MAX_COMMENT_CHARS].replace(chr(10), ' ')}"
+        for c in chosen
+    )
+    return (f"VIDEO: {b.meta.title}\n\nCLAIMS:\n{claims}\n\n<untrusted_data>\nCOMMENTS:\n{lines}\n"
+            f"</untrusted_data>"), len(chosen)
+
+
+def ground(ext: VideoExtraction, wins: list[Window]) -> dict:
+    """Drop claims whose quote cannot be found in the cited (or any) segment."""
+    by_id = {w.seg_id: w.text for w in wins}
+    full = " ".join(by_id.values())
+    kept, dropped = [], []
+    for c in ext.claims:
+        cited = " ".join(by_id.get(s, "") for s in c.seg_ids)
+        score = max(fuzz.partial_ratio(c.quote, cited) if cited else 0, fuzz.partial_ratio(c.quote, full))
+        (kept if score >= QUOTE_MATCH_MIN else dropped).append((c, score))
+    ext.claims = [c for c, _ in kept]
+    valid_segs = set(by_id)
+    for c in ext.claims:
+        c.seg_ids = [s for s in c.seg_ids if s in valid_segs]
+    return {"kept": len(kept), "dropped": [{"claim_id": c.claim_id, "quote": c.quote, "score": s}
+                                           for c, s in dropped]}
+
+
+def map_video(llm: LLM, topic: str, b: VideoBundle, lang: str) -> dict:
+    if not b.transcript:
+        raise LLMError(f"no transcript: {b.transcript_error}")
+    wins = windows(b.transcript)
+    system = load_prompt("map_video.md", lang, topic=topic, max_claims=claim_budget(b.meta.duration_s))
+    raw = llm.json("extract", system, _video_input(b, wins),
+                   VideoExtraction.model_json_schema())
+    ext = VideoExtraction.model_validate(raw)
+    grounding = ground(ext, wins)
+    comments = None
+    if b.comments and ext.claims:
+        user, n = _comment_input(b, ext)
+        if n:
+            raw_c = llm.json("extract", load_prompt("map_comments.md", lang, topic=topic), user,
+                             CommentExtraction.model_json_schema())
+            comments = CommentExtraction.model_validate(raw_c)
+            known = {c.id for c in b.comments}
+            comments.evidence = [e for e in comments.evidence if e.comment_id in known]
+    return {
+        "prompt_version": PROMPT_VERSION,
+        "video_id": b.meta.id,
+        "windows": [w.__dict__ for w in wins],
+        "video": ext.model_dump(mode="json"),
+        "comments": comments.model_dump(mode="json") if comments else None,
+        "grounding": grounding,
+    }
+
+
+def run_map(llm: LLM, run_dir: Path, topic: str, lang: str, workers: int = 4, only: list[str] | None = None,
+            log=print) -> dict:
+    out_dir = run_dir / "extractions"
+    out_dir.mkdir(exist_ok=True)
+    todo = []
+    for f in sorted((run_dir / "videos").glob("*.json")):
+        if only and f.stem not in only:
+            continue
+        if (out_dir / f.name).exists():
+            continue
+        todo.append(VideoBundle.model_validate_json(f.read_text()))
+    log(f"[map] {len(todo)} videos to process ({workers} parallel)")
+    done, failed = 0, {}
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        futs = {ex.submit(map_video, llm, topic, b, lang): b for b in todo}
+        for fut in as_completed(futs):
+            b = futs[fut]
+            try:
+                res = fut.result()
+            except Exception as e:
+                failed[b.meta.id] = f"{type(e).__name__}: {str(e)[:200]}"
+                log(f"   ✗ {b.meta.id}: {failed[b.meta.id]}")
+                continue
+            (out_dir / f"{b.meta.id}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
+            done += 1
+            v = res["video"]
+            ev = len(res["comments"]["evidence"]) if res["comments"] else 0
+            log(f"   ✓ {done}/{len(todo)} {b.meta.id} · claims={len(v['claims'])} "
+                f"(dropped {len(res['grounding']['dropped'])}) · comment evidence={ev} · "
+                f"clickbait={v['hype']['clickbait_score']:.2f} · ${llm.meter.usd:.3f}")
+    return {"done": done, "failed": failed, "usd": llm.meter.usd}
