@@ -89,9 +89,13 @@ def repair_cmd(run_id: str, whisper: bool = typer.Option(True, help="Use Whisper
 def process(run_id: str, downloads: int = typer.Option(6, help="Parallel audio downloads"),
             workers: int = _WORKERS, backend: Optional[str] = _BACKEND, pack: Optional[str] = _PACK):
     """Streaming run: harvest the plan + parallel audio + one Whisper + analysis as transcripts land,
-    then cluster, verify and write the reports. Resumes where it stopped."""
+    then cluster, verify and write the reports. Resumes where it stopped; plans first when there is no plan."""
     from tubeproof.core.pipeline import process as run_process
 
+    if not layout.manifest(settings.run_dir(run_id)).exists():
+        log("no plan yet → planning first (review plan.json afterwards)")
+        research.harvest(research.load_config(run_id, pack), run_id=run_id, llm=_llm(backend), log=log,
+                         pack_name=pack, plan_only=True)
     _run_dir, _topic, cfg = _ctx(run_id, pack)
     out = run_process(run_id, _llm(backend), cfg, downloads=downloads, map_workers=workers, log=log)
     console.print(f"[green]✓[/] {out}")

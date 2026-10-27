@@ -150,3 +150,18 @@ def test_base_lang():
     from tubeproof.i18n import base_lang
 
     assert base_lang("en-US") == "en" and base_lang(None) == "" and base_lang("TR") == "tr"
+
+
+def test_ground_drops_unquoted_concepts():
+    from tubeproof.core.extraction import Concept, Teaching
+    from tubeproof.core.map_stage import ground
+    from tubeproof.core.segment import Window
+
+    wins = [Window("s1", 0, 60, "instead of using that code directly, it's passed in instead")]
+    ok = Concept(name="DI", introduced_at_s=8, vehicle="definition", sequence="a → b",
+                 quote="it's passed in instead", seg_ids=["s1", "s9"])
+    bad = Concept(name="made up", introduced_at_s=9, vehicle="analogy", sequence="a", quote="a totally invented sentence")
+    t = Teaching(concepts=[ok, bad], prior_knowledge="", misconceptions=[], viewer_thinking=[], hard_parts="")
+    g = ground(t, wins, field="concepts")
+    assert [c.name for c in t.concepts] == ["DI"] and t.concepts[0].seg_ids == ["s1"]
+    assert g["dropped"][0]["id"] == "made up"

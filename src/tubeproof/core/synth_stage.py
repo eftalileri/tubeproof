@@ -184,8 +184,7 @@ def _exemplar_digest(run_dir: Path, vids: list[dict]) -> str:
             continue
         ex = json.loads(f.read_text())
         x, m = ex["video"], rows.get(v["id"], {})
-        measured = {k: m.get(k) for k in ("duration_s", "cuts_per_min", "cuts_first_3s", "cuts_first_10s",
-                                          "cuts_first_30s", "cuts_first_60s", "shot_s_median")} | (ex.get("speech") or {})
+        measured = {k: m.get(k) for k in exemplar.PICTURE_METRICS} | (ex.get("speech") or {})
         beats = "; ".join(f"{int(b['t'])}s {b['kind']}: {b['what']}" for b in x["beats"])
         loops = "; ".join(f"{l['question']} ({int(l['opened_at_s'])}s→"
                           f"{int(l['closed_at_s']) if l.get('closed_at_s') is not None else '-'}s)" for l in x["open_loops"])
@@ -196,6 +195,7 @@ def _exemplar_digest(run_dir: Path, vids: list[dict]) -> str:
             f"   opening: {json.dumps(x['opening'], ensure_ascii=False)}\n"
             f"   beats: {beats}\n   open loops: {loops or '-'}\n   re-hooks: {x['rehook_interval_note']}\n"
             f"   language: {json.dumps(x['language'], ensure_ascii=False)}\n   visuals: {x['visual_style']}\n"
+            f"   teaching: {json.dumps(x.get('teaching'), ensure_ascii=False)}\n"
             f"   summary: {x['summary_local']}")
     return "\n\n".join(out)
 
@@ -219,7 +219,7 @@ def render_exemplar(run_id: str, private: bool, vids: list[dict], lang: str) -> 
 
     rows = {r["video_id"]: r for r in exemplar.table(settings.run_dir(run_id))}
     L = labels(lang)
-    cols = ("cuts_per_min", "cuts_first_3s", "cuts_first_10s", "cuts_first_30s", "shot_s_median")
+    cols = tuple(c for c in exemplar.PICTURE_METRICS if c not in ("duration_s", "cuts_first_60s"))
     scols = ("wpm", "wpm_first_10s", "wpm_first_30s", "first_speech_s")
     head = "| # | " + " | ".join(L["exemplar_cols"][c] for c in ("video", "views") + cols + scols) + " |"
     lines = [f"\n\n---\n\n## {L['exemplar_table']}\n", L["exemplar_intro"] + "\n", head,

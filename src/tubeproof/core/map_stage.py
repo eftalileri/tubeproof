@@ -21,7 +21,7 @@ from tubeproof.llm.base import LLM, LLMError
 from tubeproof.models import VideoBundle
 
 PROMPT_VERSION = "map-v4"  # v4: topic-neutral basis/evidence wording (2026-10-27)
-EXEMPLAR_PROMPT_VERSION = "exemplar-v1"
+EXEMPLAR_PROMPT_VERSION = "exemplar-v2"
 MAX_DESC_CHARS = 3000
 MAX_COMMENTS = 140
 MAX_COMMENT_CHARS = 450
@@ -67,7 +67,7 @@ def _comment_input(b: VideoBundle, ext: VideoExtraction) -> tuple[str, int]:
 
 
 def ground(ext, wins: list[Window], field: str = "claims") -> dict:
-    """Drop items of `ext.<field>` (claims, or exemplar beats) whose verbatim quote cannot be found
+    """Drop items of `ext.<field>` (claims, exemplar beats, or taught concepts) whose verbatim quote cannot be found
     in the cited (or any) segment."""
     by_id = {w.seg_id: w.text for w in wins}
     full = " ".join(by_id.values())
@@ -80,7 +80,7 @@ def ground(ext, wins: list[Window], field: str = "claims") -> dict:
     valid_segs = set(by_id)
     for c in getattr(ext, field):
         c.seg_ids = [s for s in c.seg_ids if s in valid_segs]
-    return {"kept": len(kept), "dropped": [{"id": getattr(c, "claim_id", None) or getattr(c, "t", None),
+    return {"kept": len(kept), "dropped": [{"id": getattr(c, "claim_id", None) or getattr(c, "t", None) or getattr(c, "name", None),
                                             "quote": c.quote, "score": s} for c, s in dropped]}
 
 
@@ -97,7 +97,7 @@ def _map_exemplar(llm: LLM, topic: str, b: VideoBundle, lang: str, wins: list[Wi
     user = _video_input(b, wins) + f"\n\nMEASURED BY CODE:\n{json.dumps(measured, ensure_ascii=False)}"
     ext = ExemplarExtraction.model_validate(
         llm.json("extract", system, user, ExemplarExtraction.model_json_schema(), images=images))
-    grounding = ground(ext, wins, field="beats")
+    grounding = ground(ext, wins, field="beats") | {"concepts": ground(ext.teaching, wins, field="concepts")}
     full = " ".join(w.text for w in wins)
     ext.language.examples = [x for x in ext.language.examples if fuzz.partial_ratio(x, full) >= QUOTE_MATCH_MIN]
     return {"prompt_version": EXEMPLAR_PROMPT_VERSION, "mode": "exemplar", "video_id": b.meta.id,

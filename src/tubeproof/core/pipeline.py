@@ -157,7 +157,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
             log(f"   ✗ exemplar {vid}: {str(e)[:140]}")
             return
         log(f"   ✓ exemplar {vid} · {m['cuts_per_min']} cuts/min · first 10 s {m['cuts_first_10s']} cuts · "
-            f"frames {len(m['frames'])} · {elapsed()}")
+            f"{m['changes_per_min']} changes/min · frames {len(m['frames'])} · {elapsed()}")
         if b.transcript:
             submit_map(vid)
         else:

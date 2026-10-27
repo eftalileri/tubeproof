@@ -22,26 +22,53 @@ from tubeproof.models import Transcript
 # A shot change = ffmpeg scene score above this. 0.3 is ffmpeg's documented starting point; on a
 # 43 min MrBeast video it gave 25 cuts/min, matching a hand count of the first minute (2026-10-27).
 SCENE_THRESHOLD = 0.3
-# Frames the model sees: the first seconds densely (the hook), then the rest of the first 30 s.
+# A visual change = scene score above this: a new element, a wall drawn, a code block collapsing.
+# Animated and slide-style videos change the picture without cutting; on a Code Aesthetic video with
+# 0 cuts, 0.02 caught each checked change by eye (2026-10-27). Changes closer than CHANGE_MERGE_S are
+# one change (continuous motion such as typing or scrolling fires on every frame).
+CHANGE_THRESHOLD = 0.02
+CHANGE_MERGE_S = 1.0
+# Frames the model sees: the first seconds densely (the hook), the rest of the first 30 s, then the
+# body at these fractions of the duration (teaching visuals live there).
 FRAME_TIMES = (0, 1, 2, 3, 5, 8, 12, 20, 30)
+BODY_FRACTIONS = (0.2, 0.4, 0.6, 0.8)
+# Picture metrics shown to the synth model and in the report table, in this order.
+PICTURE_METRICS = ("duration_s", "cuts_per_min", "cuts_first_3s", "cuts_first_10s", "cuts_first_30s",
+                   "cuts_first_60s", "shot_s_median", "changes_per_min", "changes_first_30s", "change_gap_s_median")
 WINDOWS = (3, 10, 30, 60)  # seconds; "first N s" metrics
 _SENTENCE = re.compile(r"[.!?…]+\s+")
 
 
-def cuts(video: Path) -> list[float]:
+def cuts(video: Path) -> tuple[list[float], list[float]]:
+    """One ffmpeg pass → (cut times, visual-change times). Cuts are scores above SCENE_THRESHOLD;
+    changes are scores above CHANGE_THRESHOLD, merged within CHANGE_MERGE_S."""
     r = subprocess.run(["ffmpeg", "-nostdin", "-i", str(video), "-vf",
-                        f"select='gt(scene,{SCENE_THRESHOLD})',showinfo", "-f", "null", "-"],
+                        f"select='gt(scene,{CHANGE_THRESHOLD})',metadata=print", "-f", "null", "-"],
                        capture_output=True, text=True)
     if r.returncode != 0:
         raise RuntimeError(f"ffmpeg scene detection failed: {r.stderr[-300:]}")
-    return [float(line.split("pts_time:")[1].split()[0]) for line in r.stderr.splitlines() if "pts_time:" in line]
+    scored, t = [], None
+    for line in r.stderr.splitlines():
+        if "pts_time:" in line:
+            t = float(line.split("pts_time:")[1].split()[0])
+        elif "lavfi.scene_score=" in line and t is not None:
+            scored.append((t, float(line.split("lavfi.scene_score=")[1])))
+    changes: list[float] = []
+    for t, _ in scored:
+        if not changes or t - changes[-1] >= CHANGE_MERGE_S:
+            changes.append(t)
+    return [t for t, s in scored if s > SCENE_THRESHOLD], changes
 
 
-def frames(video: Path, out_dir: Path) -> list[Path]:
+def frame_times(duration_s: int) -> list[int]:
+    return sorted(set(FRAME_TIMES) | {int(duration_s * f) for f in BODY_FRACTIONS})
+
+
+def frames(video: Path, out_dir: Path, times: list[int]) -> list[Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
     paths = []
-    for t in FRAME_TIMES:
-        p = out_dir / f"f{t:03d}.jpg"
+    for t in times:
+        p = out_dir / f"f{t:04d}.jpg"
         subprocess.run(["ffmpeg", "-nostdin", "-loglevel", "error", "-y", "-ss", str(t), "-i", str(video),
                         "-frames:v", "1", "-q:v", "4", str(p)], check=True)
         if p.exists():
@@ -87,9 +114,11 @@ def measure(video_id: str, video: Path, duration_s: int | None, out_root: Path) 
     out_dir = out_root / video_id
     if not duration_s:
         raise ValueError(f"{video_id}: no duration in metadata; cuts per minute would be invented")
-    cs = cuts(video)
+    cs, ch = cuts(video)
     dur = duration_s
     shots = [b - a for a, b in zip([0.0] + cs, cs + [float(dur)]) if b > a]
+    gaps = [b - a for a, b in zip([0.0] + ch, ch + [float(dur)]) if b > a]
+    times = frame_times(dur)
     res = {
         "video_id": video_id,
         "duration_s": dur,
@@ -98,9 +127,12 @@ def measure(video_id: str, video: Path, duration_s: int | None, out_root: Path) 
         **{f"cuts_first_{w}s": sum(1 for t in cs if t < w) for w in WINDOWS},
         "shot_s_median": round(statistics.median(shots), 2) if shots else None,
         "cut_times_first_60s": [round(t, 2) for t in cs if t < 60],
-        "frames": [str(p) for p in frames(video, out_dir / "frames")],
+        "changes_per_min": round(len(ch) / (dur / 60), 1),
+        "changes_first_30s": sum(1 for t in ch if t < 30),
+        "change_gap_s_median": round(statistics.median(gaps), 2) if gaps else None,
+        "frames": [str(p) for p in frames(video, out_dir / "frames", times)],
         "thumbnail": str(p) if (p := thumbnail(video_id, out_dir)) else None,
-        "frame_times": list(FRAME_TIMES),
+        "frame_times": times,
     }
     (out_root / f"{video_id}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
     return res

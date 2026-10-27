@@ -153,6 +153,28 @@ class Language(BaseModel):
     examples: list[str] = Field(description="2-5 VERBATIM transcript lines that show the style")
 
 
+class Concept(BaseModel):
+    name: str = Field(description="The idea taught, in the report language")
+    introduced_at_s: float
+    vehicle: Literal["analogy", "story", "example", "visual", "demo", "definition", "question", "misconception"] = Field(
+        description="How the idea first reaches the viewer")
+    sequence: str = Field(description="The order of moves used to teach it, e.g. 'problem → analogy → definition → "
+                                      "example', in the report language")
+    quote: str = Field(description="VERBATIM transcript span where the idea lands, 3-30 words")
+    seg_ids: list[str] = []
+
+
+class Teaching(BaseModel):
+    concepts: list[Concept] = Field(description="Every distinct idea the video teaches, in order; [] if it teaches none")
+    prior_knowledge: str = Field(description="What the viewer must already know; how jargon is introduced or avoided")
+    misconceptions: list[str] = Field(description="Wrong beliefs the video names and corrects, with their second")
+    viewer_thinking: list[str] = Field(description="Moments that make the viewer think or predict before the answer, "
+                                                   "with their second")
+    hard_parts: str = Field(description="How the hardest part is handled: slowed, repeated, visualised, split, skipped")
+    recap: str | None = Field(None, description="Where and how the ideas are summed up; null if never")
+    story_vehicle: str | None = Field(None, description="The narrative or real case that carries the teaching, if any")
+
+
 class ExemplarExtraction(BaseModel):
     summary_local: str = Field(description="3-5 sentences in the report language: how this video holds attention")
     packaging: Packaging
@@ -162,3 +184,4 @@ class ExemplarExtraction(BaseModel):
     rehook_interval_note: str = Field(description="How often new stakes/twists/re-hooks arrive, with examples")
     language: Language
     visual_style: str = Field(description="From the frames: framing, text on screen, color, pace of visuals")
+    teaching: Teaching
