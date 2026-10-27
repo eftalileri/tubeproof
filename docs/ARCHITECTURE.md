@@ -311,6 +311,7 @@ tubeproof/
 | Whisper backlog, 2026-10-27 | RTF 0.076 (mlx turbo, 1.5×); 1366 min of audio ≈ 104 min of GPU |
 | Exemplar, 43-min video at 360p picture | 118 MB, ffmpeg cut detection 38 s, 25 cuts/min; frames + thumbnail + Haiku analysis ≈ $0.005–0.02 per video |
 | YouTube watch-page loads per exemplar video | was 3–4 (meta, paid-promotion check, yt-dlp subtitles, picture download, audio download); now 1: `metadata.extract` is reused by download and subtitles, one download carries picture + original audio, no paid-promotion check in exemplar mode, captions retried only where they were deferred. ~45 videos at the old rate tripped YouTube's IP bot check (`/watch` → 429 "sorry" page; search, browse and thumbnails kept working), 2026-10-27 |
+| Audio-only streams, 2026-10-27 ~22:00 | Every audio-only format (139/140/249, three channels) answers 403; the same track merged with a picture downloads. Both download kinds now fetch picture + audio and split the track locally (smallest picture for `kind="audio"`: a 4–5 min video in ~10 s) |
 | Visual changes (scene score > 0.02, merged within 1 s) | Code Aesthetic: 0 cuts/min but 2.2–10.9 changes/min; Kurzgesagt: 10–18 changes/min, ~3 s apart. Checked by eye on frames before/after |
 
 ## 13. CLI

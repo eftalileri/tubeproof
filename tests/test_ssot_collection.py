@@ -154,11 +154,12 @@ def test_store_one_ttl_cutoff(tmp_path, monkeypatch):
 
 
 def test_video_download_uses_the_audio_chain():
-    """Picture downloads try the same audio preferences, in order, as audio downloads."""
-    from tubeproof.sources.youtube.transcript import _AUDIO, MEDIA_FORMATS
+    """Both kinds fetch picture + audio (audio-only streams answer 403) with one audio chain, in order."""
+    from tubeproof.sources.youtube.transcript import _AUDIO, FORMAT_SORT, MEDIA_FORMATS
 
-    assert MEDIA_FORMATS["audio"] == "/".join(_AUDIO)
-    assert [alt.split("+", 1)[1] for alt in MEDIA_FORMATS["video"].split("/")[:-1]] == list(_AUDIO)
+    for kind in ("audio", "video"):
+        assert [alt.split("+", 1)[1] for alt in MEDIA_FORMATS[kind].split("/")[:-1]] == list(_AUDIO)
+    assert FORMAT_SORT.keys() == MEDIA_FORMATS.keys()
 
 
 def test_empty_leftover_is_not_reused_as_a_download(tmp_path, monkeypatch):
@@ -183,7 +184,7 @@ def test_empty_leftover_is_not_reused_as_a_download(tmp_path, monkeypatch):
 
     monkeypatch.setattr(transcript.yt_dlp, "YoutubeDL", FakeYDL)
     monkeypatch.setattr(transcript, "extract", lambda vid: {"id": vid})
-    assert transcript.download_media("vid", tmp_path).name == "vid.webm"
+    assert transcript.download_media("vid", tmp_path, kind="video").name == "vid.webm"
     assert fetched and not (tmp_path / "vid.m4a").exists()
 
 

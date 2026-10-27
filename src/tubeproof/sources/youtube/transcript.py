@@ -112,15 +112,19 @@ def _via_ytdlp(video_id: str, prefer_lang: str | None) -> Transcript:
 # note; without the m4a step its fallback paired a webm picture with opus audio, which `split_audio`
 # could not copy out (Sebastian Lague 8BCdKJ4ObZ4, 2026-10-27).
 _AUDIO = ("ba[format_note*=original][ext=m4a]", "ba[format_note*=original]", "ba[ext=m4a]", "ba")
+# Both kinds fetch picture + audio in one request: since 2026-10-27 22:00 YouTube answers every
+# audio-only stream with 403 (three channels, every audio format), while the same audio merged with a
+# picture downloads. "audio" takes the smallest picture and keeps only its track (`split_audio`).
 MEDIA_FORMATS = {
-    "audio": "/".join(_AUDIO),
+    "audio": "/".join(f"bv*+{a}" for a in _AUDIO) + "/b",
     "video": "/".join(f"bv*[height<=360]+{a}" for a in _AUDIO) + "/b[height<=360]",
 }
+FORMAT_SORT = {"audio": ["lang", "+res", "+size", "+abr"], "video": ["lang", "res:360", "+size", "+abr"]}
 
 
 def download_media(video_id: str, dest_dir: str | Path, kind: str = "audio") -> Path:
-    """Smallest original-language audio track (`kind="audio"`) or a 360p picture with the original
-    audio (`kind="video"`). The media CDN is not covered by the caption rate-limit, so this is safe to
+    """Original-language audio track (`kind="audio"`, split out of the smallest picture download) or a
+    360p picture with the original audio (`kind="video"`). The media CDN is not covered by the caption rate-limit, so this is safe to
     run in parallel. Keep the two kinds in separate folders: an existing file is reused."""
 
     dest = Path(dest_dir)
@@ -140,12 +144,17 @@ def download_media(video_id: str, dest_dir: str | Path, kind: str = "audio") -> 
     # 12+ min ranged, and one stall forever; 2026-10-27).
     opts = ydl_opts(skip_download=False, noprogress=True,
                     format=MEDIA_FORMATS[kind],
-                    format_sort=["lang", "+abr"] if kind == "audio" else ["lang", "res:360", "+size", "+abr"],
+                    format_sort=FORMAT_SORT[kind],
                     merge_output_format="mp4", outtmpl=str(dest / f"{video_id}.%(ext)s"),
                     socket_timeout=30, http_chunk_size=10 * 1024 * 1024)
     with yt_dlp.YoutubeDL(opts) as ydl:
         ydl.process_ie_result(extract(video_id), download=True)
-    return next(p for p in dest.glob(f"{video_id}.*") if p.suffix not in (".part", ".ytdl"))
+    got = next(p for p in dest.glob(f"{video_id}.*") if p.suffix not in (".part", ".ytdl"))
+    if kind == "audio":
+        audio = split_audio(got, dest)
+        got.unlink()
+        return audio
+    return got
 
 
 def split_audio(video: Path, dest_dir: str | Path) -> Path:
