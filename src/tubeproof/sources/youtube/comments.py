@@ -23,7 +23,7 @@ def _author_hash(name: str) -> str:
 def fetch_comments(video_id: str, channel_id: str | None, popular: int = 150,
                    recent: int = 60) -> list[Comment]:
     dl = YoutubeCommentDownloader()
-    url = f"https://www.youtube.com/watch?v={video_id}"
+    url = http.watch_url(video_id)
     out: dict[str, Comment] = {}
     for sort, n in ((SORT_BY_POPULAR, popular), (SORT_BY_RECENT, recent)):
         if n <= 0:

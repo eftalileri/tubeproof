@@ -9,7 +9,8 @@ import typer
 from rich.console import Console
 
 from tubeproof import research
-from tubeproof.config import settings
+from tubeproof.config import layout, settings
+from tubeproof.core.harvest import read_manifest, video_titles
 from tubeproof.i18n import lang_of
 from tubeproof.sources.youtube import innertube
 from tubeproof.store.db import Store
@@ -32,7 +33,7 @@ def _llm(backend: str | None):
 
 def _ctx(run_id: str, pack: str | None) -> tuple:
     run_dir = settings.run_dir(run_id)
-    manifest = json.loads((run_dir / "manifest.json").read_text())
+    manifest = read_manifest(run_dir)
     cfg = research.load_config(run_id, pack or manifest["params"].get("pack"))
     return run_dir, manifest["topic"], cfg
 
@@ -58,9 +59,9 @@ def harvest(
     topic: Optional[str] = typer.Option(None, help="Topic (default: the pack's topic)"),
     pack: Optional[str] = _PACK,
     query: list[str] = typer.Option([], "--query", "-q", help="Extra search query (repeatable)"),
-    months: Optional[float] = typer.Option(None, help="Time window in months (default 12)"),
-    videos: int = typer.Option(30, help="Number of videos to select"),
-    playlists: int = typer.Option(5, help="Number of course playlists to inspect"),
+    months: Optional[float] = typer.Option(None, help="Time window in months (default: pack, else 12)"),
+    videos: Optional[int] = typer.Option(None, help="Number of videos to select (default 30)"),
+    playlists: Optional[int] = typer.Option(None, help="Number of course playlists to inspect (default 5)"),
     no_links: bool = typer.Option(False, help="Do not read description links"),
     whisper: bool = typer.Option(False, help="Transcribe with Whisper when there are no captions"),
     no_screen: bool = typer.Option(False, help="Turn off the LLM relevance gate"),
@@ -144,13 +145,13 @@ def report(run_id: str, backend: Optional[str] = _BACKEND, pack: Optional[str] =
     if research.mode_of(cfg) == "exemplar":
         from tubeproof.core.synth_stage import render_exemplar
 
-        vids = json.loads((run_dir / "manifest.json").read_text())["videos"]
+        vids = read_manifest(run_dir)["videos"]
         for private in (False, True):
             if (report_dir(run_id, private) / BODY_FILE).exists():
                 console.print(f"[green]✓[/] {render_exemplar(run_id, private, vids, lang_of(cfg))}")
         return
     scored = build_scored(run_dir, research.breakpoints(cfg))
-    titles = {v["id"]: v["title"] for v in json.loads((run_dir / "manifest.json").read_text())["videos"]}
+    titles = video_titles(read_manifest(run_dir))
     for private in (False, True):
         if (report_dir(run_id, private) / BODY_FILE).exists():
             console.print(f"[green]✓[/] {render_report(run_id, private, scored, titles, lang_of(cfg))}")
@@ -167,7 +168,7 @@ def runs():
 def stats(run_id: str):
     """Harvest statistics of a run."""
     run_dir = settings.run_dir(run_id)
-    files = sorted((run_dir / "videos").glob("*.json"))
+    files = sorted(layout.videos(run_dir).glob("*.json"))
     tot = dict(videos=len(files), transcripts=0, words=0, comments=0, spam=0, links=0, paid_links=0,
                fetched_pages=0, paid_promo=0, langs={})
     for f in files:

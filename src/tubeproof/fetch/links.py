@@ -36,7 +36,7 @@ def extract_urls(text: str) -> list[str]:
 
 def _unwrap_youtube_redirect(url: str) -> str:
     p = urlparse(url)
-    if (p.hostname or "").endswith("youtube.com") and p.path == "/redirect":
+    if http.host_match((p.hostname or "").lower(), http.YOUTUBE_HOSTS) and p.path == "/redirect":
         q = parse_qs(p.query).get("q")
         if q:
             return unquote(q[0])

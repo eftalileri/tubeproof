@@ -16,6 +16,7 @@ import subprocess
 from pathlib import Path
 
 from tubeproof import http
+from tubeproof.config import layout
 from tubeproof.models import Transcript
 
 # A shot change = ffmpeg scene score above this. 0.3 is ffmpeg's documented starting point; on a
@@ -84,8 +85,10 @@ def measure(video_id: str, video: Path, duration_s: int | None, out_root: Path) 
     """Picture metrics, frames and thumbnail. Speech metrics need the final transcript, so the map
     stage adds them (`speech`) when it analyses the video."""
     out_dir = out_root / video_id
+    if not duration_s:
+        raise ValueError(f"{video_id}: no duration in metadata; cuts per minute would be invented")
     cs = cuts(video)
-    dur = duration_s or (max(cs) if cs else 0)
+    dur = duration_s
     shots = [b - a for a, b in zip([0.0] + cs, cs + [float(dur)]) if b > a]
     res = {
         "video_id": video_id,
@@ -104,16 +107,16 @@ def measure(video_id: str, video: Path, duration_s: int | None, out_root: Path) 
 
 
 def load(run_dir: Path, video_id: str) -> dict | None:
-    p = run_dir / "exemplar" / f"{video_id}.json"
+    p = layout.exemplar_file(run_dir, video_id)
     return json.loads(p.read_text()) if p.exists() else None
 
 
 def table(run_dir: Path) -> list[dict]:
     """Per-video rows for the report: picture metrics + the speech metrics the map stage saved."""
     rows = []
-    for p in sorted((run_dir / "exemplar").glob("*.json")):
+    for p in sorted(layout.exemplar(run_dir).glob("*.json")):
         row = json.loads(p.read_text())
-        ex = run_dir / "extractions" / p.name
+        ex = layout.extraction(run_dir, p.stem)
         row["speech"] = json.loads(ex.read_text()).get("speech") if ex.exists() else None
         rows.append(row)
     return rows

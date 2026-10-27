@@ -29,10 +29,10 @@ def load_config(run_id: str | None = None, pack: str | None = None) -> dict:
     cfg: dict = {}
     if pack:
         cfg = load_pack(pack)
-    elif run_id and (settings.research_path(run_id) / "pack.yaml").exists():
-        cfg = yaml.safe_load((settings.research_path(run_id) / "pack.yaml").read_text())
+    elif run_id and settings.pack_path(run_id).exists():
+        cfg = yaml.safe_load(settings.pack_path(run_id).read_text())
     if run_id:
-        priv = settings.research_path(run_id) / "private" / "context.yaml"
+        priv = settings.context_path(run_id)
         if priv.exists():
             cfg = {**cfg, **(yaml.safe_load(priv.read_text()) or {})}
     return cfg
@@ -56,13 +56,16 @@ def harvest(cfg: dict, *, topic: str | None = None, extra_queries: list[str] = (
         raise ValueError("a topic or a pack with a topic is required")
     queries = [Query(**q) for q in cfg.get("queries", [])] + [Query(text=q) for q in extra_queries]
     market = cfg.get("market") or {}
+    # Selection defaults live in core harvest (SSOT-14): pass only what the caller or pack sets.
+    policy = {k: v for k, v in {**opts, "months": opts.get("months") or cfg.get("months"),
+                                "market_share": market.get("min_share")}.items() if v is not None}
     return core_harvest(topic, queries or [Query(text=topic)],
                         playlist_queries=[Query(**q) for q in cfg.get("playlist_queries", [])] or None,
-                        months=opts.pop("months", None) or cfg.get("months", 12), run_id=run_id or cfg.get("name"),
+                        run_id=run_id or cfg.get("name"),
                         llm=llm, question=cfg.get("question"), relevance_notes=cfg.get("relevance_notes"),
                         channels=cfg.get("channels"),
                         market_lang=market.get("lang"),
-                        market_share=market.get("min_share", 0.25), log=log, **opts)
+                        log=log, **policy)
 
 
 MODES = ("claims", "exemplar")

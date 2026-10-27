@@ -11,18 +11,17 @@ video starts as soon as its transcript exists.
 
 from __future__ import annotations
 
-import json
 import queue
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from tubeproof.config import settings
+from tubeproof.config import layout, settings
 from tubeproof.core import exemplar
-from tubeproof.i18n import lang_of
-from tubeproof.core.harvest import harvest
-from tubeproof.core.map_stage import map_video
+from tubeproof.i18n import base_lang, lang_of
+from tubeproof.core.harvest import EXEMPLAR_BUNDLE, harvest, read_manifest
+from tubeproof.core.map_stage import is_mapped, map_video, save_extraction, summary
 from tubeproof.core.reduce_stage import run_reduce
 from tubeproof.core.synth_stage import write_reports
 from tubeproof.core.verify_stage import run_verify
@@ -47,15 +46,15 @@ def coverage(tr, duration_s: int | None) -> float:
 def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers: int = 4,
             log=print) -> Path:
     run_dir = settings.run_dir(run_id)
-    manifest = json.loads((run_dir / "manifest.json").read_text())
+    manifest = read_manifest(run_dir)
     topic = manifest["topic"]
     report_lang = lang_of(cfg)
     from tubeproof.research import mode_of
     mode = mode_of(cfg)
-    audio_dir = settings.data_dir / "audio" / run_id
-    video_dir = settings.data_dir / "video" / run_id
-    exemplar_dir = run_dir / "exemplar"
-    ext_dir = run_dir / "extractions"
+    audio_dir = settings.media_dir(run_id, "audio")
+    video_dir = settings.media_dir(run_id, "video")
+    exemplar_dir = layout.exemplar(run_dir)
+    ext_dir = layout.extractions(run_dir)
     ext_dir.mkdir(exist_ok=True)
     store = Store()
     t0 = time.time()
@@ -70,7 +69,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
         return f"{(time.time() - t0) / 60:4.1f} min"
 
     def bundle_path(vid: str) -> Path:
-        return run_dir / "videos" / f"{vid}.json"
+        return layout.bundle(run_dir, vid)
 
     def map_one(vid: str) -> None:
         b = VideoBundle.model_validate_json(bundle_path(vid).read_text())
@@ -81,18 +80,18 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                 stats["map_failed"] += 1
             log(f"   ✗ analysis {vid}: {str(e)[:140]}")
             return
-        (ext_dir / f"{vid}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
+        save_extraction(run_dir, res)
         with lock:
             stats["mapped"] += 1
-        log(f"   ✓ analysis {vid} · claims={len(res['video']['claims'])} · ${llm.meter.usd:.2f} · {elapsed()}")
+        log(f"   ✓ analysis {vid} · {summary(res)} · ${llm.meter.usd:.2f} · {elapsed()}")
 
     def submit_map(vid: str) -> None:
-        if (ext_dir / f"{vid}.json").exists():
+        if is_mapped(run_dir, vid):
             return
         with lock:
             map_futs.append(map_pool.submit(map_one, vid))
 
-    def download(vid: str, lang: str | None) -> None:
+    def download(vid: str, lang: str | None, duration_s: int | None) -> None:
         try:
             path = download_media(vid, audio_dir)
         except Exception as e:
@@ -102,11 +101,11 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
             return
         with lock:
             stats["audio"] += 1
-        whisper_q.put((vid, lang, path))
+        whisper_q.put((vid, lang, path, duration_s))
 
     def whisper_worker() -> None:
         while (item := whisper_q.get()) is not None:
-            vid, lang, path = item
+            vid, lang, path, dur = item
             t = time.time()
             try:
                 tr = None
@@ -116,7 +115,6 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                     except Exception:
                         tr = None
                 tr = tr or transcribe_audio(vid, path, lang)
-                dur = VideoBundle.model_validate_json(bundle_path(vid).read_text()).meta.duration_s
                 if tr.source == "whisper" and coverage(tr, dur) < MIN_COVERAGE:
                     # A cut-off audio file once gave 48 s of text for a 60 min talk (2026-10-27):
                     # fetch the audio again and transcribe once more before accepting it.
@@ -140,7 +138,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                 stats["whisper" if tr.source == "whisper" else "captions_late"] = \
                     stats.get("whisper" if tr.source == "whisper" else "captions_late", 0) + 1
             warn = ""
-            if lang and tr.language and tr.language.split("-")[0] != lang.split("-")[0]:
+            if lang and tr.language and base_lang(tr.language) != base_lang(lang):
                 warn = f" · ⚠ language {tr.language} ≠ video {lang} (dub?)"
             log(f"   ✓ whisper {vid} · {tr.source} · {tr.language} · {time.time() - t:.0f}s · "
                 f"queue {whisper_q.qsize()} · {elapsed()}{warn}")
@@ -163,7 +161,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
         if b.transcript:
             submit_map(vid)
         else:
-            download(vid, b.meta.language)
+            download(vid, b.meta.language, b.meta.duration_s)
 
     def on_bundle(b: VideoBundle) -> None:
         if mode == "exemplar" and exemplar.load(run_dir, b.meta.id) is None:
@@ -171,14 +169,15 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
         elif b.transcript:
             submit_map(b.meta.id)
         else:
-            dl_futs.append(dl_pool.submit(download, b.meta.id, b.meta.language))
+            dl_futs.append(dl_pool.submit(download, b.meta.id, b.meta.language, b.meta.duration_s))
 
     worker = threading.Thread(target=whisper_worker, name="whisper", daemon=True)
     worker.start()
-    for f in sorted((run_dir / "videos").glob("*.json")):
+    for f in sorted(layout.videos(run_dir).glob("*.json")):
         on_bundle(VideoBundle.model_validate_json(f.read_text()))
     if manifest.get("planned"):
-        harvest(topic, [], run_id=run_id, allow_whisper=False, on_bundle=on_bundle, log=log)
+        harvest(topic, [], run_id=run_id, allow_whisper=False, on_bundle=on_bundle, log=log,
+                **(EXEMPLAR_BUNDLE if mode == "exemplar" else {}))
     for fut in dl_futs:
         fut.result()
     whisper_q.put(None)
@@ -199,7 +198,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
         outs = write_reports(llm, run_id, cfg, log=log)
         log(f"[flow] done · {elapsed()} · total ${llm.meter.usd:.2f} · {llm.meter.by_tier}")
         return outs[0]
-    clusters = run_dir / "clusters.json"
+    clusters = layout.clusters(run_dir)
     newest = max((f.stat().st_mtime for f in ext_dir.glob("*.json")), default=0)
     if clusters.exists() and clusters.stat().st_mtime > newest:
         log("[reduce] clusters up to date, skipped")  # resume must not re-roll the LLM grouping

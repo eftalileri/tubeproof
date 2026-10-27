@@ -13,7 +13,8 @@ import traceback
 
 from mcp.server.mcpserver import MCPServer
 
-from tubeproof.config import settings
+from tubeproof.config import layout, settings
+from tubeproof.http import short_url
 from tubeproof import research
 from tubeproof.sources.youtube import innertube
 
@@ -29,8 +30,8 @@ def _job_log(key: str):
     return log
 
 
-def _research(key: str, topic: str, run_id: str | None, pack: str | None, queries: list[str], months: float,
-              videos: int, playlists: int) -> None:
+def _research(key: str, topic: str, run_id: str | None, pack: str | None, queries: list[str],
+              months: float | None, videos: int | None, playlists: int | None) -> None:
     from tubeproof.core.pipeline import process
     from tubeproof.llm.base import get_backend
 
@@ -55,8 +56,8 @@ def _research(key: str, topic: str, run_id: str | None, pack: str | None, querie
 
 @mcp.tool()
 def research_topic(topic: str, run_id: str | None = None, pack: str | None = None,
-                   queries: list[str] | None = None, months: float = 12, videos: int = 30,
-                   playlists: int = 5) -> dict:
+                   queries: list[str] | None = None, months: float | None = None, videos: int | None = None,
+                   playlists: int | None = None) -> dict:
     """Start a full YouTube practitioner-knowledge research in the background.
 
     Searches popular videos and course playlists (any language) in the last `months`,
@@ -86,7 +87,9 @@ def research_status(job_id: str) -> dict:
 @mcp.tool()
 def get_report(run_id: str) -> str:
     """The finished public Markdown report (research/<run_id>/REPORT.md)."""
-    path = settings.research_path(run_id) / "REPORT.md"
+    from tubeproof.core.synth_stage import REPORT_FILE, report_dir
+
+    path = report_dir(run_id, private=False) / REPORT_FILE
     return path.read_text() if path.exists() else f"No report yet for {run_id}."
 
 
@@ -110,7 +113,7 @@ def search_videos(query: str, months: float = 12, limit: int = 15, playlists: bo
 def query_claims(run_id: str, text: str = "", band: str | None = None, limit: int = 20) -> list[dict]:
     """Search the scored claim clusters of a run by keyword and/or band
     (well_supported, likely, contested, doubtful, single_source, unverifiable)."""
-    path = settings.run_dir(run_id) / "scored.json"
+    path = layout.scored(settings.run_dir(run_id))
     if not path.exists():
         return []
     words = [w for w in text.casefold().split() if w]
@@ -122,7 +125,7 @@ def query_claims(run_id: str, text: str = "", band: str | None = None, limit: in
         if all(w in hay for w in words):
             out.append({k: c[k] for k in ("cluster_id", "claim_local", "claim_type", "label", "scope_local",
                                           "reasoning_local", "score")}
-                       | {"sources": [f"https://youtu.be/{m['video_id']}?t={int(m['t'] or 0)}"
+                       | {"sources": [short_url(m["video_id"], m["t"] or 0)
                                       for m in c["members"]][:5]})
     out.sort(key=lambda c: -c["score"]["confidence"])
     return out[:limit]

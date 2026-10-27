@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass, field
-from datetime import date
 from pathlib import Path
 
 from concurrent.futures import ThreadPoolExecutor
@@ -18,6 +17,8 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 from pydantic import BaseModel, Field
 
+from tubeproof.config import layout
+from tubeproof.core.extraction import DEFAULT_BASIS
 from tubeproof.llm.base import LLM
 from tubeproof.models import VideoBundle
 
@@ -49,7 +50,7 @@ class Member:
     coi: list[str]
     clickbait: float
     comments: list[dict] = field(default_factory=list)  # comment evidence for this claim
-    basis: str = "general_knowledge"
+    basis: str = DEFAULT_BASIS
 
 
 @dataclass
@@ -64,21 +65,23 @@ class Cluster:
 
 def load_members(run_dir: Path) -> list[Member]:
     members: list[Member] = []
-    for f in sorted((run_dir / "extractions").glob("*.json")):
+    for f in sorted(layout.extractions(run_dir).glob("*.json")):
         ex = json.loads(f.read_text())
-        b = VideoBundle.model_validate_json((run_dir / "videos" / f.name).read_text())
+        b = VideoBundle.model_validate_json(layout.bundle(run_dir, f.stem).read_text())
         wins = {w["seg_id"]: w for w in ex["windows"]}
         likes = {c.id: c.likes for c in b.comments}
         ev_by_claim: dict[str, list[dict]] = {}
         for e in (ex.get("comments") or {}).get("evidence", []):
             if e.get("claim_id"):
                 ev_by_claim.setdefault(e["claim_id"], []).append({**e, "likes": likes.get(e["comment_id"], 0)})
+        if not (b.meta.channel_id and b.meta.channel):  # independence is counted by channel: never guess one
+            raise ValueError(f"{b.meta.id}: channel missing in metadata; re-fetch it before clustering")
         v = ex["video"]
         for c in v["claims"]:
             t0 = wins[c["seg_ids"][0]]["t_start"] if c["seg_ids"] and c["seg_ids"][0] in wins else None
             members.append(Member(
                 ref=f"{b.meta.id}:{c['claim_id']}", video_id=b.meta.id,
-                channel_id=b.meta.channel_id or b.meta.id, channel=b.meta.channel or "?",
+                channel_id=b.meta.channel_id, channel=b.meta.channel,
                 upload_date=str(b.meta.upload_date) if b.meta.upload_date else None,
                 text_en=c["text_en"], text_local=c["text_local"], quote=c["quote"], t_start=t0,
                 claim_type=c["claim_type"], polarity=c["polarity"], specificity=c["specificity"],
@@ -86,7 +89,7 @@ def load_members(run_dir: Path) -> list[Member]:
                 is_withheld_teaser=c["is_withheld_teaser"], survivorship_flags=c["survivorship_flags"],
                 coi=[x for x in v["creator"]["coi"] if x != "none_detected"],
                 clickbait=v["hype"]["clickbait_score"], comments=ev_by_claim.get(c["claim_id"], []),
-                basis=c.get("basis", "general_knowledge"),
+                basis=c.get("basis", DEFAULT_BASIS),
             ))
     return members
 
@@ -212,18 +215,14 @@ def run_reduce(run_dir: Path, llm: LLM | None = None, workers: int = 4, log=prin
     clusters = cluster(members, llm, workers, log)
     multi = sum(1 for c in clusters if len(c.channels) >= 2)
     log(f"[reduce] {len(members)} claims → {len(clusters)} clusters ({multi} from ≥2 channels)")
-    (run_dir / "clusters.json").write_text(json.dumps(
+    layout.clusters(run_dir).write_text(json.dumps(
         [{"cluster_id": c.cluster_id, "members": [asdict(m) for m in c.members]} for c in clusters],
         ensure_ascii=False, indent=1))
     return clusters
 
 
 def load_clusters(run_dir: Path) -> list[Cluster]:
-    raw = json.loads((run_dir / "clusters.json").read_text())
+    raw = json.loads(layout.clusters(run_dir).read_text())
     return [Cluster(cluster_id=c["cluster_id"], members=[Member(**m) for m in c["members"]]) for c in raw]
 
 
-def age_months(upload_date: str | None) -> float:
-    if not upload_date:
-        return 12.0
-    return max((date.today() - date.fromisoformat(upload_date)).days / 30.44, 0.0)

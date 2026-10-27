@@ -26,9 +26,9 @@ def ydl_opts(**extra) -> dict:
 
 
 def video_meta(video_id: str) -> VideoMeta:
-    http.throttle("https://www.youtube.com/")
+    http.throttle(http.YOUTUBE_HOME)
     with yt_dlp.YoutubeDL(ydl_opts()) as ydl:
-        info = ydl.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=False)
+        info = ydl.extract_info(http.watch_url(video_id), download=False)
     upload = info.get("upload_date")
     return VideoMeta(
         id=info["id"],
@@ -51,7 +51,7 @@ def video_meta(video_id: str) -> VideoMeta:
 
 
 def playlist_meta(playlist_id: str, max_items: int = 200) -> PlaylistMeta:
-    http.throttle("https://www.youtube.com/")
+    http.throttle(http.YOUTUBE_HOME)
     opts = ydl_opts(extract_flat="in_playlist", playlistend=max_items)
     with yt_dlp.YoutubeDL(opts) as ydl:
         info = ydl.extract_info(f"https://www.youtube.com/playlist?list={playlist_id}", download=False)
@@ -71,7 +71,7 @@ _PAID_RE = re.compile(r'"paidContentOverlay"\s*:\s*\{')
 
 def has_paid_promotion(video_id: str) -> bool | None:
     """YouTube's own "Includes paid promotion" disclosure on the watch page."""
-    url = f"https://www.youtube.com/watch?v={video_id}&hl=en"
+    url = http.watch_url(video_id, hl="en")
     try:
         with http.client() as c:
             resp = http.request(c, "GET", url)

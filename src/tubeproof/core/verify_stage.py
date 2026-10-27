@@ -12,10 +12,12 @@ import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Literal
-from urllib.parse import urlparse
+from tubeproof.http import url_under
 
 from pydantic import BaseModel, Field
 
+from tubeproof.config import layout
+from tubeproof.core.extraction import ClaimType
 from tubeproof.core.reduce_stage import Cluster, load_clusters
 from tubeproof.core.segment import fmt_ts
 from tubeproof.llm.base import LLM
@@ -45,8 +47,7 @@ class DocCheck(BaseModel):
 class ClusterVerdict(BaseModel):
     canonical_en: str
     canonical_local: str = Field(description="The claim as one clear sentence in the report language")
-    claim_type: Literal["platform_mechanic", "tactic_efficacy", "numeric_threshold", "setup_instruction",
-                        "outcome_income", "opinion"]
+    claim_type: ClaimType
     scope_local: str | None = Field(None, description="When it applies: budget band, objective, vertical, period")
     member_stances: list[MemberStance]
     doc_check: DocCheck
@@ -90,11 +91,7 @@ def _input(c: Cluster) -> str:
 
 
 def _official(url: str | None, domains: list[str]) -> bool:
-    if not url:
-        return False
-    p = urlparse(url)
-    full = (p.hostname or "").removeprefix("www.") + p.path
-    return any(full.startswith(d) for d in domains)
+    return bool(url) and url_under(url, domains)
 
 
 def _changes(cfg: dict) -> str:
@@ -131,7 +128,7 @@ def verify_cluster(llm: LLM, c: Cluster, topic: str, cfg: dict) -> dict:
 
 def run_verify(llm: LLM, run_dir: Path, topic: str, cfg: dict, workers: int = 4, log=print) -> dict:
     clusters = load_clusters(run_dir)
-    out_path = run_dir / "verdicts.json"
+    out_path = layout.verdicts(run_dir)
     verdicts: dict = json.loads(out_path.read_text()) if out_path.exists() else {}
     todo = [c for c in clusters if needs_llm(c) and cluster_key(c) not in verdicts]
     log(f"[verify] {len(todo)} clusters to verify ({len(clusters) - len(todo)} skipped/ready)")

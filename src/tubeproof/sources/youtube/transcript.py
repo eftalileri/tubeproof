@@ -13,6 +13,8 @@ for BLOCK_COOLDOWN seconds, so a soft block is not prolonged by hammering it.
 
 from __future__ import annotations
 
+import contextlib
+import fcntl
 import json
 import os
 import subprocess
@@ -25,6 +27,8 @@ import yt_dlp
 from youtube_transcript_api import YouTubeTranscriptApi
 
 from tubeproof import http
+from tubeproof.config import settings
+from tubeproof.i18n import base_lang
 from tubeproof.models import Transcript, TranscriptSegment
 from tubeproof.sources.youtube.metadata import ydl_opts
 
@@ -34,9 +38,6 @@ class TranscriptUnavailable(Exception):
 
 
 BLOCK_COOLDOWN = 900
-# 0 = whole video (default): the key part of a talk is often late, and selection already drops
-# videos over 90 min. Set TUBEPROOF_WHISPER_MAX_MINUTES to cap transcription time.
-WHISPER_MAX_MINUTES = int(os.environ.get("TUBEPROOF_WHISPER_MAX_MINUTES", "0"))
 _blocked_until = 0.0
 _model = None
 _model_lock = threading.Lock()
@@ -52,15 +53,15 @@ def captions_blocked() -> bool:
 
 
 def _via_transcript_api(video_id: str, prefer_lang: str | None) -> Transcript:
-    http.throttle("https://www.youtube.com/")
+    http.throttle(http.YOUTUBE_HOME)
     tlist = YouTubeTranscriptApi().list(video_id)
     tracks = list(tlist)
     if not tracks:
         raise TranscriptUnavailable("no tracks")
-    base = (prefer_lang or "").split("-")[0]
+    base = base_lang(prefer_lang)
 
     def score(t) -> tuple:
-        same_lang = bool(base) and t.language_code.split("-")[0] == base
+        same_lang = bool(base) and base_lang(t.language_code) == base
         return (same_lang, not t.is_generated)
 
     track = max(tracks, key=score)
@@ -71,15 +72,15 @@ def _via_transcript_api(video_id: str, prefer_lang: str | None) -> Transcript:
 
 
 def _via_ytdlp(video_id: str, prefer_lang: str | None) -> Transcript:
-    base = (prefer_lang or "").split("-")[0]
+    base = base_lang(prefer_lang)
     langs = [f"{base}-orig", base] if base else []
     langs.append(".*-orig")
     with tempfile.TemporaryDirectory() as tmp:
         opts = ydl_opts(writesubtitles=True, writeautomaticsub=True, subtitleslangs=langs,
                         subtitlesformat="json3", outtmpl=str(Path(tmp) / "%(id)s.%(ext)s"))
-        http.throttle("https://www.youtube.com/")
+        http.throttle(http.YOUTUBE_HOME)
         with yt_dlp.YoutubeDL(opts) as ydl:
-            ydl.download([f"https://www.youtube.com/watch?v={video_id}"])
+            ydl.download([http.watch_url(video_id)])
         files = sorted(Path(tmp).glob(f"{video_id}.*.json3"))
         if not files:
             raise TranscriptUnavailable("yt-dlp found no original-language subtitles")
@@ -126,27 +127,23 @@ def download_media(video_id: str, dest_dir: str | Path, kind: str = "audio") -> 
                     format_sort=["lang", "+abr"] if kind == "audio" else ["res:360", "+size"], outtmpl=str(dest / f"{video_id}.%(ext)s"),
                     socket_timeout=30, http_chunk_size=10 * 1024 * 1024)
     with yt_dlp.YoutubeDL(opts) as ydl:
-        ydl.download([f"https://www.youtube.com/watch?v={video_id}"])
+        ydl.download([http.watch_url(video_id)])
     return next(p for p in dest.glob(f"{video_id}.*") if p.suffix not in (".part", ".ytdl"))
 
 
-# Speech fed 1.5x faster: 38% less Whisper time, 98-99% identical text (measured on Turkish and
-# Arabic, 2026-10-27); timestamps are scaled back. TUBEPROOF_WHISPER_TEMPO=1 disables it.
-WHISPER_TEMPO = float(os.environ.get("TUBEPROOF_WHISPER_TEMPO", "1.5"))
 
 
 def _decode(path: Path, tempo: float = 1.0):
     import numpy as np
 
     filt = ["-filter:a", f"atempo={tempo}"] if tempo != 1.0 else []
-    cap = ["-t", str(WHISPER_MAX_MINUTES * 60)] if WHISPER_MAX_MINUTES > 0 else []
+    cap = ["-t", str(settings.whisper_max_minutes * 60)] if settings.whisper_max_minutes > 0 else []
     raw = subprocess.run(["ffmpeg", "-nostdin", "-loglevel", "error", *cap,
                           "-i", str(path), *filt, "-f", "s16le", "-ac", "1", "-ar", "16000", "-"],
                          capture_output=True, check=True).stdout
     return np.frombuffer(raw, np.int16).astype(np.float32) / 32768
 
 
-MLX_MODEL = os.environ.get("TUBEPROOF_WHISPER_MLX_MODEL", "mlx-community/whisper-large-v3-turbo")
 
 
 def _mlx_ready() -> bool:
@@ -158,25 +155,50 @@ def _mlx_ready() -> bool:
     except ImportError:
         return False
     try:
-        return any(r.repo_id == MLX_MODEL and r.size_on_disk > 500_000_000 for r in scan_cache_dir().repos)
+        return any(r.repo_id == settings.whisper_mlx_model and r.size_on_disk > 500_000_000 for r in scan_cache_dir().repos)
     except Exception:
         return False
+
+
+GPU_BUSY_GRACE = 90  # s: a low-priority run waits while a normal run used Whisper this recently
+
+
+@contextlib.contextmanager
+def _gpu_slot():
+    """One transcription per machine, not just per process: two runs on one GPU only slow each
+    other (each ~2x slower). A file lock serialises them; normal runs stamp `whisper.busy`, and a
+    low-priority run waits until that stamp is GPU_BUSY_GRACE old, so it yields between files too."""
+    settings.data_dir.mkdir(parents=True, exist_ok=True)
+    busy = settings.whisper_busy
+    low = settings.whisper_priority == "low"
+    with open(settings.whisper_lock, "w") as f:
+        while low and busy.exists() and time.time() - busy.stat().st_mtime < GPU_BUSY_GRACE:
+            time.sleep(5)
+        fcntl.flock(f, fcntl.LOCK_EX)
+        if not low:
+            busy.touch()
+        try:
+            yield
+        finally:
+            if not low:
+                busy.touch()
+            fcntl.flock(f, fcntl.LOCK_UN)
 
 
 def transcribe_audio(video_id: str, audio_path: Path, prefer_lang: str | None) -> Transcript:
     """One transcription at a time: a second concurrent model on the same GPU/CPU only slows both."""
     global _model
-    engine = os.environ.get("TUBEPROOF_WHISPER") or ("mlx" if _mlx_ready() else "faster")
-    lang = (prefer_lang or "").split("-")[0] or None
-    k = WHISPER_TEMPO
+    engine = settings.whisper_engine or ("mlx" if _mlx_ready() else "faster")
+    lang = base_lang(prefer_lang) or None
+    k = settings.whisper_tempo  # timestamps are scaled back by the same factor
     audio = _decode(audio_path, k)  # ffmpeg decode (+ tempo) sidesteps PyAV version mismatches
-    with _model_lock:
+    with _model_lock, _gpu_slot():
         if engine == "mlx":
             try:
                 import mlx_whisper  # type: ignore
             except ImportError as e:
                 raise TranscriptUnavailable("mlx-whisper not installed") from e
-            out = mlx_whisper.transcribe(audio, path_or_hf_repo=MLX_MODEL, language=lang, verbose=None)
+            out = mlx_whisper.transcribe(audio, path_or_hf_repo=settings.whisper_mlx_model, language=lang, verbose=None)
             segs = [TranscriptSegment(start=x["start"] * k, duration=(x["end"] - x["start"]) * k,
                                       text=x["text"].strip()) for x in out.get("segments", [])]
             detected = out.get("language")
@@ -186,7 +208,7 @@ def transcribe_audio(video_id: str, audio_path: Path, prefer_lang: str | None) -
             except ImportError as e:
                 raise TranscriptUnavailable("whisper fallback not installed (pip install 'tubeproof[whisper]')") from e
             if _model is None:
-                _model = WhisperModel(os.environ.get("TUBEPROOF_WHISPER_MODEL", "large-v3-turbo"), device="cpu",
+                _model = WhisperModel(settings.whisper_model, device="cpu",
                                       compute_type="int8", cpu_threads=os.cpu_count() or 4)
             it, info = _model.transcribe(audio, language=lang, vad_filter=True, beam_size=1)
             segs = [TranscriptSegment(start=x.start * k, duration=(x.end - x.start) * k, text=x.text.strip())

@@ -16,11 +16,13 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from tubeproof.core import exemplar
+from tubeproof.core.harvest import read_manifest, video_titles
 from tubeproof.core.reduce_stage import load_clusters
-from tubeproof.core.score import FIRST_HAND, RUBRIC_VERSION, score_cluster
+from tubeproof.core.score import BANDS, FIRST_HAND, RUBRIC_VERSION, score_cluster
 from tubeproof.core.segment import fmt_ts
 from tubeproof.core.verify_stage import cluster_key
-from tubeproof.config import settings
+from tubeproof.config import layout, settings
+from tubeproof.http import short_url
 from tubeproof.i18n import labels, lang_of
 from tubeproof.llm.base import LLM
 from tubeproof.prompts import load as load_prompt
@@ -31,8 +33,10 @@ class Report(BaseModel):
 
 def build_scored(run_dir: Path, breakpoints: list[date]) -> list[dict]:
     clusters = load_clusters(run_dir)
-    vpath = run_dir / "verdicts.json"
-    verdicts = json.loads(vpath.read_text()) if vpath.exists() else {}
+    vpath = layout.verdicts(run_dir)
+    if not vpath.exists():
+        raise FileNotFoundError(f"{vpath} missing: run `tubeproof verify` before the report")
+    verdicts = json.loads(vpath.read_text())
     scored = []
     for c in clusters:
         v = verdicts.get(cluster_key(c))
@@ -56,7 +60,7 @@ def build_scored(run_dir: Path, breakpoints: list[date]) -> list[dict]:
             "members": [{"ref": m.ref, "video_id": m.video_id, "channel": m.channel, "date": m.upload_date,
                          "t": m.t_start, "quote": m.quote, "coi": m.coi, "basis": m.basis} for m in c.members],
         })
-    (run_dir / "scored.json").write_text(json.dumps(scored, ensure_ascii=False, indent=1))
+    layout.scored(run_dir).write_text(json.dumps(scored, ensure_ascii=False, indent=1))
     return scored
 
 
@@ -68,8 +72,7 @@ def _digest(scored: list[dict], extractions_dir: Path, max_single: int = 60) -> 
     """Single-source clusters: every first-hand one goes in, plus the best `max_single` others.
     A flat cap of 60 by confidence left out 95 of 137 first-hand single-source clusters, the
     practitioner evidence the tool exists for (2026-10-27)."""
-    order = ["well_supported", "likely", "contested", "doubtful", "single_source", "unverifiable"]
-    rows = sorted(scored, key=lambda x: (order.index(x["score"]["band"]), not _first_hand(x),
+    rows = sorted(scored, key=lambda x: (BANDS.index(x["score"]["band"]), not _first_hand(x),
                                          -x["score"]["confidence"]))
     lines, singles = [], 0
     for r in rows:
@@ -129,7 +132,7 @@ def _appendix(scored: list[dict], titles: dict[str, str], cited: set[str], lang:
             t = int(m["t"] or 0)
             coi = f" · {L['coi']}: {', '.join(m['coi'])}" if m["coi"] else ""
             basis = L["basis"].get(m.get("basis", ""), m.get("basis", ""))
-            out.append(f"\n- [{titles.get(m['video_id'], m['video_id'])[:70]}](https://youtu.be/{m['video_id']}?t={t}) "
+            out.append(f"\n- [{titles.get(m['video_id'], m['video_id'])[:70]}]({short_url(m['video_id'], t)}) "
                        f"@{fmt_ts(t)} · {m['channel']} · {m['date']} · *{st}* · {L['basis_label']}: {basis}{coi}\n"
                        f"  > {m['quote'][:220]}")
     return "\n".join(out)
@@ -141,7 +144,7 @@ REPORT_FILE = "REPORT.md"
 
 def report_dir(run_id: str, private: bool) -> Path:
     base = settings.research_path(run_id)
-    return base / "private" if private else base
+    return settings.private_dir(run_id) if private else base
 
 
 def render_report(run_id: str, private: bool, scored: list[dict], titles: dict[str, str], lang: str) -> Path:
@@ -176,7 +179,7 @@ def _exemplar_digest(run_dir: Path, vids: list[dict]) -> str:
     rows = {r["video_id"]: r for r in exemplar.table(run_dir)}
     out = []
     for n, v in enumerate(vids, 1):
-        f = run_dir / "extractions" / f"{v['id']}.json"
+        f = layout.extraction(run_dir, v["id"])
         if not f.exists():
             continue
         ex = json.loads(f.read_text())
@@ -211,7 +214,7 @@ def render_exemplar(run_id: str, private: bool, vids: list[dict], lang: str) -> 
         i, t = int(mt.group(1)), mt.group(2)
         if not 1 <= i <= len(vids):
             return mt.group(0)
-        url = f"https://youtu.be/{vids[i - 1]['id']}" + (f"?t={t}" if t else "")
+        url = short_url(vids[i - 1]["id"], int(t) if t else None)
         return f"[V{i}{' ' + fmt_ts(int(t)) if t else ''}]({url})"
 
     rows = {r["video_id"]: r for r in exemplar.table(settings.run_dir(run_id))}
@@ -229,7 +232,7 @@ def render_exemplar(run_id: str, private: bool, vids: list[dict], lang: str) -> 
         for c, x in zip(cols + scols, cells):
             if isinstance(x, (int, float)):
                 vals[c].append(x)
-        lines.append(f"| V{n} | [{v['title'][:60]}](https://youtu.be/{v['id']}) | {v.get('views') or ''} | "
+        lines.append(f"| V{n} | [{v['title'][:60]}]({short_url(v['id'])}) | {v.get('views') or ''} | "
                      + " | ".join("" if x is None else str(x) for x in cells) + " |")
     lines.append(f"| | **{L['exemplar_cols']['median']}** | | "
                  + " | ".join(str(round(median(vals[c]), 1)) if vals[c] else "" for c in cols + scols) + " |")
@@ -241,9 +244,9 @@ def render_exemplar(run_id: str, private: bool, vids: list[dict], lang: str) -> 
 def _run_exemplar_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> Path:
     run_dir = settings.run_dir(run_id)
     lang = lang_of(cfg)
-    manifest = json.loads((run_dir / "manifest.json").read_text())
+    manifest = read_manifest(run_dir)
     vids = manifest["videos"]
-    topic = cfg.get("topic") or manifest["topic"]
+    topic = manifest["topic"]
     hyps = cfg.get("hypotheses") if private else None
     reader = ""
     if private:
@@ -280,9 +283,9 @@ def run_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> 
     run_dir = settings.run_dir(run_id)
     lang = lang_of(cfg)
     scored = build_scored(run_dir, breakpoints(cfg))
-    manifest = json.loads((run_dir / "manifest.json").read_text())
-    titles = {v["id"]: v["title"] for v in manifest["videos"]}
-    topic = cfg.get("topic") or manifest["topic"]
+    manifest = read_manifest(run_dir)
+    titles = video_titles(manifest)
+    topic = manifest["topic"]
     hyps = cfg.get("hypotheses") if private else None
     reader = ""
     if private:
@@ -303,7 +306,7 @@ def run_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> 
         test_ref=labels(lang)["test_ref"])
     kind = "private" if private else "public"
     log(f"[synth] {kind} report from {len(scored)} clusters")
-    rep = Report.model_validate(llm.json("synth", system, _digest(scored, run_dir / "extractions"),
+    rep = Report.model_validate(llm.json("synth", system, _digest(scored, layout.extractions(run_dir)),
                                          Report.model_json_schema()))
     d = report_dir(run_id, private)
     d.mkdir(parents=True, exist_ok=True)

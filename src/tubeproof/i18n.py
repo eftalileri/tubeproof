@@ -70,6 +70,11 @@ LABELS = {
 }
 
 
+def base_lang(code: str | None) -> str:
+    """"en-US" -> "en", None -> "". Every language comparison (tracks, market quota, dub check) uses it."""
+    return (code or "").split("-")[0].lower()
+
+
 def lang_of(cfg: dict) -> str:
     lang = (cfg or {}).get("report_lang") or DEFAULT_LANG
     if lang not in LABELS:

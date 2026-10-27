@@ -15,6 +15,7 @@ from tubeproof.models import SearchHit
 
 BATCH = 60
 MIN_SCORE = 2
+TOP_SCORE = 3  # "the reader's exact situation": selected first, required for course-set items
 PASSES = 2  # each hit is rated twice in different batch orders and keeps the LOWER score
 
 _SYSTEM = """You screen YouTube search results for a research corpus.
@@ -72,11 +73,9 @@ def screen(llm: LLM, topic: str, question: str | None, hits: list[SearchHit],
             try:
                 raw = llm.json("extract", system, f"<untrusted_data>\n{lines}\n</untrusted_data>",
                                _Ratings.model_json_schema())
-            except Exception as e:
-                log(f"   ! relevance gate failed ({str(e)[:100]}); this group passes unfiltered")
-                for h in batch:
-                    fresh.setdefault(h.id, MIN_SCORE)
-                continue
+            except Exception as e:  # fail loudly: an unrated batch must not pass as relevant
+                raise RuntimeError(f"relevance gate failed on a batch ({str(e)[:160]}); re-run, rated "
+                                   "items are cached") from e
             for r in _Ratings.model_validate(raw).ratings:
                 if 0 <= r.i < len(batch):
                     vid = batch[r.i].id

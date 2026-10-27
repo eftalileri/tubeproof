@@ -1,6 +1,6 @@
 import base64
 
-from tubeproof.core.discover import rank_score, select_diverse
+from tubeproof.core.discover import rank_score
 from tubeproof.filters.linkclass import classify
 from tubeproof.filters.spam import flag_spam
 from tubeproof.fetch.links import extract_urls
@@ -62,10 +62,8 @@ def test_spam_flags():
     assert cs[3].spam_reasons == []
 
 
-def test_rank_and_diversity():
+def test_rank_prefers_recent():
     assert rank_score(100_000, 30) > rank_score(100_000, 900)
-    picked = select_diverse([("a", 9, "c1"), ("b", 8, "c1"), ("c", 7, "c1"), ("d", 1, "c2")], 3, per_channel=2)
-    assert picked == ["a", "b", "d"]
 
 
 def test_org_key_merges_company_channels():
@@ -104,3 +102,51 @@ def test_exemplar_citations_become_links(tmp_path, monkeypatch):
     assert "[V1 1:23](https://youtu.be/aaa?t=83)" in out
     assert "[V2](https://youtu.be/bbb)" in out
     assert "[V9]" in out and "youtu.be/bbb?t" not in out
+
+
+def test_gpu_slot_serialises_and_stamps(tmp_path, monkeypatch):
+    from dataclasses import replace
+
+    from tubeproof.config import settings
+    from tubeproof.sources.youtube import transcript
+
+    monkeypatch.setattr(transcript, "settings", replace(settings, data_dir=tmp_path, whisper_priority="normal"))
+    with transcript._gpu_slot():
+        assert (tmp_path / "whisper.lock").exists()
+    assert (tmp_path / "whisper.busy").exists()
+
+
+def test_no_undefined_names():
+    """Catches a missing import before a long run hits it (a NameError in a worker thread is silent)."""
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    src = Path(__file__).resolve().parents[1] / "src" / "tubeproof"
+    out = subprocess.run([sys.executable, "-m", "pyflakes", str(src)], capture_output=True, text=True).stdout
+    bad = [line for line in out.splitlines() if "undefined name" in line or "redefinition of unused" in line]
+    assert not bad, "\n".join(bad)
+
+
+def test_manifest_row_has_plan_fields():
+    from tubeproof.core.harvest import PLAN_FIELDS, _manifest_row
+    from tubeproof.models import VideoMeta
+
+    row = _manifest_row("v1", VideoMeta(id="v1", title="T", duration_s=600), 3, "relevance 3", 1.2, ["q"], [])
+    assert all(k in row for k in PLAN_FIELDS) and row["duration_s"] == 600
+
+
+def test_research_harvest_passes_only_set_policy(monkeypatch):
+    from tubeproof import research
+    from tubeproof.core import harvest as core
+
+    seen = {}
+    monkeypatch.setattr(core, "harvest", lambda *a, **kw: seen.update(kw))
+    research.harvest({"topic": "t", "queries": [{"text": "q"}]}, n_videos=None, months=None)
+    assert "n_videos" not in seen and "months" not in seen and "market_share" not in seen
+
+
+def test_base_lang():
+    from tubeproof.i18n import base_lang
+
+    assert base_lang("en-US") == "en" and base_lang(None) == "" and base_lang("TR") == "tr"

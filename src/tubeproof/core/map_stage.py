@@ -12,6 +12,7 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
+from tubeproof.config import layout
 from tubeproof.core import exemplar
 from tubeproof.core.extraction import CommentExtraction, ExemplarExtraction, VideoExtraction
 from tubeproof.core.segment import Window, fmt_ts, windows
@@ -137,15 +138,34 @@ def map_video(llm: LLM, topic: str, b: VideoBundle, lang: str, mode: str = "clai
     }
 
 
+def summary(res: dict) -> str:
+    """One log line per analysed video, for either mode."""
+    v, g = res["video"], res["grounding"]
+    if res.get("mode") == "exemplar":
+        return f"beats={len(v['beats'])} (dropped {len(g['dropped'])})"
+    ev = len(res["comments"]["evidence"]) if res["comments"] else 0
+    return (f"claims={len(v['claims'])} (dropped {len(g['dropped'])}) · comment evidence={ev} · "
+            f"clickbait={v['hype']['clickbait_score']:.2f}")
+
+
+def is_mapped(run_dir: Path, video_id: str) -> bool:
+    return layout.extraction(run_dir, video_id).exists()
+
+
+def save_extraction(run_dir: Path, res: dict) -> None:
+    """The one writer of `extractions/<id>.json` (batch map and the streaming pipeline)."""
+    p = layout.extraction(run_dir, res["video_id"])
+    p.parent.mkdir(exist_ok=True)
+    p.write_text(json.dumps(res, ensure_ascii=False, indent=1))
+
+
 def run_map(llm: LLM, run_dir: Path, topic: str, lang: str, workers: int = 4, only: list[str] | None = None,
             mode: str = "claims", log=print) -> dict:
-    out_dir = run_dir / "extractions"
-    out_dir.mkdir(exist_ok=True)
     todo = []
-    for f in sorted((run_dir / "videos").glob("*.json")):
+    for f in sorted(layout.videos(run_dir).glob("*.json")):
         if only and f.stem not in only:
             continue
-        if (out_dir / f.name).exists():
+        if is_mapped(run_dir, f.stem):
             continue
         todo.append(VideoBundle.model_validate_json(f.read_text()))
     log(f"[map] {len(todo)} videos to process ({workers} parallel)")
@@ -160,11 +180,7 @@ def run_map(llm: LLM, run_dir: Path, topic: str, lang: str, workers: int = 4, on
                 failed[b.meta.id] = f"{type(e).__name__}: {str(e)[:200]}"
                 log(f"   ✗ {b.meta.id}: {failed[b.meta.id]}")
                 continue
-            (out_dir / f"{b.meta.id}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
+            save_extraction(run_dir, res)
             done += 1
-            v = res["video"]
-            ev = len(res["comments"]["evidence"]) if res["comments"] else 0
-            log(f"   ✓ {done}/{len(todo)} {b.meta.id} · claims={len(v['claims'])} "
-                f"(dropped {len(res['grounding']['dropped'])}) · comment evidence={ev} · "
-                f"clickbait={v['hype']['clickbait_score']:.2f} · ${llm.meter.usd:.3f}")
+            log(f"   ✓ {done}/{len(todo)} {b.meta.id} · {summary(res)} · ${llm.meter.usd:.3f}")
     return {"done": done, "failed": failed, "usd": llm.meter.usd}

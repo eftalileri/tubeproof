@@ -12,6 +12,7 @@ import base64
 import re
 from typing import Iterator
 
+from tubeproof.config import DAYS_PER_MONTH
 from tubeproof import http
 from tubeproof.models import SearchHit
 
@@ -50,7 +51,7 @@ def upload_bucket(months: float) -> str | None:
 
 
 _AGE_UNITS = {"second": 1 / 86400, "minute": 1 / 1440, "hour": 1 / 24, "day": 1,
-              "week": 7, "month": 30.44, "year": 365.25}
+              "week": 7, "month": DAYS_PER_MONTH, "year": 365.25}
 
 
 def parse_age_days(text: str | None) -> int | None:

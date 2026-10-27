@@ -106,6 +106,7 @@ Tests were run on a Mac over a home connection.
 | K22 | **One research = one folder; two reports from one evidence base** | `research/<id>/`: `pack.yaml`, `plan.json`, `REPORT.md` public; `data/` and `private/` never committed. The public report is written from the topic; the private one adds the reader's question, context and decisions. Paid model text is saved (`report_body.md`) so links and the appendix re-render for free. |
 | K24 | **Exemplar mode: measure what a channel does, then test rules against it** | Advice says what should work; a top channel's own videos show what is done. `mode: exemplar` + `channels` selects a channel's latest long-form uploads (the `UULF` playlist, no Shorts), measures cuts, speech rate and frames by code, and has the model describe packaging, opening, beats and language from the transcript, thumbnail and frames (quotes grounded). No clustering or verification; the report tests the reader's rules (hypotheses) against the videos. |
 | K25 | **Images reach the model as content blocks, never through a tool** | Frames and thumbnails go over `claude -p` stream-json input as base64 image blocks, so analysis calls stay tool-free (K13). |
+| K26 | **One Whisper per machine; low-priority runs yield** | Two runs on one GPU each ran ~2x slower and delayed the run on the critical path. A file lock serialises transcription across processes; `TUBEPROOF_WHISPER_PRIORITY=low` waits until no normal run has used Whisper for 90 s. |
 | K23 | **English tool, per-pack report language** | Code, logs, prompts and docs are English. `report_lang` in the pack picks the report language; fixed report labels live in `i18n.py`; prompts load only through `prompts.load`. |
 
 ---
@@ -306,6 +307,8 @@ tubeproof/
 | Claims, 35-video run | 752 claims → 561 clusters; 0 ungrounded quotes |
 | Verification with mandatory doc lookup | ~50 s and ~$0.05 per cluster (Sonnet + WebSearch/WebFetch), 8 in parallel |
 | Synthesis (Opus), ~300 KB digest | ~$1.7 per report |
+| Plan-bundle harvest, exemplar (no comments/links) | ~3 s per video instead of ~30 s (comments 22 s, links 6 s skipped) |
+| Whisper backlog, 2026-10-27 | RTF 0.076 (mlx turbo, 1.5×); 1366 min of audio ≈ 104 min of GPU |
 | Exemplar, 43-min video at 360p picture-only | 118 MB, ffmpeg cut detection 38 s, 25 cuts/min; frames + thumbnail + Haiku analysis ≈ $0.005–0.02 per video |
 
 ## 13. CLI

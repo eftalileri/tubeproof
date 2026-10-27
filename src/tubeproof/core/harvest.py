@@ -9,9 +9,10 @@ import time
 from datetime import date, timedelta
 from pathlib import Path
 
-from tubeproof.config import settings
+from tubeproof.config import DAYS_PER_MONTH, layout, settings
 from tubeproof.core.discover import Query, discover, rank_score
-from tubeproof.core.screen import MIN_SCORE, screen
+from tubeproof.core.screen import MIN_SCORE, TOP_SCORE, screen
+from tubeproof.i18n import base_lang
 from tubeproof.fetch.links import process_links
 from tubeproof.filters.spam import flag_spam
 from tubeproof.models import Comment, Link, PlaylistMeta, SearchHit, Transcript, VideoBundle, VideoMeta
@@ -44,15 +45,39 @@ PLAN_FIELDS = ("id", "title", "channel", "upload_date", "views", "duration_s", "
                "playlists")
 
 
+def read_manifest(run_dir: Path) -> dict:
+    """The run's manifest. Its `topic` is the topic the corpus was collected for and is the one
+    every stage uses (a later pack edit must not make verify and synth disagree)."""
+    return json.loads(layout.manifest(run_dir).read_text())
+
+
+def _manifest_row(vid: str, m: VideoMeta, relevance, reason, score, queries: list, playlists: list) -> dict:
+    """One video row of the manifest, the same for a plan and a direct harvest (plan.json reads
+    PLAN_FIELDS from it; the direct path once left duration_s out)."""
+    return {"id": vid, "title": m.title, "channel": m.channel, "views": m.views,
+            "upload_date": str(m.upload_date), "duration_s": m.duration_s, "language": m.language,
+            "relevance": relevance, "reason": reason, "score": score, "found_by_queries": queries,
+            "playlists": playlists}
+
+
+def video_titles(manifest: dict) -> dict[str, str]:
+    return {v["id"]: v["title"] for v in manifest["videos"]}
+
+
 def write_manifest(run_dir: Path, manifest: dict) -> None:
     """The run's manifest (data/, private) plus its public video list `research/<id>/plan.json`:
     which videos were selected and why, without queries or reader context."""
-    (run_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1))
+    layout.manifest(run_dir).write_text(json.dumps(manifest, ensure_ascii=False, indent=1))
     public = {"topic": manifest["topic"], "cutoff": manifest.get("cutoff"),
               "selected": manifest.get("harvested") or manifest.get("created"),
               "videos": [{k: v.get(k) for k in PLAN_FIELDS} for v in manifest["videos"]],
               "playlists": [{k: p.get(k) for k in ("id", "title", "channel")} for p in manifest.get("playlists", [])]}
-    (run_dir.parent / "plan.json").write_text(json.dumps(public, ensure_ascii=False, indent=1))
+    layout.plan(run_dir).write_text(json.dumps(public, ensure_ascii=False, indent=1))
+
+
+# Exemplar analysis reads picture + transcript only. Comments (~22 s) and description links (~6 s) were
+# 28 of ~30 s per bundle on MrBeast videos and fed nothing (2026-10-27).
+EXEMPLAR_BUNDLE = {"comments_popular": 0, "comments_recent": 0, "fetch_links": False}
 
 
 def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] | None = None,
@@ -72,9 +97,9 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
     store = Store()
     run_id = run_id or f"{date.today():%Y%m%d}-{slug(topic)}"
     run_dir = settings.run_dir(run_id)
-    (run_dir / "videos").mkdir(parents=True, exist_ok=True)
-    prev = json.loads((run_dir / "manifest.json").read_text()) if (run_dir / "manifest.json").exists() else None
-    existing = {f.stem for f in (run_dir / "videos").glob("*.json")}
+    layout.videos(run_dir).mkdir(parents=True, exist_ok=True)
+    prev = read_manifest(run_dir) if layout.manifest(run_dir).exists() else None
+    existing = {f.stem for f in layout.videos(run_dir).glob("*.json")}
     if prev:
         topic = prev["topic"]
         pack_name = prev["params"].get("pack") or pack_name
@@ -82,7 +107,7 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
                   market_lang=market_lang, market_share=market_share,
                   queries=[q.__dict__ for q in queries])
     store.upsert_run(run_id, topic, params, "discover")
-    cutoff = date.today() - timedelta(days=round(months * 30.44))
+    cutoff = date.today() - timedelta(days=round(months * DAYS_PER_MONTH))
     if prev and prev.get("planned"):
         return _harvest_plan(prev, run_dir, store, params, comments_popular, comments_recent, fetch_links,
                              allow_whisper, log, on_bundle)
@@ -124,12 +149,12 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
             if not market_lang:
                 return False
             if meta and meta.language:
-                return meta.language.split("-")[0] == market_lang
+                return base_lang(meta.language) == market_lang
             return any(hl_of_query.get(q) == market_lang for q in cand.queries_by_id.get(vid, []))
 
         ordered = sorted(cand.videos.values(), key=lambda h: (-tier(h.id), -pre_score(h)))
         pool_ids: list[str] = []
-        for group, cap in (([h for h in ordered if tier(h.id) >= 3], 60),
+        for group, cap in (([h for h in ordered if tier(h.id) >= TOP_SCORE], 60),
                            ([h for h in ordered if tier(h.id) == MIN_SCORE], n_videos * 2),
                            ([h for h in ordered if is_market(h.id)], n_videos)):
             pool_ids += [h.id for h in group[:cap] if h.id not in pool_ids]
@@ -184,7 +209,7 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
         if market_lang:
             pick([v for v in scored if is_market(v, metas[v])], math.ceil(n_videos * market_share),
                  f"market language ({market_lang})")
-        pick([v for v in scored if tier(v) >= 3], n_videos - len(chosen), "relevance 3")
+        pick([v for v in scored if tier(v) >= TOP_SCORE], n_videos - len(chosen), "relevance 3")
         pick(list(scored), n_videos - len(chosen), "relevance 2")
 
         # playlists = course sets; their items pass the same date, duration and relevance gates
@@ -209,7 +234,7 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
                 item_rel = screen(llm, topic, question, item_hits, log=log, store=store, notes=relevance_notes)
                 rel.update(item_rel)
                 # a course earns corpus slots only with lessons on the reader's exact situation
-                items = {v: m for v, m in items.items() if item_rel.get(v, 0) >= 3}
+                items = {v: m for v, m in items.items() if item_rel.get(v, 0) >= TOP_SCORE}
             taken = 0
             for vid, m in items.items():
                 if taken >= playlist_videos:
@@ -230,11 +255,9 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
     if plan_only:
         plan = {"run_id": run_id, "topic": topic, "planned": True, "created": time.strftime("%Y-%m-%d %H:%M"),
                 "params": params, "cutoff": str(cutoff),
-                "videos": [{"id": v, "title": metas[v].title, "channel": metas[v].channel, "views": metas[v].views,
-                            "upload_date": str(metas[v].upload_date), "duration_s": metas[v].duration_s,
-                            "language": metas[v].language, "relevance": rel_of[v], "reason": reason.get(v),
-                            "score": scored.get(v), "found_by_queries": queries_by_id.get(v, []),
-                            "playlists": [p.id for p in playlists if v in p.video_ids]} for v in chosen],
+                "videos": [_manifest_row(v, metas[v], rel_of[v], reason.get(v), scored.get(v),
+                                         queries_by_id.get(v, []), [p.id for p in playlists if v in p.video_ids])
+                           for v in chosen],
                 "playlists": [p.model_dump(mode="json") for p in playlists]}
         write_manifest(run_dir, plan)
         store.upsert_run(run_id, topic, params, "planned")
@@ -246,29 +269,13 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
     log("[3/4] Harvest: transcript, comments, links")
     in_playlists = {vid: [p.id for p in playlists if vid in p.video_ids] for vid in chosen}
     for i, vid in enumerate(chosen, 1):
-        out = run_dir / "videos" / f"{vid}.json"
+        out = layout.bundle(run_dir, vid)
         if out.exists():
             continue
         m = metas[vid]
-        if m.has_paid_promotion is None:
-            m.has_paid_promotion = yt_meta.has_paid_promotion(vid)
         b = VideoBundle(meta=m, rank_score=scored.get(vid), playlist_ids=in_playlists.get(vid, []),
                         found_by_queries=queries_by_id.get(vid, []))
-        try:
-            b.transcript = _cached(store, "transcript", vid,
-                                   lambda: yt_transcript.fetch_transcript(vid, m.language, allow_whisper),
-                                   Transcript)
-        except Exception as e:
-            b.transcript_error = str(e)[:400]
-        try:
-            raw = _cached(store, "comments", vid,
-                          lambda: yt_comments.fetch_comments(vid, m.channel_id, comments_popular, comments_recent),
-                          Comment)
-            b.comments = flag_spam(raw)
-        except Exception as e:
-            b.comments_error = str(e)[:400]
-        if fetch_links:
-            b.links = _cached(store, "links", vid, lambda: process_links(m.description), Link)
+        _fill_bundle(b, store, comments_popular, comments_recent, fetch_links, allow_whisper)
         out.write_text(b.model_dump_json(indent=1))
         spam = sum(1 for c in b.comments if c.spam_reasons)
         paid = sum(1 for l in b.links if l.is_paid)
@@ -282,10 +289,8 @@ def harvest(topic: str, queries: list[Query], *, playlist_queries: list[Query] |
     manifest = {
         "run_id": run_id, "topic": topic, "created": time.strftime("%Y-%m-%d %H:%M"),
         "params": params, "cutoff": str(cutoff),
-        "videos": [{"id": v, "title": metas[v].title, "channel": metas[v].channel,
-                    "views": metas[v].views, "upload_date": str(metas[v].upload_date),
-                    "language": metas[v].language, "relevance": rel.get(v), "reason": reason.get(v),
-                    "score": scored.get(v), "playlists": in_playlists.get(v, [])} for v in chosen],
+        "videos": [_manifest_row(v, metas[v], rel.get(v), reason.get(v), scored.get(v), queries_by_id.get(v, []),
+                                 in_playlists.get(v, [])) for v in chosen],
         "playlists": [p.model_dump(mode="json") for p in playlists],
     }
     if prev:
@@ -331,7 +336,7 @@ def repair(run_id: str, *, allow_whisper: bool = True, log=print) -> dict:
     """
     store = Store()
     run_dir = settings.run_dir(run_id)
-    files = [f for f in sorted((run_dir / "videos").glob("*.json"))
+    files = [f for f in sorted(layout.videos(run_dir).glob("*.json"))
              if not json.loads(f.read_text()).get("transcript")]
     log(f"[repair] {len(files)} videos missing a transcript")
     fixed = 0
@@ -359,12 +364,10 @@ def _harvest_plan(plan: dict, run_dir: Path, store: Store, params: dict, comment
     log(f"[plan] harvesting {len(plan['videos'])} videos from the saved plan")
     store.upsert_run(run_dir.name, topic, params, "harvest")
     for i, v in enumerate(plan["videos"], 1):
-        out = run_dir / "videos" / f"{v['id']}.json"
+        out = layout.bundle(run_dir, v["id"])
         if out.exists():
             continue
         m = _cached(store, "meta", v["id"], lambda: yt_meta.video_meta(v["id"]), VideoMeta)
-        if m.has_paid_promotion is None:
-            m.has_paid_promotion = yt_meta.has_paid_promotion(v["id"])
         b = VideoBundle(meta=m, rank_score=v.get("score"), playlist_ids=v.get("playlists", []),
                         found_by_queries=v.get("found_by_queries", []))
         _fill_bundle(b, store, comments_popular, comments_recent, fetch_links, allow_whisper)
@@ -383,18 +386,23 @@ def _harvest_plan(plan: dict, run_dir: Path, store: Store, params: dict, comment
 
 def _fill_bundle(b: VideoBundle, store: Store, comments_popular: int, comments_recent: int,
                  fetch_links: bool, allow_whisper: bool) -> None:
+    """The one place a bundle is filled (paid-promotion flag, transcript, comments, links), for both
+    the direct harvest and the saved-plan harvest."""
     vid, m = b.meta.id, b.meta
+    if m.has_paid_promotion is None:
+        m.has_paid_promotion = yt_meta.has_paid_promotion(vid)
     try:
         b.transcript = _cached(store, "transcript", vid,
                                lambda: yt_transcript.fetch_transcript(vid, m.language, allow_whisper), Transcript)
     except Exception as e:
         b.transcript_error = str(e)[:400]
-    try:
-        raw = _cached(store, "comments", vid,
-                      lambda: yt_comments.fetch_comments(vid, m.channel_id, comments_popular, comments_recent),
-                      Comment)
-        b.comments = flag_spam(raw)
-    except Exception as e:
-        b.comments_error = str(e)[:400]
+    if comments_popular or comments_recent:  # 0 + 0 = not wanted: skip the ~20 s comment fetch
+        try:
+            raw = _cached(store, "comments", vid,
+                          lambda: yt_comments.fetch_comments(vid, m.channel_id, comments_popular, comments_recent),
+                          Comment)
+            b.comments = flag_spam(raw)
+        except Exception as e:
+            b.comments_error = str(e)[:400]
     if fetch_links:
         b.links = _cached(store, "links", vid, lambda: process_links(m.description), Link)

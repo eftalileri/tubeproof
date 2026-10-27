@@ -12,6 +12,10 @@ ClaimType = Literal["platform_mechanic", "tactic_efficacy", "numeric_threshold",
                     "outcome_income", "opinion"]
 
 
+# Unattributed common wisdom; also the basis of extractions made before `basis` existed (map-v1).
+DEFAULT_BASIS = "general_knowledge"
+
+
 class SegmentLabel(BaseModel):
     seg_id: str
     label: SegLabel

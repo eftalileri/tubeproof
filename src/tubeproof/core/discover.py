@@ -6,6 +6,7 @@ import math
 from collections import defaultdict
 from dataclasses import dataclass, field
 
+from tubeproof.config import DAYS_PER_MONTH
 from tubeproof.models import SearchHit
 from tubeproof.sources.youtube import innertube
 
@@ -30,7 +31,7 @@ def discover(queries: list[Query], months: float, per_query: int = 30,
     """Videos come from `queries`; playlists from `playlist_queries` (course-style
     phrasings like "full course" surface playlists far better), defaulting to `queries`."""
     cand = Candidates()
-    max_age = months * 30.44
+    max_age = months * DAYS_PER_MONTH
     for q in queries:
         # Both orders: popularity alone drifts off-topic, relevance alone misses proven videos.
         hits = list(innertube.search(q.text, kind="video", months=months, limit=per_query // 2,
@@ -74,17 +75,3 @@ def rank_score(views: int | None, age_days: int | None, likes: int | None = None
         score += 40 * min(comments / views, 0.02)
     score += 0.4 * math.log2(query_hits)
     return round(score, 3)
-
-
-def select_diverse(scored: list[tuple[str, float, str | None]], n: int, per_channel: int = 2) -> list[str]:
-    """Top-n ids by score with at most `per_channel` per channel (diversity of sources)."""
-    picked, per = [], defaultdict(int)
-    for vid, _score, channel in sorted(scored, key=lambda x: -x[1]):
-        key = channel or vid
-        if per[key] >= per_channel:
-            continue
-        picked.append(vid)
-        per[key] += 1
-        if len(picked) >= n:
-            break
-    return picked

@@ -15,7 +15,8 @@ from datetime import date
 
 from rapidfuzz import fuzz
 
-from tubeproof.core.reduce_stage import Cluster, Member, age_months
+from tubeproof.config import DAYS_PER_MONTH
+from tubeproof.core.reduce_stage import Cluster, Member
 
 RUBRIC_VERSION = "r3"
 
@@ -23,6 +24,8 @@ COMMENT_CONFIRM, COMMENT_CONFIRM_CAP = 0.4, 1.6
 COMMENT_REFUTE, COMMENT_REFUTE_CAP = -0.5, -2.0  # asymmetric: creators can delete criticism
 DOC_SUPPORT, DOC_CONTRADICT = 2.0, -3.0
 FIRST_HAND = {"own_experience", "client_data"}
+# Bands from strongest to weakest; reports sort and filter by this order.
+BANDS = ("well_supported", "likely", "contested", "doubtful", "single_source", "unverifiable")
 BASIS_FACTOR = {"own_experience": 1.0, "client_data": 1.0, "general_knowledge": 0.7, "other_creator": 0.5,
                 "platform_docs": 1.0}
 DOCS_ECHO = "DOCS_ECHO"
@@ -58,6 +61,16 @@ def independence_groups(members: list[Member]) -> dict[str, str]:
                 if ra != rb:
                     parent[rb] = ra
     return {m.ref: find(parent[m.ref]) if m.basis != "platform_docs" else DOCS_ECHO for m in members}
+
+
+# A source with no upload date is weighted as one half-life old: neither fresh nor discarded.
+UNKNOWN_AGE_MONTHS = 12.0
+
+
+def age_months(upload_date: str | None) -> float:
+    if not upload_date:
+        return UNKNOWN_AGE_MONTHS
+    return max((date.today() - date.fromisoformat(upload_date)).days / DAYS_PER_MONTH, 0.0)
 
 
 def _source_weight(m: Member, breakpoints: list[date]) -> float:

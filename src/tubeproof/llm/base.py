@@ -3,17 +3,18 @@ model mapping can change in one place (config) without touching stage code."""
 
 from __future__ import annotations
 
-import os
 import threading
 from dataclasses import dataclass, field
 from typing import Literal, Protocol
 
+from tubeproof.config import settings
+
 Tier = Literal["extract", "verify", "synth"]
 
 DEFAULT_MODELS: dict[Tier, str] = {
-    "extract": os.environ.get("TUBEPROOF_MODEL_EXTRACT", "claude-haiku-5-5"),
-    "verify": os.environ.get("TUBEPROOF_MODEL_VERIFY", "claude-sonnet-5-5"),
-    "synth": os.environ.get("TUBEPROOF_MODEL_SYNTH", "claude-opus-5-5"),
+    "extract": settings.model_extract,
+    "verify": settings.model_verify,
+    "synth": settings.model_synth,
 }
 
 
@@ -46,7 +47,7 @@ class LLM(Protocol):
 
 
 def get_backend(name: str | None = None) -> LLM:
-    name = name or os.environ.get("TUBEPROOF_LLM", "claude_cli")
+    name = name or settings.llm_backend
     if name == "claude_cli":
         from tubeproof.llm.claude_cli import ClaudeCLI
 

@@ -10,7 +10,7 @@ from __future__ import annotations
 import re
 from urllib.parse import parse_qs, urlparse
 
-from tubeproof.http import YOUTUBE_HOSTS, host_match
+from tubeproof.http import YOUTUBE_HOSTS, host_match, norm_host
 from tubeproof.models import Link
 
 _AFFILIATE_HOSTS = (
@@ -48,7 +48,7 @@ SHORTENERS = ("bit.ly", "tinyurl.com", "t.co", "ow.ly", "rebrand.ly", "cutt.ly",
 def classify(link: Link, creator_domains: set[str] | None = None) -> Link:
     url = link.resolved_url or link.url
     p = urlparse(url)
-    host = (p.hostname or "").lower().removeprefix("www.")
+    host = norm_host(url)
     full = host + p.path
     params = {k.lower() for k in parse_qs(p.query)}
     reasons: list[str] = []
@@ -92,5 +92,5 @@ def classify(link: Link, creator_domains: set[str] | None = None) -> Link:
 
 
 def is_shortener(url: str) -> bool:
-    host = (urlparse(url).hostname or "").lower().removeprefix("www.")
+    host = norm_host(url)
     return host_match(host, SHORTENERS)

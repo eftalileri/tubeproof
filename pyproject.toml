@@ -31,7 +31,7 @@ whisper-mlx = ["mlx-whisper>=0.4.3"]
 browser = ["playwright>=1.50"]
 docs = ["markitdown>=0.1.9"]
 api = ["anthropic>=0.70"]
-dev = ["pytest>=8"]
+dev = ["pytest>=8", "pyflakes>=3"]
 
 [project.scripts]
 tubeproof = "tubeproof.cli:app"

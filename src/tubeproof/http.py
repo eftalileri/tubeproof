@@ -17,6 +17,31 @@ _lock = threading.Lock()
 YOUTUBE_HOSTS = ("youtube.com", "youtu.be")
 
 
+YOUTUBE_HOME = "https://www.youtube.com/"  # throttle key for every YouTube request
+
+
+def watch_url(video_id: str, **query) -> str:
+    """The canonical watch-page URL (fetching: metadata, captions, audio, comments)."""
+    extra = "".join(f"&{k}={v}" for k, v in query.items())
+    return f"https://www.youtube.com/watch?v={video_id}{extra}"
+
+
+def short_url(video_id: str, t: int | float | None = None) -> str:
+    """The youtu.be link a report cites; `t` jumps to that second."""
+    return f"https://youtu.be/{video_id}" + (f"?t={int(t)}" if t is not None else "")
+
+
+def norm_host(url: str) -> str:
+    """Lower-case host without a leading "www.", for host-list and domain checks."""
+    return (urlparse(url).hostname or "").lower().removeprefix("www.")
+
+
+def url_under(url: str, prefixes: list[str]) -> bool:
+    """`url` (host + path, no www.) starts with one of `prefixes`, e.g. "facebook.com/business"."""
+    full = norm_host(url) + urlparse(url).path
+    return any(full.startswith(p) for p in prefixes)
+
+
 def host_match(host: str, hosts: tuple[str, ...]) -> bool:
     """`host` is one of `hosts` or a subdomain of one (www., m., ...)."""
     return any(host == h or host.endswith("." + h) for h in hosts)
