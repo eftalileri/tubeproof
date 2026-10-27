@@ -15,6 +15,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from tubeproof.core import exemplar
 from tubeproof.core.reduce_stage import load_clusters
 from tubeproof.core.score import FIRST_HAND, RUBRIC_VERSION, score_cluster
 from tubeproof.core.segment import fmt_ts
@@ -162,11 +163,120 @@ One row per decision above, as a Markdown table: Decision | What the evidence sa
 """
 
 
+_RULES = """
+## The reader's rules against these videos
+One row per rule above, as a Markdown table: Rule | What these videos do (counts, cited) |
+Verdict (validated / partly / differs / no evidence) | Adopt instead, and why. "Differs" means
+the videos clearly do something else: state exactly what, with numbers and citations, so the
+rule can be rewritten. Do not soften a difference; "no evidence" is valid.
+"""
+
+
+def _exemplar_digest(run_dir: Path, vids: list[dict]) -> str:
+    rows = {r["video_id"]: r for r in exemplar.table(run_dir)}
+    out = []
+    for n, v in enumerate(vids, 1):
+        f = run_dir / "extractions" / f"{v['id']}.json"
+        if not f.exists():
+            continue
+        ex = json.loads(f.read_text())
+        x, m = ex["video"], rows.get(v["id"], {})
+        measured = {k: m.get(k) for k in ("duration_s", "cuts_per_min", "cuts_first_3s", "cuts_first_10s",
+                                          "cuts_first_30s", "cuts_first_60s", "shot_s_median")} | (ex.get("speech") or {})
+        beats = "; ".join(f"{int(b['t'])}s {b['kind']}: {b['what']}" for b in x["beats"])
+        loops = "; ".join(f"{l['question']} ({int(l['opened_at_s'])}s→"
+                          f"{int(l['closed_at_s']) if l.get('closed_at_s') is not None else '-'}s)" for l in x["open_loops"])
+        out.append(
+            f"[V{n}] {v['title']} · {v.get('views')} views · {v.get('upload_date')}\n"
+            f"   MEASURED: {json.dumps(measured, ensure_ascii=False)}\n"
+            f"   packaging: {json.dumps(x['packaging'], ensure_ascii=False)}\n"
+            f"   opening: {json.dumps(x['opening'], ensure_ascii=False)}\n"
+            f"   beats: {beats}\n   open loops: {loops or '-'}\n   re-hooks: {x['rehook_interval_note']}\n"
+            f"   language: {json.dumps(x['language'], ensure_ascii=False)}\n   visuals: {x['visual_style']}\n"
+            f"   summary: {x['summary_local']}")
+    return "\n\n".join(out)
+
+
+_VCITE = re.compile(r"\[V(\d+)(?: (\d+)s)?\]")
+
+
+def render_exemplar(run_id: str, private: bool, vids: list[dict], lang: str) -> Path:
+    """Model text with [V<n> <s>s] turned into links, plus the code-built measurement table."""
+    from statistics import median
+
+    d = report_dir(run_id, private)
+    body = (d / BODY_FILE).read_text()
+
+    def link(mt: re.Match) -> str:
+        i, t = int(mt.group(1)), mt.group(2)
+        if not 1 <= i <= len(vids):
+            return mt.group(0)
+        url = f"https://youtu.be/{vids[i - 1]['id']}" + (f"?t={t}" if t else "")
+        return f"[V{i}{' ' + fmt_ts(int(t)) if t else ''}]({url})"
+
+    rows = {r["video_id"]: r for r in exemplar.table(settings.run_dir(run_id))}
+    L = labels(lang)
+    cols = ("cuts_per_min", "cuts_first_3s", "cuts_first_10s", "cuts_first_30s", "shot_s_median")
+    scols = ("wpm", "wpm_first_10s", "wpm_first_30s", "first_speech_s")
+    head = "| # | " + " | ".join(L["exemplar_cols"][c] for c in ("video", "views") + cols + scols) + " |"
+    lines = [f"\n\n---\n\n## {L['exemplar_table']}\n", L["exemplar_intro"] + "\n", head,
+             "|" + "---|" * (len(cols) + len(scols) + 3)]
+    vals: dict[str, list] = {c: [] for c in cols + scols}
+    for n, v in enumerate(vids, 1):
+        r = rows.get(v["id"]) or {}
+        sp = r.get("speech") or {}
+        cells = [r.get(c) for c in cols] + [sp.get(c) for c in scols]
+        for c, x in zip(cols + scols, cells):
+            if isinstance(x, (int, float)):
+                vals[c].append(x)
+        lines.append(f"| V{n} | [{v['title'][:60]}](https://youtu.be/{v['id']}) | {v.get('views') or ''} | "
+                     + " | ".join("" if x is None else str(x) for x in cells) + " |")
+    lines.append(f"| | **{L['exemplar_cols']['median']}** | | "
+                 + " | ".join(str(round(median(vals[c]), 1)) if vals[c] else "" for c in cols + scols) + " |")
+    out = d / REPORT_FILE
+    out.write_text(_VCITE.sub(link, body) + "\n".join(lines) + "\n")
+    return out
+
+
+def _run_exemplar_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> Path:
+    run_dir = settings.run_dir(run_id)
+    lang = lang_of(cfg)
+    manifest = json.loads((run_dir / "manifest.json").read_text())
+    vids = manifest["videos"]
+    topic = cfg.get("topic") or manifest["topic"]
+    hyps = cfg.get("hypotheses") if private else None
+    reader = ""
+    if private:
+        reader = ("\nThe reader's situation (use it to make findings concrete, never as evidence):\n"
+                  f"{(cfg.get('context') or '(none given)').strip()}\n")
+        if hyps:
+            reader += "\nThe reader's rules to test against these videos:\n" + \
+                      "\n".join(f"- {h['id']}: {h['text']}" for h in hyps) + "\n"
+    system = load_prompt(
+        "synthesize_exemplar.md", lang, topic=topic, question=(cfg.get("question") if private else None) or topic,
+        audience="the reader described below" if private else "creators studying this channel's craft",
+        n_videos=len(vids), channels=", ".join(sorted({v["channel"] or "?" for v in vids})), today=date.today(),
+        reader_block=reader, rules_section=_RULES if hyps else "")
+    kind = "private" if private else "public"
+    log(f"[synth] {kind} exemplar report from {len(vids)} videos")
+    rep = Report.model_validate(llm.json("synth", system, _exemplar_digest(run_dir, vids),
+                                         Report.model_json_schema()))
+    d = report_dir(run_id, private)
+    d.mkdir(parents=True, exist_ok=True)
+    (d / BODY_FILE).write_text(rep.markdown)
+    out = render_exemplar(run_id, private, vids, lang)
+    log(f"[synth] → {out} · ${llm.meter.usd:.2f}")
+    return out
+
+
 def run_synth(llm: LLM, run_id: str, cfg: dict, *, private: bool, log=print) -> Path:
     """`private=False` writes the public report from the topic alone; `private=True` writes the
-    reader's report with their question, context and decisions."""
-    from tubeproof.research import breakpoints
+    reader's report with their question, context and decisions. Exemplar research gets the
+    exemplar report (how the videos are built, the reader's rules tested against them)."""
+    from tubeproof.research import breakpoints, mode_of
 
+    if mode_of(cfg) == "exemplar":
+        return _run_exemplar_synth(llm, run_id, cfg, private=private, log=log)
     run_dir = settings.run_dir(run_id)
     lang = lang_of(cfg)
     scored = build_scored(run_dir, breakpoints(cfg))

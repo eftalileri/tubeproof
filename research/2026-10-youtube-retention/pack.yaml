@@ -33,6 +33,11 @@ queries:
 - {text: youtube izleyici tutma oranı, hl: tr, gl: TR}
 - {text: youtube kanal büyütme tecrübe, hl: tr, gl: TR}
 - {text: youtube algoritması izlenme süresi, hl: tr, gl: TR}
+- {text: youtube video kancası ilk 30 saniye, hl: tr, gl: TR}
+- {text: youtube senaryo yazma teknikleri hikaye anlatımı, hl: tr, gl: TR}
+- {text: youtube tıklanma oranı kapak başlık, hl: tr, gl: TR}
+- {text: youtube izleyici kaybı grafik analiz, hl: tr, gl: TR}
+- {text: video kurgu tempo izleyici tutma, hl: tr, gl: TR}
 - {text: cómo retener audiencia en youtube, hl: es, gl: ES}
 - {text: retenção de público youtube roteiro, hl: pt, gl: BR}
 playlist_queries:
@@ -46,9 +51,11 @@ official_domains:
 - youtube.com/howyoutubeworks
 breakpoints: []
 relevance_notes: |
-  3 = long-form YouTube (not Shorts) craft with results: hooks/intros, retention graphs, titles and
-      thumbnails with CTR numbers, script structure, pacing; creators or strategists reporting what changed.
-  2 = general YouTube growth/algorithm practice that transfers; scriptwriting or storytelling courses;
-      breakdowns of other creators' videos.
-  1 = Shorts-only or TikTok tips, editing-software tutorials, "make money on YouTube / faceless automation"
-      hype, equipment reviews.
+  3 = long-form YouTube craft that decides clicks and watch time: hooks and intros, retention graphs,
+      titles and thumbnails (packaging), script writing and storytelling for YouTube, pacing and editing
+      for retention, breakdowns of why specific videos hold viewers; tutorials and creator results both count.
+  2 = general YouTube growth or algorithm explanations (how recommendations use CTR and watch time);
+      screenwriting or storytelling courses outside YouTube.
+  1 = upload settings, SEO, tags, descriptions, "do this after uploading" checklists, channel setup;
+      Shorts-only or TikTok tips; editing-software tutorials; "make money / faceless automation" hype;
+      equipment reviews.

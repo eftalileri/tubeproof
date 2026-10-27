@@ -104,6 +104,8 @@ Tests were run on a Mac over a home connection.
 | K20 | **Company-level independence (`org_key`)** | Channels of one company counted as two sources and inflated scores. |
 | K21 | **Mandatory official-docs lookup for every claim type but income stories, one forced retry** | Only mechanics were checked and the model skipped lookups on most clusters; "practice only" labels were therefore unproven. |
 | K22 | **One research = one folder; two reports from one evidence base** | `research/<id>/`: `pack.yaml`, `plan.json`, `REPORT.md` public; `data/` and `private/` never committed. The public report is written from the topic; the private one adds the reader's question, context and decisions. Paid model text is saved (`report_body.md`) so links and the appendix re-render for free. |
+| K24 | **Exemplar mode: measure what a channel does, then test rules against it** | Advice says what should work; a top channel's own videos show what is done. `mode: exemplar` + `channels` selects a channel's latest long-form uploads (the `UULF` playlist, no Shorts), measures cuts, speech rate and frames by code, and has the model describe packaging, opening, beats and language from the transcript, thumbnail and frames (quotes grounded). No clustering or verification; the report tests the reader's rules (hypotheses) against the videos. |
+| K25 | **Images reach the model as content blocks, never through a tool** | Frames and thumbnails go over `claude -p` stream-json input as base64 image blocks, so analysis calls stay tool-free (K13). |
 | K23 | **English tool, per-pack report language** | Code, logs, prompts and docs are English. `report_lang` in the pack picks the report language; fixed report labels live in `i18n.py`; prompts load only through `prompts.load`. |
 
 ---
@@ -304,11 +306,13 @@ tubeproof/
 | Claims, 35-video run | 752 claims → 561 clusters; 0 ungrounded quotes |
 | Verification with mandatory doc lookup | ~50 s and ~$0.05 per cluster (Sonnet + WebSearch/WebFetch), 8 in parallel |
 | Synthesis (Opus), ~300 KB digest | ~$1.7 per report |
+| Exemplar, 43-min video at 360p picture-only | 118 MB, ffmpeg cut detection 38 s, 25 cuts/min; frames + thumbnail + Haiku analysis ≈ $0.005–0.02 per video |
 
 ## 13. CLI
 
 ```bash
 tubeproof harvest <id> --plan               # select videos for research/<id>/ (pack.yaml) and save the plan
+                                            # (exemplar packs: the channels' latest uploads; use --no-screen)
 tubeproof process <id>                      # harvest the plan, transcribe, analyse, cluster, verify, write reports
 tubeproof analyze|reduce|verify|report <id> # stages one by one; `report --render` re-renders for free
 tubeproof stats <id>

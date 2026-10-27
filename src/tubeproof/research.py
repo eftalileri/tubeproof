@@ -4,7 +4,8 @@ This module is the single place that turns a research's configuration into stage
 CLI and the MCP server stay thin and cannot drift apart.
 
 - `pack.yaml`             public topic pack: topic, queries, official domains, breakpoints, report_lang,
-                          relevance_notes (topic-specific examples for the relevance gate)
+                          relevance_notes (topic-specific examples for the relevance gate),
+                          mode (claims | exemplar), channels (exemplar: [{id: UC…, latest: N}])
 - `private/context.yaml`  the reader's question, context and hypotheses (never committed)
 """
 
@@ -59,5 +60,18 @@ def harvest(cfg: dict, *, topic: str | None = None, extra_queries: list[str] = (
                         playlist_queries=[Query(**q) for q in cfg.get("playlist_queries", [])] or None,
                         months=opts.pop("months", None) or cfg.get("months", 12), run_id=run_id or cfg.get("name"),
                         llm=llm, question=cfg.get("question"), relevance_notes=cfg.get("relevance_notes"),
+                        channels=cfg.get("channels"),
                         market_lang=market.get("lang"),
                         market_share=market.get("min_share", 0.25), log=log, **opts)
+
+
+MODES = ("claims", "exemplar")
+
+
+def mode_of(cfg: dict) -> str:
+    """`claims` (default): collect and score advice. `exemplar`: measure how a channel's own videos
+    are built and test the reader's rules (hypotheses) against them."""
+    mode = cfg.get("mode") or "claims"
+    if mode not in MODES:
+        raise ValueError(f"mode {mode!r} not supported ({MODES})")
+    return mode

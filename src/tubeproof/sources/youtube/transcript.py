@@ -97,9 +97,18 @@ def _via_ytdlp(video_id: str, prefer_lang: str | None) -> Transcript:
     return Transcript(video_id=video_id, language=lang, is_generated=None, source="yt_dlp", segments=segs)
 
 
-def download_audio(video_id: str, dest_dir: str | Path) -> Path:
-    """Smallest original-language audio track. The media CDN is not covered by the
-    caption rate-limit, so this is safe to run in parallel."""
+# kind -> yt-dlp format. video: picture only, 360p is enough to see a frame and to detect cuts
+# (a 43 min video: 118 MB, cut detection 38 s; 2026-10-27); its audio comes from "audio" if needed.
+MEDIA_FORMATS = {
+    "audio": "ba[format_note*=original][ext=m4a]/ba[format_note*=original]/ba",
+    "video": "bv*[height<=360][ext=mp4]/bv*[height<=360]/wv*",
+}
+
+
+def download_media(video_id: str, dest_dir: str | Path, kind: str = "audio") -> Path:
+    """Smallest original-language audio track (`kind="audio"`) or a 360p picture-only stream
+    (`kind="video"`). The media CDN is not covered by the caption rate-limit, so this is safe to
+    run in parallel. Keep the two kinds in separate folders: an existing file is reused."""
 
     dest = Path(dest_dir)
     dest.mkdir(parents=True, exist_ok=True)
@@ -113,8 +122,8 @@ def download_audio(video_id: str, dest_dir: str | Path) -> Path:
     # the stream to ffmpeg, which YouTube throttles to near playback speed (13 MB: 6 s native vs
     # 12+ min ranged, and one stall forever; 2026-10-27).
     opts = ydl_opts(skip_download=False, noprogress=True,
-                    format="ba[format_note*=original][ext=m4a]/ba[format_note*=original]/ba",
-                    format_sort=["lang", "+abr"], outtmpl=str(dest / f"{video_id}.%(ext)s"),
+                    format=MEDIA_FORMATS[kind],
+                    format_sort=["lang", "+abr"] if kind == "audio" else ["res:360", "+size"], outtmpl=str(dest / f"{video_id}.%(ext)s"),
                     socket_timeout=30, http_chunk_size=10 * 1024 * 1024)
     with yt_dlp.YoutubeDL(opts) as ydl:
         ydl.download([f"https://www.youtube.com/watch?v={video_id}"])
@@ -190,7 +199,7 @@ def transcribe_audio(video_id: str, audio_path: Path, prefer_lang: str | None) -
 
 def _via_whisper(video_id: str, prefer_lang: str | None) -> Transcript:
     with tempfile.TemporaryDirectory() as tmp:
-        return transcribe_audio(video_id, download_audio(video_id, tmp), prefer_lang)
+        return transcribe_audio(video_id, download_media(video_id, tmp), prefer_lang)
 
 
 def fetch_transcript(video_id: str, prefer_lang: str | None = None,

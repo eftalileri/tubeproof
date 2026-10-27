@@ -74,3 +74,33 @@ def test_org_key_merges_company_channels():
     assert org_key("Sub Club by RevenueCat") == org_key("RevenueCat")
     assert org_key("App Leaders Club Türkiye by Adapty") == org_key("App Leaders by Adapty")
     assert org_key("Ben Heath") != org_key("Gui Costa")
+
+
+def test_exemplar_speech_metrics():
+    from tubeproof.core.exemplar import speech
+    from tubeproof.models import Transcript, TranscriptSegment
+
+    tr = Transcript(video_id="x", source="whisper", segments=[
+        TranscriptSegment(start=0.5, duration=2.5, text="This is the hook. Watch this."),
+        TranscriptSegment(start=3.0, duration=57.0, text=" ".join(["word"] * 150) + "."),
+    ])
+    sp = speech(tr)
+    assert sp["first_speech_s"] == 0.5
+    assert sp["words_first_3s"] == 6
+    assert sp["wpm"] == 156.0
+    assert sp["sentence_words_median"] == 4
+
+
+def test_exemplar_citations_become_links(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    from tubeproof.core import synth_stage
+
+    monkeypatch.setattr(synth_stage, "report_dir", lambda run_id, private: tmp_path)
+    monkeypatch.setattr(synth_stage, "settings", SimpleNamespace(run_dir=lambda run_id: tmp_path))
+    (tmp_path / synth_stage.BODY_FILE).write_text("Hook first [V1 83s], see [V2]; bad [V9].")
+    vids = [{"id": "aaa", "title": "A"}, {"id": "bbb", "title": "B"}]
+    out = synth_stage.render_exemplar("r", False, vids, "en").read_text()
+    assert "[V1 1:23](https://youtu.be/aaa?t=83)" in out
+    assert "[V2](https://youtu.be/bbb)" in out
+    assert "[V9]" in out and "youtu.be/bbb?t" not in out

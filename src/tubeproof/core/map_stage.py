@@ -12,13 +12,15 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
-from tubeproof.core.extraction import CommentExtraction, VideoExtraction
+from tubeproof.core import exemplar
+from tubeproof.core.extraction import CommentExtraction, ExemplarExtraction, VideoExtraction
 from tubeproof.core.segment import Window, fmt_ts, windows
 from tubeproof.prompts import load as load_prompt
 from tubeproof.llm.base import LLM, LLMError
 from tubeproof.models import VideoBundle
 
 PROMPT_VERSION = "map-v4"  # v4: topic-neutral basis/evidence wording (2026-10-27)
+EXEMPLAR_PROMPT_VERSION = "exemplar-v1"
 MAX_DESC_CHARS = 3000
 MAX_COMMENTS = 140
 MAX_COMMENT_CHARS = 450
@@ -63,27 +65,54 @@ def _comment_input(b: VideoBundle, ext: VideoExtraction) -> tuple[str, int]:
             f"</untrusted_data>"), len(chosen)
 
 
-def ground(ext: VideoExtraction, wins: list[Window]) -> dict:
-    """Drop claims whose quote cannot be found in the cited (or any) segment."""
+def ground(ext, wins: list[Window], field: str = "claims") -> dict:
+    """Drop items of `ext.<field>` (claims, or exemplar beats) whose verbatim quote cannot be found
+    in the cited (or any) segment."""
     by_id = {w.seg_id: w.text for w in wins}
     full = " ".join(by_id.values())
     kept, dropped = [], []
-    for c in ext.claims:
+    for c in getattr(ext, field):
         cited = " ".join(by_id.get(s, "") for s in c.seg_ids)
         score = max(fuzz.partial_ratio(c.quote, cited) if cited else 0, fuzz.partial_ratio(c.quote, full))
         (kept if score >= QUOTE_MATCH_MIN else dropped).append((c, score))
-    ext.claims = [c for c, _ in kept]
+    setattr(ext, field, [c for c, _ in kept])
     valid_segs = set(by_id)
-    for c in ext.claims:
+    for c in getattr(ext, field):
         c.seg_ids = [s for s in c.seg_ids if s in valid_segs]
-    return {"kept": len(kept), "dropped": [{"claim_id": c.claim_id, "quote": c.quote, "score": s}
-                                           for c, s in dropped]}
+    return {"kept": len(kept), "dropped": [{"id": getattr(c, "claim_id", None) or getattr(c, "t", None),
+                                            "quote": c.quote, "score": s} for c, s in dropped]}
 
 
-def map_video(llm: LLM, topic: str, b: VideoBundle, lang: str) -> dict:
+def _map_exemplar(llm: LLM, topic: str, b: VideoBundle, lang: str, wins: list[Window], run_dir: Path) -> dict:
+    """How the video is built: code measurements + frames + transcript → ExemplarExtraction."""
+    m = exemplar.load(run_dir, b.meta.id)
+    if m is None:
+        raise LLMError(f"no exemplar measurements for {b.meta.id}")
+    sp = exemplar.speech(b.transcript)
+    measured = {k: v for k, v in m.items() if k not in ("frames", "thumbnail", "video_id")} | {"speech": sp}
+    images = ([m["thumbnail"]] if m["thumbnail"] else []) + m["frames"]
+    system = load_prompt("map_exemplar.md", lang, topic=topic,
+                         frame_times=", ".join(f"{t}s" for t in m["frame_times"][:len(m["frames"])]))
+    user = _video_input(b, wins) + f"\n\nMEASURED BY CODE:\n{json.dumps(measured, ensure_ascii=False)}"
+    ext = ExemplarExtraction.model_validate(
+        llm.json("extract", system, user, ExemplarExtraction.model_json_schema(), images=images))
+    grounding = ground(ext, wins, field="beats")
+    full = " ".join(w.text for w in wins)
+    ext.language.examples = [x for x in ext.language.examples if fuzz.partial_ratio(x, full) >= QUOTE_MATCH_MIN]
+    return {"prompt_version": EXEMPLAR_PROMPT_VERSION, "mode": "exemplar", "video_id": b.meta.id,
+            "windows": [w.__dict__ for w in wins], "speech": sp, "video": ext.model_dump(mode="json"),
+            "comments": None, "grounding": grounding}
+
+
+def map_video(llm: LLM, topic: str, b: VideoBundle, lang: str, mode: str = "claims",
+              run_dir: Path | None = None) -> dict:
+    """`mode="claims"` extracts advice claims; `mode="exemplar"` describes how the video is built
+    (needs the run's exemplar measurements, see core/exemplar.py)."""
     if not b.transcript:
         raise LLMError(f"no transcript: {b.transcript_error}")
     wins = windows(b.transcript)
+    if mode == "exemplar":
+        return _map_exemplar(llm, topic, b, lang, wins, run_dir)
     system = load_prompt("map_video.md", lang, topic=topic, max_claims=claim_budget(b.meta.duration_s))
     raw = llm.json("extract", system, _video_input(b, wins),
                    VideoExtraction.model_json_schema())
@@ -109,7 +138,7 @@ def map_video(llm: LLM, topic: str, b: VideoBundle, lang: str) -> dict:
 
 
 def run_map(llm: LLM, run_dir: Path, topic: str, lang: str, workers: int = 4, only: list[str] | None = None,
-            log=print) -> dict:
+            mode: str = "claims", log=print) -> dict:
     out_dir = run_dir / "extractions"
     out_dir.mkdir(exist_ok=True)
     todo = []
@@ -122,7 +151,7 @@ def run_map(llm: LLM, run_dir: Path, topic: str, lang: str, workers: int = 4, on
     log(f"[map] {len(todo)} videos to process ({workers} parallel)")
     done, failed = 0, {}
     with ThreadPoolExecutor(max_workers=workers) as ex:
-        futs = {ex.submit(map_video, llm, topic, b, lang): b for b in todo}
+        futs = {ex.submit(map_video, llm, topic, b, lang, mode, run_dir): b for b in todo}
         for fut in as_completed(futs):
             b = futs[fut]
             try:

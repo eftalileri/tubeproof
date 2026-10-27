@@ -104,7 +104,8 @@ def analyze(run_id: str, workers: int = _WORKERS,
     from tubeproof.core.map_stage import run_map
 
     run_dir, topic, cfg = _ctx(run_id, pack)
-    res = run_map(_llm(backend), run_dir, topic, lang_of(cfg), workers=workers, only=only or None, log=log)
+    res = run_map(_llm(backend), run_dir, topic, lang_of(cfg), workers=workers, only=only or None,
+                  mode=research.mode_of(cfg), log=log)
     console.print(f"[green]✓[/] {res['done']} videos, {len(res['failed'])} failed, ${res['usd']:.3f}")
 
 
@@ -139,6 +140,14 @@ def report(run_id: str, backend: Optional[str] = _BACKEND, pack: Optional[str] =
     if not render:
         for out in write_reports(_llm(backend), run_id, cfg, log=log):
             console.print(f"[green]✓[/] {out}")
+        return
+    if research.mode_of(cfg) == "exemplar":
+        from tubeproof.core.synth_stage import render_exemplar
+
+        vids = json.loads((run_dir / "manifest.json").read_text())["videos"]
+        for private in (False, True):
+            if (report_dir(run_id, private) / BODY_FILE).exists():
+                console.print(f"[green]✓[/] {render_exemplar(run_id, private, vids, lang_of(cfg))}")
         return
     scored = build_scored(run_dir, research.breakpoints(cfg))
     titles = {v["id"]: v["title"] for v in json.loads((run_dir / "manifest.json").read_text())["videos"]}

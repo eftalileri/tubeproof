@@ -19,6 +19,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from tubeproof.config import settings
+from tubeproof.core import exemplar
 from tubeproof.i18n import lang_of
 from tubeproof.core.harvest import harvest
 from tubeproof.core.map_stage import map_video
@@ -27,7 +28,7 @@ from tubeproof.core.synth_stage import write_reports
 from tubeproof.core.verify_stage import run_verify
 from tubeproof.llm.base import LLM
 from tubeproof.models import VideoBundle
-from tubeproof.sources.youtube.transcript import (captions_blocked, download_audio, fetch_transcript,
+from tubeproof.sources.youtube.transcript import (captions_blocked, download_media, fetch_transcript,
                                                 transcribe_audio)
 from tubeproof.store.db import Store
 
@@ -49,7 +50,11 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
     manifest = json.loads((run_dir / "manifest.json").read_text())
     topic = manifest["topic"]
     report_lang = lang_of(cfg)
+    from tubeproof.research import mode_of
+    mode = mode_of(cfg)
     audio_dir = settings.data_dir / "audio" / run_id
+    video_dir = settings.data_dir / "video" / run_id
+    exemplar_dir = run_dir / "exemplar"
     ext_dir = run_dir / "extractions"
     ext_dir.mkdir(exist_ok=True)
     store = Store()
@@ -70,7 +75,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
     def map_one(vid: str) -> None:
         b = VideoBundle.model_validate_json(bundle_path(vid).read_text())
         try:
-            res = map_video(llm, topic, b, report_lang)
+            res = map_video(llm, topic, b, report_lang, mode, run_dir)
         except Exception as e:
             with lock:
                 stats["map_failed"] += 1
@@ -89,7 +94,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
 
     def download(vid: str, lang: str | None) -> None:
         try:
-            path = download_audio(vid, audio_dir)
+            path = download_media(vid, audio_dir)
         except Exception as e:
             with lock:
                 stats["whisper_failed"] += 1
@@ -117,7 +122,7 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                     # fetch the audio again and transcribe once more before accepting it.
                     log(f"   ⚠ coverage {vid}: {coverage(tr, dur) * 100:.0f}% → re-downloading audio")
                     path.unlink(missing_ok=True)
-                    path = download_audio(vid, audio_dir)
+                    path = download_media(vid, audio_dir)
                     tr = transcribe_audio(vid, path, lang)
                     if coverage(tr, dur) < MIN_COVERAGE:
                         log(f"   ⚠ coverage {vid}: still {coverage(tr, dur) * 100:.0f}%")
@@ -141,8 +146,29 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
                 f"queue {whisper_q.qsize()} · {elapsed()}{warn}")
             submit_map(vid)
 
-    def on_bundle(b: VideoBundle) -> None:
+    def prepare_exemplar(b: VideoBundle) -> None:
+        """Picture first (cuts, frames, thumbnail), then the usual transcript route."""
+        vid = b.meta.id
+        try:
+            path = download_media(vid, video_dir, kind="video")
+            m = exemplar.measure(vid, path, b.meta.duration_s, exemplar_dir)
+            path.unlink(missing_ok=True)
+        except Exception as e:
+            with lock:
+                stats["map_failed"] += 1
+            log(f"   ✗ exemplar {vid}: {str(e)[:140]}")
+            return
+        log(f"   ✓ exemplar {vid} · {m['cuts_per_min']} cuts/min · first 10 s {m['cuts_first_10s']} cuts · "
+            f"frames {len(m['frames'])} · {elapsed()}")
         if b.transcript:
+            submit_map(vid)
+        else:
+            download(vid, b.meta.language)
+
+    def on_bundle(b: VideoBundle) -> None:
+        if mode == "exemplar" and exemplar.load(run_dir, b.meta.id) is None:
+            dl_futs.append(dl_pool.submit(prepare_exemplar, b))
+        elif b.transcript:
             submit_map(b.meta.id)
         else:
             dl_futs.append(dl_pool.submit(download, b.meta.id, b.meta.language))
@@ -169,6 +195,10 @@ def process(run_id: str, llm: LLM, cfg: dict, *, downloads: int = 6, map_workers
     log(f"[flow] audio {stats['audio']} · whisper {stats['whisper']} (failed {stats['whisper_failed']}) · "
         f"analysis {stats['mapped']} (failed {stats['map_failed']}) · {elapsed()} · ${llm.meter.usd:.2f}")
 
+    if mode == "exemplar":  # no claims to cluster or verify: the report tests rules against the videos
+        outs = write_reports(llm, run_id, cfg, log=log)
+        log(f"[flow] done · {elapsed()} · total ${llm.meter.usd:.2f} · {llm.meter.by_tier}")
+        return outs[0]
     clusters = run_dir / "clusters.json"
     newest = max((f.stat().st_mtime for f in ext_dir.glob("*.json")), default=0)
     if clusters.exists() and clusters.stat().st_mtime > newest:

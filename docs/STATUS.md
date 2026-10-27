@@ -11,10 +11,9 @@ Working state for the next session. Decisions and their reasons: `ARCHITECTURE.m
 
 ## Next
 
-1. A research on YouTube video presentation (titles/thumbnails, first seconds, retention structure, natural
-   script language). It needs an **exemplar mode**: analysing how a channel's own top videos are built
-   (opening, promise delivery, pacing), not only advice claims. Add it by extending harvest selection
-   (a channel's latest N videos) and the map prompt (named mode), per `SSOT.md`.
+1. Running: `research/2026-10-youtube-retention/` (advice, 40 videos) and `research/2026-10-mrbeast-exemplar/`
+   (exemplar mode, MrBeast's latest 30). Exemplar mode is built (K24, SSOT-34); its rules come from the
+   retention runbook as hypotheses in the exemplar research's private context.
 2. Evaluation set (hand-labelled videos) for free-knowledge retention and quote accuracy.
 3. PyPI release once the CLI is stable.
 

@@ -32,6 +32,14 @@ LABELS = {
         "basis_label": "basis",
         "coi": "conflict of interest",
         "test_ref": "test",
+        "exemplar_table": "Measurements per video",
+        "exemplar_intro": "Computed by code from the 360p picture and the transcript: cuts = ffmpeg scene changes, "
+                          "wpm = words per minute. Speech rate is approximate for auto-transcribed audio.",
+        "exemplar_cols": {"video": "Video", "views": "Views", "cuts_per_min": "Cuts/min",
+                          "cuts_first_3s": "Cuts 0-3 s", "cuts_first_10s": "Cuts 0-10 s",
+                          "cuts_first_30s": "Cuts 0-30 s", "shot_s_median": "Median shot (s)", "wpm": "WPM",
+                          "wpm_first_10s": "WPM 0-10 s", "wpm_first_30s": "WPM 0-30 s",
+                          "first_speech_s": "First word (s)", "median": "Median"},
     },
     "tr": {
         "band": {"well_supported": "sağlam", "likely": "muhtemel", "contested": "tartışmalı",
@@ -49,6 +57,15 @@ LABELS = {
         "basis_label": "kaynak",
         "coi": "çıkar çatışması",
         "test_ref": "testi",
+        "exemplar_table": "Video başına ölçümler",
+        "exemplar_intro": "360p görüntü ve metinden kodla hesaplandı: kesme = ffmpeg sahne değişimi, "
+                          "kelime/dk = dakikadaki kelime. Otomatik yazıya dökülen seste konuşma hızı yaklaşıktır.",
+        "exemplar_cols": {"video": "Video", "views": "İzlenme", "cuts_per_min": "Kesme/dk",
+                          "cuts_first_3s": "Kesme 0-3 sn", "cuts_first_10s": "Kesme 0-10 sn",
+                          "cuts_first_30s": "Kesme 0-30 sn", "shot_s_median": "Ortanca çekim (sn)",
+                          "wpm": "Kelime/dk", "wpm_first_10s": "Kelime/dk 0-10 sn",
+                          "wpm_first_30s": "Kelime/dk 0-30 sn", "first_speech_s": "İlk kelime (sn)",
+                          "median": "Ortanca"},
     },
 }
 

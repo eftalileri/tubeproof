@@ -1,0 +1,9 @@
+# tubeproof topic pack (public), exemplar mode: how a channel's own latest videos are built.
+# The reader's rules to test live in private/context.yaml as hypotheses (never committed).
+name: 2026-10-mrbeast-exemplar
+mode: exemplar
+report_lang: tr
+topic: MrBeast'in son uzun videoları tıklamayı ve izleyiciyi nasıl kazanıyor — başlık ve kapak, ilk 3/10/30
+  saniye, kapak sözünün karşılanma anı, omurga ve yeniden kancalar, tempo (kesme ve konuşma hızı), senaryo dili
+channels:
+- {id: UCX6OQ3DkcsbYNE6H8uQQuVA, latest: 30}

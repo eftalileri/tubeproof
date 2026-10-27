@@ -39,8 +39,9 @@ class LLM(Protocol):
     meter: CostMeter
 
     def json(self, tier: Tier, system: str, user: str, schema: dict,
-             tools: list[str] | None = None) -> dict:
-        """Return an object that validates against `schema`."""
+             tools: list[str] | None = None, images: list | None = None) -> dict:
+        """Return an object that validates against `schema`. `images` (JPEG/PNG/WebP paths) are
+        sent as image content blocks with the user text; they never enable a tool."""
         ...
 
 

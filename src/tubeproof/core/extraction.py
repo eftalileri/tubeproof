@@ -96,3 +96,65 @@ class CommentEvidence(BaseModel):
 class CommentExtraction(BaseModel):
     evidence: list[CommentEvidence]
     new_tips: list[str] = Field(default=[], description="Concrete tips from comments not in the video (report language)")
+
+
+# --- Exemplar mode: how a video is built (not what it advises) -----------------------------------
+
+BeatKind = Literal["hook", "promise", "context", "setup", "escalation", "rehook", "twist", "payoff",
+                   "explanation", "example", "recap", "cta", "sponsor", "outro"]
+
+
+class Packaging(BaseModel):
+    title: str
+    thumbnail_text: str | None = Field(None, description="Words written on the thumbnail, verbatim; null if none")
+    thumbnail_scene: str = Field(description="What the thumbnail shows: subject, expression, objects, composition")
+    promise: str = Field(description="What title + thumbnail together promise the viewer, one sentence")
+    curiosity_gap: str | None = Field(None, description="The unanswered question that makes someone click")
+    promise_shown_at_s: float | None = Field(
+        None, description="First second the video SHOWS or SAYS the thumbnail/title promise (from transcript/frames)")
+    promise_delivered_at_s: float | None = Field(
+        None, description="Second the promise is actually paid off (the answer/result), null if never")
+    promise_quote: str | None = Field(None, description="Verbatim transcript words where the promise is first stated")
+
+
+class Opening(BaseModel):
+    first_3s_said: str = Field(description="Verbatim words spoken in the first 3 seconds ('' if none)")
+    first_3s_shown: str = Field(description="What frames 0-3 s show")
+    first_3s_device: str = Field(description="The device used: stakes, result shown first, question, "
+                                             "visual spectacle, conflict, number, etc.")
+    first_10s: str = Field(description="What happens by 10 s, one or two sentences")
+    first_30s: str = Field(description="What happens by 30 s; when the context/intro (if any) appears")
+    self_intro_at_s: float | None = Field(None, description="When the creator introduces themselves/channel, null if never")
+    matches_thumbnail_at_start: bool = Field(description="The opening frames/words visibly match the thumbnail")
+
+
+class Beat(BaseModel):
+    t: float = Field(description="Start second")
+    kind: BeatKind
+    what: str = Field(description="What happens, one sentence, in the report language")
+    quote: str = Field(description="VERBATIM transcript span at this moment, 3-30 words")
+    seg_ids: list[str] = []
+
+
+class OpenLoop(BaseModel):
+    question: str = Field(description="The question or tension left open for the viewer")
+    opened_at_s: float
+    closed_at_s: float | None = None
+
+
+class Language(BaseModel):
+    tone: str = Field(description="Tone and register: e.g. hyped, calm, conversational, formal")
+    techniques: list[str] = Field(description="Concrete script techniques heard (e.g. 'you'-address, "
+                                              "numbers and stakes, short declaratives, cliff-hanger lines)")
+    examples: list[str] = Field(description="2-5 VERBATIM transcript lines that show the style")
+
+
+class ExemplarExtraction(BaseModel):
+    summary_local: str = Field(description="3-5 sentences in the report language: how this video holds attention")
+    packaging: Packaging
+    opening: Opening
+    beats: list[Beat] = Field(description="The video's structure in order, 8-30 beats")
+    open_loops: list[OpenLoop] = []
+    rehook_interval_note: str = Field(description="How often new stakes/twists/re-hooks arrive, with examples")
+    language: Language
+    visual_style: str = Field(description="From the frames: framing, text on screen, color, pace of visuals")
