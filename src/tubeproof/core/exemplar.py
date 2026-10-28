@@ -17,7 +17,7 @@ from pathlib import Path
 
 from tubeproof import http
 from tubeproof.config import layout
-from tubeproof.models import Transcript
+from tubeproof.models import Transcript, VideoBundle
 
 # A shot change = ffmpeg scene score above this. 0.3 is ffmpeg's documented starting point; on a
 # 43 min MrBeast video it gave 25 cuts/min, matching a hand count of the first minute (2026-10-27).
@@ -96,7 +96,10 @@ def thumbnail(video_id: str, out_dir: Path) -> Path | None:
 def speech(tr: Transcript) -> dict:
     """Words per minute overall and in the first windows, first-speech time, sentence length."""
     def words_until(t: float) -> int:
-        return sum(len(s.text.split()) for s in tr.segments if s.start < t)
+        # A segment's words count by the share of it before t: counting a whole 10 s Whisper segment that
+        # starts at 0 put 52 words in "the first 3 s" (1040 wpm, Fireship; 2026-10-28).
+        return round(sum(len(s.text.split()) * min(1.0, (t - s.start) / s.duration) if s.duration > 0
+                         else len(s.text.split()) for s in tr.segments if s.start < t))
 
     total = sum(len(s.text.split()) for s in tr.segments)
     end = max((s.start + s.duration for s in tr.segments), default=0)
@@ -151,11 +154,14 @@ def load(run_dir: Path, video_id: str) -> dict | None:
 
 
 def table(run_dir: Path) -> list[dict]:
-    """Per-video rows for the report: picture metrics + the speech metrics the map stage saved."""
+    """Per-video rows for the report: picture metrics + speech metrics measured from the transcript now,
+    so a fix to `speech` reaches every report on a re-render (the copy the map stage saved is what its
+    model saw, not the measurement of record)."""
     rows = []
     for p in layout.exemplar_files(run_dir):
         row = json.loads(p.read_text())
-        ex = layout.extraction(run_dir, p.stem)
-        row["speech"] = json.loads(ex.read_text()).get("speech") if ex.exists() else None
+        b = layout.bundle(run_dir, p.stem)
+        tr = VideoBundle.model_validate_json(b.read_text()).transcript if b.exists() else None
+        row["speech"] = speech(tr) if tr and layout.extraction(run_dir, p.stem).exists() else None
         rows.append(row)
     return rows

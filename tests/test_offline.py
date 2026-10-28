@@ -88,6 +88,8 @@ def test_exemplar_speech_metrics():
     sp = speech(tr)
     assert sp["first_speech_s"] == 0.5
     assert sp["words_first_3s"] == 6
+    # a segment running past the window counts only its share: 150 words over 57 s, 7 s of it before 10 s
+    assert sp["wpm_first_10s"] == round(6 + 150 * 7 / 57) / (10 / 60)
     assert sp["wpm"] == 156.0
     assert sp["sentence_words_median"] == 4
 
@@ -105,12 +107,14 @@ def test_exemplar_citations_become_links(tmp_path, monkeypatch):
         synth_stage.render_exemplar("r", False, vids, "en")
     from tubeproof.config import layout
     from tubeproof.core.exemplar import PICTURE_METRICS, SPEECH_METRICS
+    from test_ssot_cross import _bundle
 
     for v in vids:
         for path, rec in ((layout.exemplar_file(tmp_path, v["id"]), {"video_id": v["id"], **dict.fromkeys(PICTURE_METRICS, 1)}),
                           (layout.extraction(tmp_path, v["id"]), {"speech": dict.fromkeys(SPEECH_METRICS, 2)})):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(json.dumps(rec))
+        _bundle(tmp_path, v["id"])
     out = synth_stage.render_exemplar("r", False, vids, "en").read_text()
     assert "[V1 1:23](https://youtu.be/aaa?t=83)" in out
     assert "[V2](https://youtu.be/bbb)" in out

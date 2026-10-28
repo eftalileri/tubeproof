@@ -112,7 +112,17 @@ def _exemplar_run(tmp_path, monkeypatch):
         {"video_id": "aaa", **dict.fromkeys(exemplar.PICTURE_METRICS, 1)}))
     layout.extraction(run_dir, "aaa").parent.mkdir(parents=True)
     layout.extraction(run_dir, "aaa").write_text(json.dumps({"speech": dict.fromkeys(exemplar.SPEECH_METRICS, 2)}))
+    _bundle(run_dir, "aaa")
     return s
+
+
+def _bundle(run_dir, vid):
+    """A harvested video with a transcript: the report measures speech from it."""
+    from tubeproof.models import VideoBundle, VideoMeta
+
+    tr = Transcript(video_id=vid, source="whisper", segments=[TranscriptSegment(start=0, duration=2, text="one two.")])
+    layout.bundle(run_dir, vid).parent.mkdir(parents=True, exist_ok=True)
+    layout.bundle(run_dir, vid).write_text(VideoBundle(meta=VideoMeta(id=vid, title="T"), transcript=tr).model_dump_json())
 
 
 # 8 · render-only is a mode of write_reports: existing bodies only, no model
@@ -161,7 +171,7 @@ def test_verify_args():
 # 12 · a missing measurement stops the exemplar report (see also test_offline)
 def test_exemplar_digest_fails_on_missing_speech(tmp_path, monkeypatch):
     s = _exemplar_run(tmp_path, monkeypatch)
-    layout.extraction(s.run_dir("r"), "aaa").write_text(json.dumps({"speech": None}))
+    layout.extraction(s.run_dir("r"), "aaa").unlink()  # measured picture, but never analysed
     with pytest.raises(RuntimeError, match="no speech metrics"):
         synth_stage.render_exemplar("r", False, [{"id": "aaa", "title": "A"}], "en")
 
