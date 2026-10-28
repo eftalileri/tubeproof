@@ -161,10 +161,11 @@ def test_one_media_format_tries_the_audio_chain_in_order():
     assert [alt.split("+", 1)[1] for alt in MEDIA_FORMAT.split("/")[:-1]] == list(_AUDIO)
 
 
-def test_empty_leftover_is_not_reused_as_a_download(tmp_path, monkeypatch):
+def test_leftover_is_not_reused_as_a_download(tmp_path, monkeypatch):
     from tubeproof.sources.youtube import transcript
 
     (tmp_path / "vid.m4a").write_bytes(b"")
+    (tmp_path / "vid.f396.mp4").write_bytes(b"picture only")  # part of an interrupted merge
     fetched = []
 
     class FakeYDL:

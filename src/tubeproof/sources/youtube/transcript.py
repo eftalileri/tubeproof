@@ -124,7 +124,10 @@ def download_media(video_id: str, dest_dir: str | Path) -> Path:
     dest = Path(dest_dir)
     dest.mkdir(parents=True, exist_ok=True)
     for old in dest.glob(f"{video_id}.*"):
-        if old.suffix in (".part", ".ytdl"):
+        # Only the merged file counts: a `.part`/`.ytdl` or a single-stream `<id>.f396.mp4` left by an
+        # interrupted merge is not the video (a picture-only part failed one video 12 times, 2026-10-28);
+        # yt-dlp resumes from those parts itself.
+        if old.stem != video_id or old.suffix in (".part", ".ytdl"):
             continue
         if old.stat().st_size == 0:  # a failed earlier write, not a download: reusing it broke a retry
             old.unlink()
@@ -140,7 +143,7 @@ def download_media(video_id: str, dest_dir: str | Path) -> Path:
                     socket_timeout=30, http_chunk_size=10 * 1024 * 1024)
     with yt_dlp.YoutubeDL(opts) as ydl:
         ydl.process_ie_result(extract(video_id), download=True)
-    return next(p for p in dest.glob(f"{video_id}.*") if p.suffix not in (".part", ".ytdl"))
+    return next(p for p in dest.glob(f"{video_id}.*") if p.stem == video_id and p.suffix not in (".part", ".ytdl"))
 
 
 def split_audio(video: Path, dest_dir: str | Path) -> Path:
