@@ -1,0 +1,152 @@
+{
+ "topic": "Sebastian Lague kanalının son uzun videoları izleyiciyi nasıl tutuyor ve ona nasıl bir şey öğretiyor — başlık ve kapak, ilk 3/10/30 saniye, kapak sözünün karşılanma anı, omurga ve yeniden kancalar, tempo (kesme ve konuşma hızı), senaryo dili, fikirlerin hangi sırayla ve hangi araçla (benzetme, hikâye, örnek, görsel) öğretildiği",
+ "cutoff": "2025-10-27",
+ "selected": "2026-10-27 22:58",
+ "videos": [
+  {
+   "id": "qyNWDzO6kKQ",
+   "title": "I Made a Pen Plotter to Draw Maps of the Moon",
+   "channel": "Sebastian Lague",
+   "upload_date": "2026-10-01",
+   "views": 637740,
+   "duration_s": 1855,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "_JGMgpyCTsY",
+   "title": "I Tried Coding my own Graphics Library",
+   "channel": "Sebastian Lague",
+   "upload_date": "2026-07-25",
+   "views": 466209,
+   "duration_s": 1650,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "Eysf6-E3ino",
+   "title": "Coding Adventure: Improving my Rubik's Cube Solver",
+   "channel": "Sebastian Lague",
+   "upload_date": "2026-06-03",
+   "views": 190411,
+   "duration_s": 1647,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "fy0HRViXZnE",
+   "title": "Coding Adventure: Rubik's Cube",
+   "channel": "Sebastian Lague",
+   "upload_date": "2026-05-07",
+   "views": 355871,
+   "duration_s": 1461,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "rRnOtKlg4jA",
+   "title": "Coding Adventure: Additive Synthesis",
+   "channel": "Sebastian Lague",
+   "upload_date": "2026-03-20",
+   "views": 363797,
+   "duration_s": 2130,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "08mmKNLQVHU",
+   "title": "Coding Adventure: Analyzing Audio",
+   "channel": "Sebastian Lague",
+   "upload_date": "2026-01-06",
+   "views": 360182,
+   "duration_s": 1287,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "8BCdKJ4ObZ4",
+   "title": "Bad Apple!! but it's a smoke simulation",
+   "channel": "Sebastian Lague",
+   "upload_date": "2025-10-26",
+   "views": 164996,
+   "duration_s": 230,
+   "language": null,
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "Q78wvrQ9xsU",
+   "title": "Coding Adventure: Simulating Smoke",
+   "channel": "Sebastian Lague",
+   "upload_date": "2025-10-11",
+   "views": 675470,
+   "duration_s": 2499,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "zElxgxOeugY",
+   "title": "I Made a Game in 4 Days (for the GMTK jam)",
+   "channel": "Sebastian Lague",
+   "upload_date": "2025-08-25",
+   "views": 199449,
+   "duration_s": 1513,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "wA1KVZ1eOuA",
+   "title": "Coding Adventure: Ray-Tracing Glass",
+   "channel": "Sebastian Lague",
+   "upload_date": "2025-08-16",
+   "views": 327754,
+   "duration_s": 2477,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "yyJ-hdISgnw",
+   "title": "Coding Adventure: Software Rasterizer",
+   "channel": "Sebastian Lague",
+   "upload_date": "2025-05-30",
+   "views": 639227,
+   "duration_s": 3009,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  },
+  {
+   "id": "HGkuRp5HfH8",
+   "title": "Simulating 256 Bytes of RAM",
+   "channel": "Sebastian Lague",
+   "upload_date": "2025-04-12",
+   "views": 490572,
+   "duration_s": 1549,
+   "language": "en",
+   "relevance": null,
+   "reason": "exemplar: latest 12 of Sebastian Lague",
+   "playlists": []
+  }
+ ],
+ "playlists": []
+}
