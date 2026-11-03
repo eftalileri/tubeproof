@@ -1,0 +1,8 @@
+# tubeproof topic pack (public), exemplar mode: how a channel's own latest videos are built.
+# The reader's rules to test live in private/context.yaml as hypotheses (never committed).
+name: youtube-video-strategies/2026-10-mrbeast-exemplar
+mode: exemplar
+report_lang: en
+topic: "How MrBeast's latest long-form videos win the click and hold viewers: title and thumbnail, the first 3/10/30 seconds, the moment the thumbnail's promise is paid off, spine and re-hooks, pacing (cuts and speech rate), script language"
+channels:
+- {id: UCX6OQ3DkcsbYNE6H8uQQuVA, latest: 30}

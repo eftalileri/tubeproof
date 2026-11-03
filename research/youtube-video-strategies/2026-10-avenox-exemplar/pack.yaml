@@ -1,0 +1,8 @@
+# tubeproof topic pack (public), exemplar mode: how a channel's own latest videos are built.
+# The reader's rules to test live in private/context.yaml as hypotheses (never committed).
+name: youtube-video-strategies/2026-10-avenox-exemplar
+mode: exemplar
+report_lang: en
+topic: "How the narrator's script and spoken language work in the Avenox channel's latest long-form videos: sentence construction and length, how the viewer is addressed (informal or formal you, questions, imperatives), signposting and transition phrases (such as \"now\", \"look\", \"pay attention\"), confidence language (firm verdicts, hesitation, \"I think\", how evidence is shown), the order in which a technical concept is explained (example, analogy, code), opening and closing, humour and naturalness, repetition and emphasis"
+channels:
+- {id: UCHnYG8F-N7mhzFrJ22iEdJg, latest: 10}

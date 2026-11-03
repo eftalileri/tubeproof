@@ -1,0 +1,8 @@
+# tubeproof topic pack (public), exemplar mode: how a channel's own latest videos are built.
+name: youtube-video-strategies/2026-10-veritasium-exemplar
+mode: exemplar
+report_lang: en
+topic: "How the latest long-form videos of the Veritasium channel hold viewers and teach them something: title and thumbnail, the first 3/10/30 seconds, the moment the thumbnail's promise is paid off, spine and re-hooks, pacing (cuts and speech rate), script language, and in what order and with which tools (analogy, story, example, visual) ideas are taught"
+channels:
+- id: UCHnyfMqiRRG1u-2MsSQLbXA
+  latest: 12

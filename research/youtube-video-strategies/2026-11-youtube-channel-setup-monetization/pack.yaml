@@ -1,0 +1,67 @@
+# tubeproof topic pack (public). Reader-specific question, context and hypotheses live in
+# private/context.yaml next to it and are never committed.
+name: youtube-video-strategies/2026-11-youtube-channel-setup-monetization
+report_lang: en
+topic: >-
+  Setting up and growing a new long-form educational YouTube channel for an international English-speaking
+  audience: YouTube Studio settings that matter, upload defaults, SEO (titles, descriptions, tags, keywords,
+  chapters, hashtags), multi-language audio tracks and auto-dubbing, translated titles and captions,
+  reaching high-RPM countries, YouTube Partner Program requirements and monetization (ads, mid-rolls,
+  affiliates, sponsors, own product), Shorts feeding long-form, end screens, playlists, publishing schedule,
+  AI voice / AI-assisted content rules
+months: 24
+market:
+  lang: tr
+  min_share: 0.15
+queries:
+- {text: youtube channel setup settings for new channel, hl: en, gl: US}
+- {text: youtube studio settings you should change, hl: en, gl: US}
+- {text: youtube seo tutorial titles descriptions tags, hl: en, gl: US}
+- {text: youtube keyword research for small channels, hl: en, gl: US}
+- {text: do youtube tags still matter, hl: en, gl: US}
+- {text: youtube multi language audio tracks results, hl: en, gl: US}
+- {text: youtube auto dubbing results views, hl: en, gl: US}
+- {text: translate youtube titles and descriptions more views, hl: en, gl: US}
+- {text: highest rpm countries youtube audience, hl: en, gl: US}
+- {text: how to get us audience on youtube from another country, hl: en, gl: US}
+- {text: youtube rpm tech education channel revenue, hl: en, gl: US}
+- {text: youtube partner program requirements 2025, hl: en, gl: US}
+- {text: youtube inauthentic content policy ai voice monetization, hl: en, gl: US}
+- {text: ai voiceover youtube monetization faceless channel, hl: en, gl: US}
+- {text: youtube mid roll ads placement revenue test, hl: en, gl: US}
+- {text: do youtube shorts help long form growth, hl: en, gl: US}
+- {text: youtube end screens playlists session watch time, hl: en, gl: US}
+- {text: best time to upload youtube videos data, hl: en, gl: US}
+- {text: small educational youtube channel first 1000 subscribers what worked, hl: en, gl: US}
+- {text: tech youtube channel affiliate sponsorship income report, hl: en, gl: US}
+- {text: youtube kanal ayarları nasıl yapılır, hl: tr, gl: TR}
+- {text: youtube seo etiket açıklama nasıl yazılır, hl: tr, gl: TR}
+- {text: yabancı izleyiciye youtube kanalı açmak, hl: tr, gl: TR}
+- {text: youtube çok dilli ses ekleme dublaj, hl: tr, gl: TR}
+- {text: youtube para kazanma şartları türkiye adsense vergi, hl: tr, gl: TR}
+- {text: ingilizce youtube kanalı türkiye'den gelir rpm, hl: tr, gl: TR}
+- {text: youtube shorts uzun videoya izleyici getirir mi, hl: tr, gl: TR}
+- {text: youtube algoritması yeni kanal tecrübe, hl: tr, gl: TR}
+playlist_queries:
+- {text: youtube seo course, hl: en, gl: US}
+- {text: youtube channel growth course for beginners, hl: en, gl: US}
+- {text: youtube para kazanma eğitimi, hl: tr, gl: TR}
+official_domains:
+- support.google.com/youtube
+- blog.youtube
+- youtube.com/creators
+- youtube.com/howyoutubeworks
+- developers.google.com/youtube
+breakpoints:
+- {name: Shorts up to 3 minutes, date: 2024-10-15}
+- {name: Auto-dubbing rolled out to knowledge and education channels, date: 2024-12-10}
+- {name: YPP repetitious content policy renamed inauthentic content, date: 2025-07-15}
+relevance_notes: |
+  3 = practitioner results or tutorials on YouTube channel setup and settings, video SEO (titles,
+      descriptions, tags, chapters), multi-language audio / dubbing / translated metadata, reaching
+      high-RPM countries, YPP and monetization (ads, mid-rolls, affiliates, sponsors), Shorts-to-long-form,
+      end screens and playlists, upload timing, AI voice rules; channel income reports with real numbers.
+  2 = general YouTube algorithm explanations, growth stories of educational or tech channels, packaging
+      (titles and thumbnails) advice.
+  1 = scriptwriting or editing craft, equipment, editing-software tutorials, TikTok/Instagram-only tips,
+      "faceless automation get rich quick" hype without data, view or subscriber buying.

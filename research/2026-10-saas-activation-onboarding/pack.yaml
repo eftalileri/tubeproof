@@ -1,0 +1,82 @@
+# tubeproof topic pack (public). Reader-specific question, context and hypotheses live in
+# private/context.yaml next to it and are never committed.
+name: 2026-10-saas-activation-onboarding
+report_lang: en
+topic: "Taking users of a mobile B2B SaaS or subscription app from install and sign-up to their first \"aha\" moment (the first valuable action, e.g. the first appointment): onboarding, in-product guides and tutorials, empty states, time-to-value, day-one return, activation email, push and WhatsApp sequences, activation during the trial"
+months: 24
+market:
+  lang: tr
+  min_share: 0.2
+queries:
+- text: saas activation rate how to improve
+  hl: en
+  gl: US
+- text: user onboarding best practices saas
+  hl: en
+  gl: US
+- text: product tour tutorial completion rate low
+  hl: en
+  gl: US
+- text: time to value onboarding saas
+  hl: en
+  gl: US
+- text: aha moment activation metric startup
+  hl: en
+  gl: US
+- text: mobile app onboarding retention day 1
+  hl: en
+  gl: US
+- text: product led growth activation
+  hl: en
+  gl: US
+- text: onboarding teardown b2b app
+  hl: en
+  gl: US
+- text: empty state design onboarding
+  hl: en
+  gl: US
+- text: trial users not activating saas
+  hl: en
+  gl: US
+- text: concierge onboarding saas founder
+  hl: en
+  gl: US
+- text: activation email sequence trial users
+  hl: en
+  gl: US
+- text: how we increased activation rate
+  hl: en
+  gl: US
+- text: subscription app onboarding paywall conversion
+  hl: en
+  gl: US
+- text: appointment booking app onboarding salon software
+  hl: en
+  gl: US
+- text: uygulama onboarding kullanıcı tutma
+  hl: tr
+  gl: TR
+- text: saas aktivasyon oranı
+  hl: tr
+  gl: TR
+- text: ürün odaklı büyüme plg
+  hl: tr
+  gl: TR
+playlist_queries:
+- text: user onboarding course
+  hl: en
+  gl: US
+- text: product led growth course
+  hl: en
+  gl: US
+official_domains:
+- appcues.com
+- userpilot.com
+- productled.com
+- reforge.com
+- intercom.com
+relevance_notes: |
+  3 = activation / onboarding of a B2B or subscription app with numbers (before/after, tests, rates).
+  2 = transferable onboarding practice: tutorials, checklists, empty states, first-session design, day-0/day-1
+      return, lifecycle messages, founder-led onboarding, teardown of a real product.
+  1 = generic growth talk, acquisition-only, consumer games.

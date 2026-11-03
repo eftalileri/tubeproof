@@ -1,0 +1,235 @@
+"""Orchestration has one authority: plan + harvest in core harvest, the full flow in research.process,
+quick search in research.search; the CLI and the MCP server only pass what is set. All offline."""
+
+import json
+
+import pytest
+
+from tubeproof.config import Settings, layout
+from tubeproof.models import PlaylistMeta, VideoMeta
+
+
+class FakeStore:
+    def __init__(self):
+        self.cache, self.runs = {}, []
+
+    def get(self, kind, key):
+        return self.cache.get((kind, key))
+
+    def put(self, kind, key, value):
+        self.cache[(kind, key)] = value
+
+    def upsert_run(self, run_id, topic, params, stage):
+        self.runs.append((run_id, stage))
+
+
+@pytest.fixture
+def offline(tmp_path, monkeypatch):
+    """core harvest against a temp research dir, a fake store and fake YouTube calls."""
+    from tubeproof import research
+    from tubeproof.core import harvest as core
+
+    s = Settings(data_dir=tmp_path / "cache", research_dir=tmp_path / "research")
+    for mod in (core, research):
+        monkeypatch.setattr(mod, "settings", s)
+    store = FakeStore()
+    monkeypatch.setattr(core, "Store", lambda: store)
+    uploads = {"ids": ["a"]}
+    monkeypatch.setattr(core.yt_meta, "playlist_meta", lambda pid, max_items=None: PlaylistMeta(
+        id=pid, title="uploads", channel="Ch", video_ids=list(uploads["ids"])))
+    monkeypatch.setattr(core.yt_meta, "video_meta", lambda vid: VideoMeta(
+        id=vid, title=f"T{vid}", channel="Ch", channel_id="UCx", duration_s=600))
+
+    def no_captions(*a, **kw):
+        raise RuntimeError("no captions")
+
+    monkeypatch.setattr(core.yt_transcript, "fetch_transcript", no_captions)
+    return s, store, uploads
+
+
+def _harvest(**kw):
+    from tubeproof.core import harvest as core
+
+    return core.harvest("topic", [], run_id="r1", channels=[{"id": "UCx", "latest": 5}], log=lambda m: None,
+                        **core.EXEMPLAR_BUNDLE, **kw)
+
+
+def test_plan_then_harvest_is_one_path(offline):
+    s, store, _ = offline
+    run_dir = _harvest(plan_only=True)
+    plan = json.loads(layout.manifest(run_dir).read_text())
+    assert plan["planned"] and [v["id"] for v in plan["videos"]] == ["a"]
+    assert not layout.bundle(run_dir, "a").exists()
+    with pytest.raises(ValueError, match="already has a plan"):  # --plan twice must not harvest
+        _harvest(plan_only=True)
+    _harvest()
+    done = json.loads(layout.manifest(run_dir).read_text())
+    assert done["planned"] is False and layout.bundle(run_dir, "a").exists()
+    # The run index is keyed by the run id (it once recorded "data", the folder name).
+    assert {rid for rid, _ in store.runs} == {"r1"} and store.runs[-1] == ("r1", "harvested")
+
+
+def test_direct_harvest_writes_the_same_manifest_as_a_plan(offline):
+    run_dir = _harvest()
+    m = json.loads(layout.manifest(run_dir).read_text())
+    assert m["planned"] is False and "harvested" in m and layout.bundle(run_dir, "a").exists()
+
+
+def test_new_pass_keeps_earlier_videos(offline):
+    """Re-planning a harvested run once overwrote its manifest with the new pass only."""
+    _, _, uploads = offline
+    run_dir = _harvest()
+    uploads["ids"] = ["b"]
+    _harvest(plan_only=True)
+    m = json.loads(layout.manifest(run_dir).read_text())
+    assert [v["id"] for v in m["videos"]] == ["a", "b"] and m["planned"] and len(m["params"]["passes"]) == 2
+
+
+def test_set_transcript_writes_bundle_and_cache(offline):
+    from tubeproof.core import harvest as core
+    from tubeproof.models import Transcript, VideoBundle
+
+    _, store, _ = offline
+    run_dir = _harvest()
+    b = VideoBundle.model_validate_json(layout.bundle(run_dir, "a").read_text())
+    assert b.transcript_error
+    core.set_transcript(run_dir, b, Transcript(video_id="a", source="whisper", segments=[]), store)
+    again = VideoBundle.model_validate_json(layout.bundle(run_dir, "a").read_text())
+    assert again.transcript and again.transcript_error is None and ("transcript", "a") in store.cache
+
+
+def test_load_config_falls_back_to_the_runs_pack(offline):
+    from tubeproof import research
+    from tubeproof.core import harvest as core
+
+    s, _, _ = offline
+    run_dir = s.run_dir("r2")
+    run_dir.mkdir(parents=True)
+    core.write_manifest(run_dir, {"run_id": "r2", "topic": "t", "params": {"pack": "meta-ads"}, "videos": []})
+    assert research.load_config("r2")["name"] == "meta-ads"  # the CLI and the MCP server now agree
+
+
+def test_unknown_pack_keys_stop_at_load(tmp_path):
+    from tubeproof import research
+
+    pack = tmp_path / "p.yaml"
+    for body, what in [("topic: t\nglossary: {a: b}\n", "unknown keys"),  # read by nothing
+                       ("topic: t\nbreakpoints:\n- {name: n, date: 2024-01-01, affects: [x]}\n", "affects"),
+                       ("topic: t\nqueries:\n- {text: q, lang: en}\n", "lang"),
+                       ("topic: t\nchannels:\n- {id: UCx, lates: 3}\n", "lates")]:
+        pack.write_text(body)
+        with pytest.raises(ValueError, match=what):
+            research.load_config(pack=str(pack))
+    pack.write_text("topic: t\nmarket: {lang: tr, min_share: 0.2}\nqueries:\n- {text: q, hl: tr, gl: TR}\n")
+    assert research.load_config(pack=str(pack))["market"]["lang"] == "tr"
+
+
+def test_malformed_private_context_stops_at_load(offline):
+    from tubeproof import research
+
+    s, _, _ = offline
+    ctx = s.context_path("r5")
+    ctx.parent.mkdir(parents=True)
+    ctx.write_text("hypotheses:\n- plain string\n")  # crashed the private report after a full run
+    with pytest.raises(ValueError, match="needs an id and a text"):
+        research.load_config("r5")
+    ctx.write_text("questoin: typo\n")
+    with pytest.raises(ValueError, match="unknown keys"):
+        research.load_config("r5")
+    ctx.write_text("hypotheses:\n- {id: H1, text: t}\n")
+    assert research.load_config("r5")["hypotheses"][0]["id"] == "H1"
+
+
+def test_process_plans_once_then_resumes(offline, monkeypatch):
+    from tubeproof import research
+    from tubeproof.core import pipeline
+
+    calls = []
+    monkeypatch.setattr(research, "harvest", lambda cfg, **kw: calls.append(("plan", kw)))
+    monkeypatch.setattr(pipeline, "process", lambda rid, llm, cfg, log, **kw: calls.append(("process", kw)) or "out")
+    assert research.process("r3", None, topic="t", log=lambda m: None) == "out"
+    assert calls[0][0] == "plan" and calls[0][1]["plan_only"] and calls[1] == ("process", {})
+    s, _, _ = offline
+    layout.manifest(s.run_dir("r3")).parent.mkdir(parents=True)
+    layout.manifest(s.run_dir("r3")).write_text(json.dumps({"params": {"pack": None}}))
+    with pytest.raises(ValueError, match="already has a plan"):  # options a resume would ignore fail loudly
+        research.process("r3", None, n_videos=10)
+    calls.clear()
+    research.process("r3", None, map_workers=2)
+    assert calls == [("process", {"map_workers": 2})]
+
+
+def test_cli_and_mcp_search_share_defaults(monkeypatch):
+    from typer.testing import CliRunner
+
+    from tubeproof import cli, mcp_server, research
+
+    seen = []
+    monkeypatch.setattr(research.innertube, "search", lambda q, **kw: seen.append(kw) or iter(()))
+    assert CliRunner().invoke(cli.app, ["search", "q"]).exit_code == 0
+    mcp_server.search_videos("q")
+    assert seen[0] == seen[1] == {"kind": "video", "limit": research.SEARCH_LIMIT}
+
+
+def test_coverage_unknown_is_not_full():
+    from tubeproof.core.pipeline import coverage
+    from tubeproof.models import Transcript
+
+    assert coverage(Transcript(video_id="a", source="whisper", segments=[]), None) is None
+
+
+def test_query_claims_fails_loudly(tmp_path, monkeypatch):
+    from tubeproof import mcp_server
+
+    monkeypatch.setattr(mcp_server, "settings", Settings(research_dir=tmp_path))
+    with pytest.raises(FileNotFoundError):
+        mcp_server.query_claims("missing")
+    with pytest.raises(ValueError, match="unknown band"):
+        mcp_server.query_claims("missing", band="great")
+
+
+def test_each_video_is_downloaded_once_for_picture_and_audio(tmp_path, monkeypatch):
+    """Exemplar mode measures the picture and transcribes the audio from one download of the video."""
+    from types import SimpleNamespace
+
+    from tubeproof.core import pipeline
+    from tubeproof.models import Transcript, TranscriptSegment, VideoBundle
+
+    s = Settings(data_dir=tmp_path / "cache", research_dir=tmp_path / "research")
+    monkeypatch.setattr(pipeline, "settings", s)
+    run_dir = s.run_dir("r")
+    layout.videos(run_dir).mkdir(parents=True)
+    layout.manifest(run_dir).write_text(json.dumps({"topic": "t", "planned": False}))
+    layout.bundle(run_dir, "v").write_text(VideoBundle(meta=VideoMeta(id="v", title="T", duration_s=10)).model_dump_json())
+    downloads, measured, mapped = [], [], []
+
+    def download(vid, dest):
+        downloads.append(vid)
+        dest.mkdir(parents=True, exist_ok=True)
+        (dest / f"{vid}.mp4").write_bytes(b"video")
+        return dest / f"{vid}.mp4"
+
+    def split(video, dest):
+        dest.mkdir(parents=True, exist_ok=True)
+        (dest / f"{video.stem}.mka").write_bytes(b"audio")
+        return dest / f"{video.stem}.mka"
+
+    monkeypatch.setattr(pipeline, "download_media", download)
+    monkeypatch.setattr(pipeline, "split_audio", split)
+    monkeypatch.setattr(pipeline, "exemplar", SimpleNamespace(
+        load=lambda rd, vid: None,
+        measure=lambda vid, path, dur, rd: measured.append(path.exists()) or {
+            "cuts_per_min": 0, "cuts_first_10s": 0, "changes_per_min": 0, "frames": []}))
+    monkeypatch.setattr(pipeline, "transcribe_audio", lambda vid, path, lang: Transcript(
+        video_id=vid, language="en", is_generated=None, source="whisper",
+        segments=[TranscriptSegment(start=0, duration=10, text="hi")]))
+    monkeypatch.setattr(pipeline, "set_transcript", lambda *a: None)
+    monkeypatch.setattr(pipeline, "map_video", lambda *a: mapped.append(a[2].meta.id) or "res")
+    monkeypatch.setattr(pipeline, "save_extraction", lambda *a: None)
+    monkeypatch.setattr(pipeline, "summary", lambda res: "")
+    monkeypatch.setattr(pipeline, "Store", lambda: None)
+    monkeypatch.setattr(pipeline, "write_reports", lambda *a, **kw: ["report"])
+    llm = SimpleNamespace(meter=SimpleNamespace(usd=0.0, by_tier={}))
+    assert pipeline.process("r", llm, {"mode": "exemplar"}, log=lambda m: None) == "report"
+    assert downloads == ["v"] and measured == [True] and mapped == ["v"]
+    assert not list(s.media_dir("r", "video").iterdir())  # the video is deleted once cut

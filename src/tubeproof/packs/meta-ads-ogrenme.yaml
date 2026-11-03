@@ -1,0 +1,24 @@
+# Focused second pass for meta-ads: the budget math behind the learning phase.
+# Hypothesis to test: required budget ≈ 50 optimization events/week × cost per event,
+# so cheaper (higher-funnel) optimization events, consolidation or better creative lower it.
+# Use with: tubeproof harvest --pack meta-ads-ogrenme --run-id <meta-ads run>
+name: meta-ads-ogrenme
+topic: "Meta / Instagram Reels reklamlarında düşük bütçeyle öğrenme aşamasını geçmek"
+months: 12
+
+queries:
+  - {text: "facebook ads 50 conversions per week learning phase budget", hl: en, gl: US}
+  - {text: "optimize for add to cart instead of purchase facebook ads", hl: en, gl: US}
+  - {text: "learning limited facebook ads does it matter", hl: en, gl: US}
+  - {text: "facebook ads consolidate budget small budget one campaign", hl: en, gl: US}
+  - {text: "how much budget do i need for facebook ads", hl: en, gl: US}
+  - {text: "instagram reels ad creative that converts small budget", hl: en, gl: US}
+  - {text: "meta ads messages campaign whatsapp small budget", hl: en, gl: US}
+  - {text: "meta reklam ne kadar bütçe gerekir", hl: tr, gl: TR}
+  - {text: "meta reklam öğrenme sınırlı", hl: tr, gl: TR}
+  - {text: "instagram reklam mesaj kampanyası", hl: tr, gl: TR}
+  - {text: "reels reklam videosu nasıl çekilir", hl: tr, gl: TR}
+  - {text: "meta reklam sepete ekleme optimizasyonu", hl: tr, gl: TR}
+
+playlist_queries:
+  - {text: "meta reklam eğitim seti", hl: tr, gl: TR}

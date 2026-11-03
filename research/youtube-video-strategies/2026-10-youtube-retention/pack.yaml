@@ -1,0 +1,59 @@
+# tubeproof topic pack (public). Reader-specific question, context and hypotheses live in
+# private/context.yaml next to it and are never committed.
+name: youtube-video-strategies/2026-10-youtube-retention
+report_lang: en
+topic: "Clicks and audience retention in long educational and explainer videos on YouTube: title and thumbnail, the first 3 and first 30 seconds (paying off the thumbnail's promise at once), the video's spine and pacing, a natural script language that does not sound AI-written"
+months: 24
+market:
+  lang: tr
+  min_share: 0.25
+queries:
+- {text: how to hook viewers in the first 30 seconds youtube, hl: en, gl: US}
+- {text: youtube audience retention tips, hl: en, gl: US}
+- {text: how to increase average view duration youtube, hl: en, gl: US}
+- {text: youtube retention graph analysis, hl: en, gl: US}
+- {text: youtube video intro that keeps viewers watching, hl: en, gl: US}
+- {text: how to write a youtube script, hl: en, gl: US}
+- {text: youtube scriptwriting storytelling structure, hl: en, gl: US}
+- {text: how to make a script not sound like ai, hl: en, gl: US}
+- {text: youtube title and thumbnail strategy, hl: en, gl: US}
+- {text: youtube thumbnail click through rate test results, hl: en, gl: US}
+- {text: packaging youtube video idea title thumbnail, hl: en, gl: US}
+- {text: educational youtube channel retention, hl: en, gl: US}
+- {text: explainer video animation pacing retention, hl: en, gl: US}
+- {text: why viewers click off youtube video, hl: en, gl: US}
+- {text: youtube strategist video breakdown retention, hl: en, gl: US}
+- {text: tech tutorial youtube channel growth what worked, hl: en, gl: US}
+- {text: youtube izlenme süresi nasıl artırılır, hl: tr, gl: TR}
+- {text: youtube video girişi nasıl olmalı, hl: tr, gl: TR}
+- {text: youtube kapak fotoğrafı ve başlık nasıl olmalı, hl: tr, gl: TR}
+- {text: youtube senaryo nasıl yazılır, hl: tr, gl: TR}
+- {text: youtube izleyici tutma oranı, hl: tr, gl: TR}
+- {text: youtube kanal büyütme tecrübe, hl: tr, gl: TR}
+- {text: youtube algoritması izlenme süresi, hl: tr, gl: TR}
+- {text: youtube video kancası ilk 30 saniye, hl: tr, gl: TR}
+- {text: youtube senaryo yazma teknikleri hikaye anlatımı, hl: tr, gl: TR}
+- {text: youtube tıklanma oranı kapak başlık, hl: tr, gl: TR}
+- {text: youtube izleyici kaybı grafik analiz, hl: tr, gl: TR}
+- {text: video kurgu tempo izleyici tutma, hl: tr, gl: TR}
+- {text: cómo retener audiencia en youtube, hl: es, gl: ES}
+- {text: retenção de público youtube roteiro, hl: pt, gl: BR}
+playlist_queries:
+- {text: youtube scriptwriting course, hl: en, gl: US}
+- {text: youtube growth course retention, hl: en, gl: US}
+- {text: youtube eğitimi kanal büyütme, hl: tr, gl: TR}
+official_domains:
+- support.google.com/youtube
+- blog.youtube
+- youtube.com/creators
+- youtube.com/howyoutubeworks
+breakpoints: []
+relevance_notes: |
+  3 = long-form YouTube craft that decides clicks and watch time: hooks and intros, retention graphs,
+      titles and thumbnails (packaging), script writing and storytelling for YouTube, pacing and editing
+      for retention, breakdowns of why specific videos hold viewers; tutorials and creator results both count.
+  2 = general YouTube growth or algorithm explanations (how recommendations use CTR and watch time);
+      screenwriting or storytelling courses outside YouTube.
+  1 = upload settings, SEO, tags, descriptions, "do this after uploading" checklists, channel setup;
+      Shorts-only or TikTok tips; editing-software tutorials; "make money / faceless automation" hype;
+      equipment reviews.
